@@ -1,19 +1,21 @@
-import express from "express"
+import express from "express";
+import cors from "cors";
 import { PORT, mongoDBURL } from "./config.js";
 import mongoose from "mongoose";
+import authRoutes from './routes/authRoutes.js';
 
-const app = express()
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
 
 app.get("/api/uma", (req, res) => {
-    //res.send("UMA UMA UMA");
-    console.log(req)
-    return res.status(234).send("Welcome UMA")
+    console.log(req);
+    return res.status(234).send("Welcome UMA");
 });
 
-app.listen(PORT, () => {
-    console.log("Umamusume started on PORT: 5001");
-    
-});
+app.use('/api/auth', authRoutes);
 
 mongoose
   .connect(mongoDBURL)
