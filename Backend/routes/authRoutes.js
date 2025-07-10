@@ -3,11 +3,13 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/userModel.js';
 import { JWT_SECRET } from '../config.js';
+import auth from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 // User Registration Route
 router.post('/register', async (request, response) => {
+  console.log('Request Body:', request.body);
   try {
     const { name, email, phoneNumber, password, role, rapidPassId } = request.body;
 
@@ -46,6 +48,7 @@ router.post('/register', async (request, response) => {
 
 
     // 5. Save the user to the database
+    console.log('New User Object:', newUserObject);
     const user = await User.create(newUserObject);
 
     // 6. Generate JWT Token
@@ -116,5 +119,48 @@ router.post('/login', async (request, response) => {
     }
 });
 
+
+
+// Get User Profile
+router.get('/profile', auth, async (request, response) => {
+  try {
+    const user = await User.findById(request.user).select('-password');
+    if (!user) {
+      return response.status(404).json({ message: 'User not found.' });
+    }
+    response.json(user);
+  } catch (error) {
+    console.error(error.message);
+    response.status(500).send({ message: 'Server Error' });
+  }
+});
+
+// Update User Profile
+router.put('/profile', auth, async (request, response) => {
+  try {
+    const { name, email, phoneNumber, password, preferredRoutes } = request.body;
+
+    const user = await User.findById(request.user);
+    if (!user) {
+      return response.status(404).json({ message: 'User not found.' });
+    }
+
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (preferredRoutes) user.preferredRoutes = preferredRoutes;
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+    }
+
+    await user.save();
+    response.json({ message: 'Profile updated successfully', user: user.toObject({ getters: true, virtuals: false }) });
+  } catch (error) {
+    console.error(error.message);
+    response.status(500).send({ message: 'Server Error' });
+  }
+});
 
 export default router;
