@@ -9,12 +9,12 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       unique: true,
-      sparse: true, // Ensures uniqueness only for documents that have this field
+      sparse: true,
     },
     phoneNumber: {
       type: String,
       unique: true,
-      sparse: true, // Ensures uniqueness only for documents that have this field
+      sparse: true,
     },
     password: {
       type: String,
