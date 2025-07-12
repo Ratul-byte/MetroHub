@@ -5,7 +5,7 @@ import Register from './components/pages/Register';
 import Profile from './components/pages/Profile';
 import Navbar from './components/layout/Navbar';
 import { useAuth } from './context/AuthContext';
-import homepageImg from './assets/homepage_img2.jpg'; // Update to your 9:16 portrait image
+import homepageImg from './assets/homepage_img2.jpg';
 
 const Home = () => {
   const { user } = useAuth();
