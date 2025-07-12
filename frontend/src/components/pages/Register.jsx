@@ -10,6 +10,7 @@ const Register = () => {
   const [name, setName] = useState('');
   const [credential, setCredential] = useState(''); // This will hold either email or phone number
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [useEmail, setUseEmail] = useState(true); // true for email, false for phone number
   const [isRapidPassUser, setIsRapidPassUser] = useState(false);
   const [rapidPassId, setRapidPassId] = useState('');
@@ -63,7 +64,11 @@ const Register = () => {
         <Button onClick={() => setUseEmail(!useEmail)} className="bg-blue-500 hover:bg-blue-600">
           {useEmail ? 'Use Phone Number Instead' : 'Use Email Instead'}
         </Button>
-        <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Input type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <div className="flex items-center">
+          <input type="checkbox" id="showPassword" className="mr-2" onChange={() => setShowPassword(!showPassword)} />
+          <label htmlFor="showPassword">Show Password</label>
+        </div>
         <div className="flex items-center space-x-2">
           <input
             type="checkbox"

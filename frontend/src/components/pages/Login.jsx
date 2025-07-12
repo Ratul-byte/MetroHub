@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 const Login = () => {
   const [credential, setCredential] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -36,7 +37,11 @@ const Login = () => {
         <h2 className="text-2xl font-bold text-center">Login</h2>
         {error && <p className="text-red-500">{error}</p>}
         <Input type="text" placeholder="Email or Phone Number" value={credential} onChange={(e) => setCredential(e.target.value)} />
-        <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Input type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <div className="flex items-center">
+          <input type="checkbox" id="showPassword" className="mr-2" onChange={() => setShowPassword(!showPassword)} />
+          <label htmlFor="showPassword">Show Password</label>
+        </div>
         <Button onClick={handleLogin} disabled={loading} className="bg-blue-500 hover:bg-blue-600">
           {loading ? 'Logging in...' : 'Login'}
         </Button>
