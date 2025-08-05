@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import Input from '../ui/Input';
-import Button from '../ui/Button';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-
+import logo from '../../assets/logo main 1.png'; 
 
 const Register = () => {
   const [name, setName] = useState('');
-  const [credential, setCredential] = useState(''); // This will hold either email or phone number
+  const [credential, setCredential] = useState(''); 
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [useEmail, setUseEmail] = useState(true); // true for email, false for phone number
+  const [useEmail, setUseEmail] = useState(true); 
   const [isRapidPassUser, setIsRapidPassUser] = useState(false);
   const [rapidPassId, setRapidPassId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isHoveredRegister, setIsHoveredRegister] = useState(false);
+  const [isHoveredToggle, setIsHoveredToggle] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -51,46 +51,241 @@ const Register = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100 animate-fadeIn opacity-0" style={{ animationDelay: '0.05s' }}>
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center">Register</h2>
-        {error && <p className="text-red-500">{error}</p>}
-        <Input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-        {useEmail ? (
-          <Input type="email" placeholder="Email" value={credential} onChange={(e) => setCredential(e.target.value)} />
-        ) : (
-          <Input type="text" placeholder="Phone Number" value={credential} onChange={(e) => setCredential(e.target.value)} />
-        )}
-        <Button onClick={() => setUseEmail(!useEmail)} className="bg-blue-500 hover:bg-blue-600">
+    <div style={{
+      position: 'relative',
+      width: '100vw',
+      height: '100vh',
+      background: 'linear-gradient(96.05deg, #FF0000 14.49%, #FF2000 24.47%, #FF4000 34.45%, #FF6000 44.43%, #FF7000 49.41%, #FF8000 54.4%, #E68626 64.38%, #D98939 69.37%, #D28B43 71.87%, #CC8D4D 74.36%, #D28859 76.86%, #D4875D 77.48%, #D68660 78.11%, #D98466 79.35%, #DC816D 80.6%, #DF7F73 81.85%, #E67B80 84.34%, #EC768D 86.84%, #F2729A 89.33%, #F96DA7 90.63%, #FF69B4 91.93%)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start', 
+      paddingTop: '50px', 
+    }}>
+      {/* Register Card */}
+      <div style={{
+        position: 'relative', 
+        width: '400px',
+        height: 'auto', 
+        background: 'rgba(245, 245, 245, 0.5)',
+        border: '2px solid #FFFFFF',
+        borderRadius: '39px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '20px',
+        boxSizing: 'border-box',
+      }}>
+        {/* Logo */}
+        <img src={logo} alt="MetroHub Logo" style={{
+          width: '135px',
+          height: '87px',
+          marginTop: '31px',
+        }} />
+
+        {/* Register to Metro Hub */}
+        <h2 style={{
+          fontFamily: 'Roboto',
+          fontStyle: 'normal',
+          fontWeight: '700',
+          fontSize: '24px',
+          lineHeight: '28px',
+          textAlign: 'center',
+          color: '#000000',
+          marginTop: '10px', 
+        }}>Register to Metro Hub</h2>
+
+        {/* Name Input */}
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          style={{
+            boxSizing: 'border-box',
+            width: '320px',
+            height: '50px',
+            background: 'rgba(255, 255, 255, 0.4)',
+            border: '1px solid #FFFFFF',
+            borderRadius: '15px',
+            paddingLeft: '20px',
+            fontFamily: 'Roboto',
+            fontStyle: 'normal',
+            fontWeight: '300',
+            fontSize: '16px',
+            lineHeight: '19px',
+            color: '#1E1E1E',
+            marginTop: '20px',
+          }}
+        />
+
+        {/* Credential Input (Email or Phone Number) */}
+        <input
+          type={useEmail ? "email" : "text"}
+          placeholder={useEmail ? "Email" : "Phone Number"}
+          value={credential}
+          onChange={(e) => setCredential(e.target.value)}
+          style={{
+            boxSizing: 'border-box',
+            width: '320px',
+            height: '50px',
+            background: 'rgba(255, 255, 255, 0.4)',
+            border: '1px solid #FFFFFF',
+            borderRadius: '15px',
+            paddingLeft: '20px',
+            fontFamily: 'Roboto',
+            fontStyle: 'normal',
+            fontWeight: '300',
+            fontSize: '16px',
+            lineHeight: '19px',
+            color: '#1E1E1E',
+            marginTop: '16px',
+          }}
+        />
+
+        {/* Toggle Email/Phone Button */}
+        <button
+          onClick={() => setUseEmail(!useEmail)}
+          onMouseEnter={() => setIsHoveredToggle(true)}
+          onMouseLeave={() => setIsHoveredToggle(false)}
+          style={{
+            width: '320px',
+            height: '40px',
+            background: isHoveredToggle ? '#0056b3' : '#007bff',
+            borderRadius: '15px',
+            fontFamily: 'Roboto',
+            fontStyle: 'normal',
+            fontWeight: '600',
+            fontSize: '16px',
+            lineHeight: '19px',
+            color: '#FFFFFF',
+            marginTop: '10px',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'background 0.3s ease',
+          }}
+        >
           {useEmail ? 'Use Phone Number Instead' : 'Use Email Instead'}
-        </Button>
-        <Input type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <div className="flex items-center">
-          <input type="checkbox" id="showPassword" className="mr-2" onChange={() => setShowPassword(!showPassword)} />
-          <label htmlFor="showPassword">Show Password</label>
+        </button>
+
+        {/* Password Input */}
+        <input
+          type={showPassword ? "text" : "password"}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{
+            boxSizing: 'border-box',
+            width: '320px',
+            height: '50px',
+            background: 'rgba(255, 255, 255, 0.4)',
+            border: '1px solid #FFFFFF',
+            borderRadius: '15px',
+            paddingLeft: '20px',
+            fontFamily: 'Roboto',
+            fontStyle: 'normal',
+            fontWeight: '300',
+            fontSize: '16px',
+            lineHeight: '19px',
+            color: '#1E1E1E',
+            marginTop: '16px',
+          }}
+        />
+
+        {/* Show Password Checkbox */}
+        <div style={{
+          display: 'flex',
+          alignSelf: 'flex-start',
+          marginLeft: '40px',
+          marginTop: '10px',
+        }}>
+          <input type="checkbox" id="showPassword" style={{ marginRight: '8px', transform: 'scale(1.2)' }} onChange={() => setShowPassword(!showPassword)} />
+          <label htmlFor="showPassword" style={{ color: '#1E1E1E', fontFamily: 'Roboto', fontSize: '16px' }}>Show Password</label>
         </div>
-        <div className="flex items-center space-x-2">
+
+        {/* Rapid Pass User Checkbox */}
+        <div style={{
+          display: 'flex',
+          alignSelf: 'flex-start',
+          marginLeft: '40px',
+          marginTop: '10px',
+        }}>
           <input
             type="checkbox"
             id="rapidPassCheckbox"
             checked={isRapidPassUser}
             onChange={(e) => setIsRapidPassUser(e.target.checked)}
-            className="form-checkbox h-5 w-5 text-blue-600"
+            style={{ marginRight: '8px', transform: 'scale(1.2)' }}
           />
-          <label htmlFor="rapidPassCheckbox" className="text-gray-700">I am a Rapid Pass User</label>
+          <label htmlFor="rapidPassCheckbox" style={{ color: '#1E1E1E', fontFamily: 'Roboto', fontSize: '16px' }}>I am a Rapid Pass User</label>
         </div>
+
+        {/* Rapid Pass ID Input */}
         {isRapidPassUser && (
-          <Input
+          <input
             type="text"
             placeholder="Rapid Pass ID"
             value={rapidPassId}
             onChange={(e) => setRapidPassId(e.target.value)}
+            style={{
+              boxSizing: 'border-box',
+              width: '320px',
+              height: '50px',
+              background: 'rgba(255, 255, 255, 0.4)',
+              border: '1px solid #FFFFFF',
+              borderRadius: '15px',
+              paddingLeft: '20px',
+              fontFamily: 'Roboto',
+              fontStyle: 'normal',
+              fontWeight: '300',
+              fontSize: '16px',
+              lineHeight: '19px',
+              color: '#1E1E1E',
+              marginTop: '16px',
+            }}
           />
         )}
-        <Button onClick={handleRegister} disabled={loading} className="bg-green-500 hover:bg-green-600">
+
+        {/* Register Button */}
+        <button
+          onClick={handleRegister}
+          disabled={loading}
+          onMouseEnter={() => setIsHoveredRegister(true)}
+          onMouseLeave={() => setIsHoveredRegister(false)}
+          style={{
+            position: 'relative',
+            width: '150px',
+            height: '50px',
+            background: isHoveredRegister ? '#024C29': '#036638' ,
+            borderRadius: '25px',
+            fontFamily: 'Roboto',
+            fontStyle: 'normal',
+            fontWeight: '600',
+            fontSize: '22px',
+            lineHeight: '26px',
+            color: '#FFFFFF',
+            marginTop: '30px',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'background 0.3s ease',
+          }}
+        >
           {loading ? 'Registering...' : 'Register'}
-        </Button>
+        </button>
+
+        {/* Login Link */}
+        <p style={{ marginTop: '20px', fontFamily: 'Roboto', fontSize: '14px', color: '#1E1E1E' }}>
+          Already have an account? <Link to="/login" style={{ color: '#007bff', textDecoration: 'underline' }}>Login now</Link>
+        </p>
+
+        {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
       </div>
+      <style>
+        {`
+          input::placeholder {
+            color: #1E1E1E !important;
+          }
+        `}
+      </style>
     </div>
   );
 };

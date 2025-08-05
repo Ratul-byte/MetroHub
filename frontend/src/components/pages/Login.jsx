@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import Input from '../ui/Input';
-import Button from '../ui/Button';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import logo from '../../assets/logo main 1.png'; 
 
 const Login = () => {
   const [credential, setCredential] = useState('');
@@ -11,6 +10,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -32,20 +32,149 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100 animate-fadeIn opacity-0" style={{ animationDelay: '0.05s' }}>
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center">Login</h2>
-        {error && <p className="text-red-500">{error}</p>}
-        <Input type="text" placeholder="Email or Phone Number" value={credential} onChange={(e) => setCredential(e.target.value)} />
-        <Input type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <div className="flex items-center">
-          <input type="checkbox" id="showPassword" className="mr-2" onChange={() => setShowPassword(!showPassword)} />
-          <label htmlFor="showPassword">Show Password</label>
+    <div style={{
+      position: 'relative',
+      width: '100vw',
+      height: '100vh',
+      background: 'linear-gradient(96.05deg, #FF0000 14.49%, #FF2000 24.47%, #FF4000 34.45%, #FF6000 44.43%, #FF7000 49.41%, #FF8000 54.4%, #E68626 64.38%, #D98939 69.37%, #D28B43 71.87%, #CC8D4D 74.36%, #D28859 76.86%, #D4875D 77.48%, #D68660 78.11%, #D98466 79.35%, #DC816D 80.6%, #DF7F73 81.85%, #E67B80 84.34%, #EC768D 86.84%, #F2729A 89.33%, #F96DA7 90.63%, #FF69B4 91.93%)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start', 
+      paddingTop: '50px', 
+    }}>
+      {/* Rectangle 2 - Login Card */}
+      <div style={{
+        position: 'relative', 
+        width: '400px',
+        height: '500px',
+        background: 'rgba(245, 245, 245, 0.5)',
+        border: '2px solid #FFFFFF',
+        borderRadius: '39px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '20px',
+        boxSizing: 'border-box',
+      }}>
+        {/* Logo */}
+        <img src={logo} alt="MetroHub Logo" style={{
+          width: '135px',
+          height: '87px',
+          marginTop: '31px',
+        }} />
+
+        {/* Log In to Metro Hub */}
+        <h2 style={{
+          fontFamily: 'Roboto',
+          fontStyle: 'normal',
+          fontWeight: '700',
+          fontSize: '24px',
+          lineHeight: '28px',
+          textAlign: 'center',
+          color: '#000000',
+          marginTop: '10px', 
+        }}>Log In to Metro Hub</h2>
+
+        {/* Email or Phone Number Input */}
+        <input
+          type="text"
+          placeholder="Email or Phone Number"
+          value={credential}
+          onChange={(e) => setCredential(e.target.value)}
+          style={{
+            boxSizing: 'border-box',
+            width: '320px',
+            height: '50px',
+            background: 'rgba(255, 255, 255, 0.4)',
+            border: '1px solid #FFFFFF',
+            borderRadius: '15px',
+            paddingLeft: '20px',
+            fontFamily: 'Roboto',
+            fontStyle: 'bold',
+            fontWeight: '300',
+            fontSize: '16px',
+            lineHeight: '19px',
+            color: '#1E1E1E', 
+            marginTop: '40px', 
+          }}
+        />
+
+        {/* Password Input */}
+        <input
+          type={showPassword ? "text" : "password"}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{
+            boxSizing: 'border-box',
+            width: '320px',
+            height: '50px',
+            background: 'rgba(255, 255, 255, 0.4)',
+            border: '1px solid #FFFFFF',
+            borderRadius: '15px',
+            paddingLeft: '20px',
+            fontFamily: 'Roboto',
+            fontStyle: 'normal',
+            fontWeight: '300',
+            fontSize: '16px',
+            lineHeight: '19px',
+            color: '#1E1E1E', 
+            marginTop: '16px', 
+          }}
+        />
+
+        {/* Show Password Checkbox */}
+        <div style={{
+          display: 'flex',
+          alignSelf: 'flex-start',
+          marginLeft: '40px',
+          marginTop: '10px',
+        }}>
+          <input type="checkbox" id="showPassword" style={{ marginRight: '8px', transform: 'scale(1.2)' }} onChange={() => setShowPassword(!showPassword)} />
+          <label htmlFor="showPassword" style={{ color: '#1E1E1E', fontFamily: 'Roboto', fontSize: '16px' }}>Show Password</label>
         </div>
-        <Button onClick={handleLogin} disabled={loading} className="bg-blue-500 hover:bg-blue-600">
-          {loading ? 'Logging in...' : 'Login'}
-        </Button>
+
+        {/* Log In Button */}
+        <button
+          onClick={handleLogin}
+          disabled={loading}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          style={{
+            position: 'relative',
+            width: '150px',
+            height: '50px',
+            background: isHovered ? '#024C29': '#036638' , // Hover effect
+            borderRadius: '25px',
+            fontFamily: 'Roboto',
+            fontStyle: 'normal',
+            fontWeight: '600',
+            fontSize: '22px',
+            lineHeight: '26px',
+            color: '#FFFFFF',
+            marginTop: '30px', 
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'background 0.3s ease',
+          }}
+        >
+          {loading ? 'Logging in...' : 'Log In'}
+        </button>
+
+        {/* Register Link */}
+        <p style={{ marginTop: '20px', fontFamily: 'Roboto', fontSize: '14px', color: '#1E1E1E' }}>
+          Don't have an account? <Link to="/register" style={{ color: '#007bff', textDecoration: 'underline' }}>Register now</Link>
+        </p>
+
+        {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
       </div>
+      <style>
+        {`
+          input::placeholder {
+            color: #1E1E1E !important;
+          }
+        `}
+      </style>
     </div>
   );
 };
