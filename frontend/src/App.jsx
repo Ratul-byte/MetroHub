@@ -6,6 +6,7 @@ import Profile from './components/pages/Profile';
 import Navbar from './components/layout/Navbar';
 import { useAuth } from './context/AuthContext';
 import homepageImg from './assets/homepage_img2.jpg';
+import Map from './components/pages/Map';
 
 const Home = () => {
   const { user } = useAuth();
@@ -55,13 +56,22 @@ const Home = () => {
                 </Link>
               </>
             ) : (
-              <Link 
-                to="/book-ticket" 
-                className="px-6 py-3 bg-orange-600 text-white rounded-md text-lg hover:bg-orange-700 transition duration-300" 
-                style={{ textShadow: '1px 1px 3px rgba(0, 0, 0, 0.4)' }}
-              >
-                Book Ticket
-              </Link>
+              <>
+                <Link 
+                  to="/book-ticket" 
+                  className="px-6 py-3 bg-orange-600 text-white rounded-md text-lg hover:bg-orange-700 transition duration-300" 
+                  style={{ textShadow: '1px 1px 3px rgba(0, 0, 0, 0.4)' }}
+                >
+                  Book Ticket
+                </Link>
+                <Link 
+                  to="/map" 
+                  className="px-6 py-3 bg-indigo-600 text-white rounded-md text-lg hover:bg-indigo-700 transition duration-300" 
+                  style={{ textShadow: '1px 1px 3px rgba(0, 0, 0, 0.4)' }}
+                >
+                  View Map
+                </Link>
+              </>
             )}
           </div>
         </div>
@@ -101,6 +111,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/map" element={<Map />} />
           </Routes>
         </div>
       </div>

@@ -1,0 +1,169 @@
+/* Rectangle 1 */
+
+position: absolute;
+width: 1280px;
+height: 720px;
+left: 146px;
+top: 16px;
+
+
+
+/* Rectangle 2 */
+
+position: absolute;
+width: 400px;
+height: 500px;
+left: 440px;
+top: 110px;
+
+background: rgba(245, 245, 245, 0.5);
+border: 2px solid #FFFFFF;
+border-radius: 39px;
+
+
+/* Rectangle 3 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 320px;
+height: 50px;
+left: 480px;
+top: 326px;
+
+background: rgba(255, 255, 255, 0.4);
+border: 1px solid #FFFFFF;
+border-radius: 15px;
+
+
+/* Email or Phone Number */
+
+position: absolute;
+width: 280px;
+height: 34px;
+left: 500px;
+top: 342px;
+
+font-family: 'Roboto';
+font-style: normal;
+font-weight: 300;
+font-size: 16px;
+line-height: 19px;
+
+color: #1E1E1E;
+
+
+
+/* Rectangle 4 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 320px;
+height: 50px;
+left: 480px;
+top: 392px;
+
+background: rgba(255, 255, 255, 0.4);
+border: 1px solid #FFFFFF;
+border-radius: 15px;
+
+
+/* Password */
+
+position: absolute;
+width: 280px;
+height: 34px;
+left: 500px;
+top: 408px;
+
+font-family: 'Roboto';
+font-style: normal;
+font-weight: 300;
+font-size: 16px;
+line-height: 19px;
+
+color: #1E1E1E;
+
+
+
+/* logo main 1 1 */
+
+position: absolute;
+width: 135px;
+height: 87px;
+left: 572px;
+top: 141px;
+
+background: url(logo main 1.png);
+
+
+/* Log In to Metro Hub */
+
+position: absolute;
+width: 200px;
+height: 44px;
+left: 540px;
+top: 228px;
+
+font-family: 'Roboto';
+font-style: normal;
+font-weight: 700;
+font-size: 24px;
+line-height: 28px;
+text-align: center;
+
+color: #000000;
+
+
+
+/* Log in hover */
+
+position: absolute;
+visibility: hidden;
+width: 150px;
+height: 50px;
+left: 1021px;
+top: 454px;
+
+
+
+/* Log in og */
+
+position: absolute;
+width: 150px;
+height: 50px;
+left: 565px;
+top: 490px;
+
+
+
+/* Log in og */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #024C29;
+border-radius: 25px;
+
+
+/* Log In */
+
+position: absolute;
+left: 30%;
+right: 13.33%;
+top: 18%;
+bottom: 18%;
+
+font-family: 'Roboto';
+font-style: normal;
+font-weight: 600;
+font-size: 22px;
+line-height: 26px;
+
+color: #FFFFFF;
+
+

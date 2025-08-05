@@ -1,13 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import logo from '../../assets/logo main 1.png';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
 
   return (
     <nav className="bg-gray-800 p-4 text-white flex justify-between items-center h-15">
-      <Link to="/" className="text-2xl font-bold animate-fadeIn opacity-0" style={{ animationDelay: '0.2s' }}>MetroHub</Link>
+      <Link to="/" className="flex items-center space-x-2 text-2xl font-bold animate-fadeIn opacity-0" style={{ animationDelay: '0.2s' }}>
+        <img src={logo} alt="MetroHub Logo" className="h-14 w-auto" />
+        <span className="text-2xl">MetroHub</span>
+      </Link>
       <div>
         {user ? (
           <div className="flex items-center space-x-4">
