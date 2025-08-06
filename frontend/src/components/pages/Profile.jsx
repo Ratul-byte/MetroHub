@@ -14,6 +14,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [depositAmount, setDepositAmount] = useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -70,6 +71,45 @@ const Profile = () => {
     }
   };
 
+  const handleBecomeRapidPassUser = async () => {
+    setLoading(true);
+    setMessage('');
+    setError('');
+    try {
+      const response = await axios.put('http://localhost:5001/api/user/profile', { role: 'rapidPassUser' }, {
+        headers: {
+          'x-auth-token': token,
+        },
+      });
+      setMessage('Successfully upgraded to Rapid Pass user.');
+      login(response.data, token);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to upgrade.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeposit = async () => {
+    setLoading(true);
+    setMessage('');
+    setError('');
+    try {
+      const response = await axios.put('http://localhost:5001/api/user/profile', { passBalance: Number(depositAmount) }, {
+        headers: {
+          'x-auth-token': token,
+        },
+      });
+      setMessage(`Successfully deposited ${depositAmount}.`);
+      setDepositAmount('');
+      login(response.data, token);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to deposit.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading && !user) {
     return <div className="text-center mt-10">Loading profile...</div>;
   }
@@ -94,6 +134,26 @@ const Profile = () => {
         <Button onClick={handleUpdateProfile} disabled={loading} className="bg-blue-500 hover:bg-blue-600">
           {loading ? 'Updating...' : 'Update Profile'}
         </Button>
+
+        <div className="mt-6 pt-6 border-t">
+          <h3 className="text-lg font-semibold text-center">Rapid Pass</h3>
+          {user.role === 'rapidPassUser' ? (
+            <div className="text-center">
+              <p className="text-green-600">You are a Rapid Pass user.</p>
+              <p>Balance: ${user.passBalance.toFixed(2)}</p>
+            </div>
+          ) : (
+            <Button onClick={handleBecomeRapidPassUser} disabled={loading} className="w-full bg-green-500 hover:bg-green-600">
+              {loading ? 'Upgrading...' : 'Become a Rapid Pass User'}
+            </Button>
+          )}
+          <div className="mt-4">
+            <Input type="number" placeholder="Deposit Amount" value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
+            <Button onClick={handleDeposit} disabled={loading || user.role !== 'rapidPassUser'} className="w-full mt-2 bg-indigo-500 hover:bg-indigo-600">
+              {loading ? 'Depositing...' : 'Deposit'}
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

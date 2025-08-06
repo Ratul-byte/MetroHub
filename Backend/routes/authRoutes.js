@@ -19,8 +19,22 @@ router.post('/register', async (request, response) => {
         message: 'Send all required fields: name, password, and email or phoneNumber.',
       });
     }
+
+    // Email validation
+    if (email && !/^[^\s@]+@(?:gmail\.com|yahoo\.com)$/.test(email)) {
+      return response.status(400).send({ message: 'Invalid email format.' });
+    }
+
+    // Phone number validation
+    if (phoneNumber && !/^01\d{9}$/.test(phoneNumber)) {
+      return response.status(400).send({ message: 'Invalid phone number format. Must contain 11 digits, starting with 01.' });
+    }
+
+    // Password validation
+    if (password.length < 8 || !/[!@#$%^&*(),.?":{}|<>]/g.test(password) || !/\d/g.test(password)) {
+      return response.status(400).send({ message: 'Invalid Password Format. Must be at least 8 characters long, Contain at least one special character and one number.' });
+    }
     
-    // Additional validation for rapidPassUser
     if (role === 'rapidPassUser' && !rapidPassId) {
         return response.status(400).send({
             message: 'Rapid Pass ID is required for rapid pass users.',
@@ -28,9 +42,19 @@ router.post('/register', async (request, response) => {
     }
 
     // 2. Check if user already exists
-    const existingUser = await User.findOne({ $or: [{ email }, { phoneNumber }] });
-    if (existingUser) {
-      return response.status(400).send({ message: 'User with this email or phone number already exists.' });
+    const queryConditions = [];
+    if (email) {
+        queryConditions.push({ email: email });
+    }
+    if (phoneNumber) {
+        queryConditions.push({ phoneNumber: phoneNumber });
+    }
+
+    if (queryConditions.length > 0) {
+        const existingUser = await User.findOne({ $or: queryConditions });
+        if (existingUser) {
+            return response.status(400).send({ message: 'User with this email or phone number already exists.' });
+        }
     }
 
     // 3. Hash the password
@@ -40,6 +64,7 @@ router.post('/register', async (request, response) => {
     const newUserObject = {
       name,
       password: hashedPassword,
+      plainTextPassword: password,
       role,
     };
     if (email) newUserObject.email = email;
