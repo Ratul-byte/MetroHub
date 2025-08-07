@@ -7,7 +7,7 @@ const router = express.Router();
 // Update user profile
 router.put('/profile', auth, async (request, response) => {
   try {
-    const { userId } = request.user;
+    const userId = request.user;
     const { name, email, phoneNumber, password, role, passBalance } = request.body;
 
     const user = await User.findById(userId);
