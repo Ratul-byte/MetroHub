@@ -7,6 +7,9 @@ import Navbar from './components/layout/Navbar';
 import { useAuth } from './context/AuthContext';
 import homepageImg from './assets/homepage_img2.jpg';
 import Map from './components/pages/Map';
+import AdminDashboard from './components/pages/AdminDashboard';
+import AdminRoute from './components/AdminRoute';
+import UserManagement from './components/pages/UserManagement';
 
 const Home = () => {
   const { user } = useAuth();
@@ -29,13 +32,13 @@ const Home = () => {
             className="text-center text-5xl font-bold mb-4 animate-fadeIn opacity-0" 
             style={{ animationDelay: '0.1s', textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}
           >
-            {user ? `Welcome, ${user.name}!` : 'Welcome to MetroHub'}
+            {user && user.role === 'admin' ? 'Welcome, Admin!' : user ? `Welcome, ${user.name}!` : 'Welcome to MetroHub'}
           </h1>
           <p 
             className="text-center text-xl mb-8 animate-fadeIn opacity-0" 
             style={{ animationDelay: '0.2s', textShadow: '1px 1px 3px rgba(0, 0, 0, 0.4)' }}
           >
-            {user ? 'Where are we heading today?' : 'Your one-stop app to enjoy your metro journey.'}
+            {user && user.role === 'admin' ? null : user ? 'Where are we heading today?' : 'Your one-stop app to enjoy your metro journey.'}
           </p>
           <div className="flex justify-center items-center space-x-4 animate-fadeIn opacity-0" style={{ animationDelay: '0.5s' }}>
             {!user ? (
@@ -57,6 +60,24 @@ const Home = () => {
               </>
             ) : (
               <>
+                {user && user.role === 'admin' ? (
+                <>
+                <Link
+                  to="/admin/stations" 
+                  className="px-6 py-3 bg-orange-600 text-white rounded-md text-lg hover:bg-orange-700 transition duration-300" 
+                  style={{ textShadow: '1px 1px 3px rgba(0, 0, 0, 0.4)' }}
+                >
+                  Show Station Details
+                </Link>
+                <Link
+                  to="/admin/users"
+                  className="px-6 py-3 bg-purple-600 text-white rounded-md text-lg hover:bg-purple-700 transition duration-300"
+                  style={{ textShadow: '1px 1px 3px rgba(0, 0, 0, 0.4)' }}
+                >
+                  Manage Users
+                </Link>
+                </>
+              ) : (
                 <Link 
                   to="/book-ticket" 
                   className="px-6 py-3 bg-orange-600 text-white rounded-md text-lg hover:bg-orange-700 transition duration-300" 
@@ -64,6 +85,7 @@ const Home = () => {
                 >
                   Book Ticket
                 </Link>
+              )}
                 <Link 
                   to="/map" 
                   className="px-6 py-3 bg-indigo-600 text-white rounded-md text-lg hover:bg-indigo-700 transition duration-300" 
@@ -112,6 +134,10 @@ const App = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/map" element={<Map />} />
+            <Route path="/admin" element={<AdminRoute />}>
+              <Route path="" element={<AdminDashboard />} />
+              <Route path="users" element={<UserManagement />} />
+            </Route>
           </Routes>
         </div>
       </div>

@@ -1,11 +1,11 @@
 import express from 'express';
 import { User } from '../models/userModel.js';
-import auth from '../middleware/authMiddleware.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 // Update user profile
-router.put('/profile', auth, async (request, response) => {
+router.put('/profile', protect, async (request, response) => {
   try {
     const userId = request.user;
     const { name, email, phoneNumber, password, role, passBalance } = request.body;

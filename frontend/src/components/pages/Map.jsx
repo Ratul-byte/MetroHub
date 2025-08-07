@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
 
 const Map = () => {
+  const { user } = useAuth();
   const [mapSrc, setMapSrc] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -71,43 +73,45 @@ const Map = () => {
 
   return (
     <div className="relative h-full">
-      <div className="absolute top-4 right-4 z-10 bg-yellow-100 p-4 rounded-md shadow-md flex items-center space-x-2">
-        <input
-          type="text"
-          placeholder="Enter your location..."
-          value={source}
-          onChange={handleSourceChange}
-          className="w-64 p-2 border border-gray-300 rounded-md"
-        />
-        <div className="relative">
+      {user && user.role !== 'admin' && (
+        <div className="absolute top-4 right-4 z-10 bg-yellow-100 p-4 rounded-md shadow-md flex items-center space-x-2">
           <input
             type="text"
-            placeholder="Enter destination..."
-            value={destination}
-            onChange={handleDestinationChange}
+            placeholder="Enter your location..."
+            value={source}
+            onChange={handleSourceChange}
             className="w-64 p-2 border border-gray-300 rounded-md"
           />
-          {suggestions.length > 0 && (
-            <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1">
-              {suggestions.map(suggestion => (
-                <li
-                  key={suggestion.name}
-                  onClick={() => handleSuggestionClick(suggestion)}
-                  className="p-2 cursor-pointer hover:bg-gray-200"
-                >
-                  {suggestion.name}
-                </li>
-              ))}
-            </ul>
-          )}
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Enter destination..."
+              value={destination}
+              onChange={handleDestinationChange}
+              className="w-64 p-2 border border-gray-300 rounded-md"
+            />
+            {suggestions.length > 0 && (
+              <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1">
+                {suggestions.map(suggestion => (
+                  <li
+                    key={suggestion.name}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    className="p-2 cursor-pointer hover:bg-gray-200"
+                  >
+                    {suggestion.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <button
+            onClick={handleGetDirections}
+            className="w-auto p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
+            Get Directions
+          </button>
         </div>
-        <button
-          onClick={handleGetDirections}
-          className="w-auto p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-        >
-          Get Directions
-        </button>
-      </div>
+      )}
       {loading && <div className="flex items-center justify-center h-full">Loading Map...</div>}
       {error && (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white p-4 rounded-md shadow-md z-20">

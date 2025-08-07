@@ -1,25 +1,66 @@
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '../config.js';
+import { User } from '../models/userModel.js';
 
-const auth = (request, response, next) => {
-  try {
-    const token = request.header('x-auth-token');
+const protect = async (req, res, next) => {
+  let token;
 
-    if (!token) {
-      return response.status(401).json({ message: 'No authentication token, authorization denied.' });
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    try {
+      token = req.headers.authorization.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      if (decoded.userId === 'hardcoded_admin_user_id') {
+        req.user = {
+          _id: 'hardcoded_admin_user_id',
+          name: 'Admin User',
+          email: 'admin1@gmail.com',
+          role: 'admin',
+        };
+      } else {
+        req.user = await User.findById(decoded.userId).select('-password');
+      }
+      next();
+    } catch (error) {
+      console.error(error);
+      res.status(401);
+      throw new Error('Not authorized, token failed');
     }
+  } else if (req.headers['x-auth-token']) {
+    try {
+      token = req.headers['x-auth-token'];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const verified = jwt.verify(token, JWT_SECRET);
-    if (!verified) {
-      return response.status(401).json({ message: 'Token verification failed, authorization denied.' });
+      if (decoded.userId === 'hardcoded_admin_user_id') {
+        req.user = {
+          _id: 'hardcoded_admin_user_id',
+          name: 'Admin User',
+          email: 'admin1@gmail.com',
+          role: 'admin',
+        };
+      } else {
+        req.user = await User.findById(decoded.userId).select('-password');
+      }
+      next();
+    } catch (error) {
+      console.error(error);
+      res.status(401);
+      throw new Error('Not authorized, token failed');
     }
+  }
 
-    request.user = verified.userId;
-    request.role = verified.role;
-    next();
-  } catch (err) {
-    response.status(500).json({ error: err.message });
+  if (!token) {
+    res.status(401);
+    throw new Error('Not authorized, no token');
   }
 };
 
-export default auth;
+const admin = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    res.status(401);
+    throw new Error('Not authorized as an admin');
+  }
+};
+
+export { protect, admin };

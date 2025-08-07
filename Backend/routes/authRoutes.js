@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/userModel.js';
 import { JWT_SECRET } from '../config.js';
-import auth from '../middleware/authMiddleware.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -99,6 +99,30 @@ router.post('/register', async (request, response) => {
 
 // User Login Route
 router.post('/login', async (request, response) => {
+    const { credential, password } = request.body;
+
+    // Hardcoded admin login for development/testing purposes
+    if (credential === 'admin1@gmail.com' && password === 'admin') {
+        const adminUser = {
+            _id: 'hardcoded_admin_user_id', // A special ID for the hardcoded admin
+            name: 'Admin User',
+            email: 'admin1@gmail.com',
+            role: 'admin',
+        };
+        const token = jwt.sign({ userId: adminUser._id, role: adminUser.role }, JWT_SECRET, {
+            expiresIn: '1d',
+        });
+        return response.status(200).send({
+            message: 'Admin login successful',
+            token,
+            user: {
+                id: adminUser._id,
+                name: adminUser.name,
+                role: adminUser.role
+            }
+        });
+    }
+
     try {
         const { credential, password } = request.body; // credential can be email or phoneNumber
 
@@ -147,7 +171,7 @@ router.post('/login', async (request, response) => {
 
 
 // Get User Profile
-router.get('/profile', auth, async (request, response) => {
+router.get('/profile', protect, async (request, response) => {
   try {
     const user = await User.findById(request.user).select('-password');
     if (!user) {
@@ -161,7 +185,7 @@ router.get('/profile', auth, async (request, response) => {
 });
 
 // Update User Profile
-router.put('/profile', auth, async (request, response) => {
+router.put('/profile', protect, async (request, response) => {
   try {
     const { name, email, phoneNumber, password, preferredRoutes } = request.body;
 

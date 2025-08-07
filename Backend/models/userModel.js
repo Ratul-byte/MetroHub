@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
-      enum: ['normal', 'rapidPassUser'],
+      enum: ['normal', 'rapidPassUser', 'admin'],
       default: 'normal',
     },
     rapidPassId: {

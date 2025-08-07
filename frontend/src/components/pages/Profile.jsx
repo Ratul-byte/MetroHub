@@ -125,35 +125,41 @@ const Profile = () => {
         {message && <p className="text-green-500 text-center">{message}</p>}
         {error && <p className="text-red-500 text-center">{error}</p>}
 
-        <Input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-        <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <Input type="text" placeholder="Phone Number" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
-        <Input type="password" placeholder="New Password (leave blank to keep current)" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <Input type="text" placeholder="Preferred Routes (comma-separated)" value={preferredRoutes} onChange={(e) => setPreferredRoutes(e.target.value)} />
+        {user.role !== 'admin' ? (
+          <>
+            <Input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
+            <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input type="text" placeholder="Phone Number" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+            <Input type="password" placeholder="New Password (leave blank to keep current)" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Input type="text" placeholder="Preferred Routes (comma-separated)" value={preferredRoutes} onChange={(e) => setPreferredRoutes(e.target.value)} />
 
-        <Button onClick={handleUpdateProfile} disabled={loading} className="bg-blue-500 hover:bg-blue-600">
-          {loading ? 'Updating...' : 'Update Profile'}
-        </Button>
+            <Button onClick={handleUpdateProfile} disabled={loading} className="bg-blue-500 hover:bg-blue-600">
+              {loading ? 'Updating...' : 'Update Profile'}
+            </Button>
 
-        <div className="mt-6 pt-6 border-t">
-          <h3 className="text-lg font-semibold text-center">Rapid Pass</h3>
-          {user.role === 'rapidPassUser' ? (
-            <div className="text-center">
-              <p className="text-green-600">You are a Rapid Pass user.</p>
-              <p>Balance: ${user.passBalance.toFixed(2)}</p>
+            <div className="mt-6 pt-6 border-t">
+              <h3 className="text-lg font-semibold text-center">Rapid Pass</h3>
+              {user.role === 'rapidPassUser' ? (
+                <div className="text-center">
+                  <p className="text-green-600">You are a Rapid Pass user.</p>
+                  <p>Balance: ${user.passBalance.toFixed(2)}</p>
+                </div>
+              ) : (
+                <Button onClick={handleBecomeRapidPassUser} disabled={loading} className="w-full bg-green-500 hover:bg-green-600">
+                  {loading ? 'Upgrading...' : 'Become a Rapid Pass User'}
+                </Button>
+              )}
+              <div className="mt-4">
+                <Input type="number" placeholder="Deposit Amount" value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
+                <Button onClick={handleDeposit} disabled={loading || user.role !== 'rapidPassUser'} className="w-full mt-2 bg-indigo-500 hover:bg-indigo-600">
+                  {loading ? 'Depositing...' : 'Deposit'}
+                </Button>
+              </div>
             </div>
-          ) : (
-            <Button onClick={handleBecomeRapidPassUser} disabled={loading} className="w-full bg-green-500 hover:bg-green-600">
-              {loading ? 'Upgrading...' : 'Become a Rapid Pass User'}
-            </Button>
-          )}
-          <div className="mt-4">
-            <Input type="number" placeholder="Deposit Amount" value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
-            <Button onClick={handleDeposit} disabled={loading || user.role !== 'rapidPassUser'} className="w-full mt-2 bg-indigo-500 hover:bg-indigo-600">
-              {loading ? 'Depositing...' : 'Deposit'}
-            </Button>
-          </div>
-        </div>
+          </>
+        ) : (
+          <p className="text-center text-lg text-gray-600">Admin users do not have a profile to update here.</p>
+        )}
       </div>
     </div>
   );
