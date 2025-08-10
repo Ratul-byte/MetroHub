@@ -11,6 +11,8 @@ import AdminDashboard from './components/pages/AdminDashboard';
 import AdminRoute from './components/AdminRoute';
 import UserManagement from './components/pages/UserManagement';
 
+import ResetPassword from './components/pages/ResetPassword';
+
 const Home = () => {
   const { user } = useAuth();
 
@@ -105,7 +107,7 @@ const Home = () => {
 const App = () => {
   return (
     <Router>
-      <div className="flex flex-col h-screen" style={{ margin: 0, overflow: 'hidden', fontFamily: "'Open Sans', sans-serif" }}>
+      <div className="flex flex-col h-screen" style={{ margin: 0, overflowY: 'auto', fontFamily: "'Open Sans', sans-serif" }}>
         <style>
           {`
             @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
@@ -132,6 +134,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/map" element={<Map />} />
             <Route path="/admin" element={<AdminRoute />}>

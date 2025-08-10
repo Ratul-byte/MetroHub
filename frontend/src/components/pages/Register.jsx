@@ -22,11 +22,20 @@ const Register = () => {
   const handleRegister = async () => {
     setLoading(true);
     setError('');
+    const securityAnswer = window.prompt('What is your favourite character?');
+
+    if (!securityAnswer) {
+      setError('Please provide an answer to the security question.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const payload = {
         name,
         password,
         role: isRapidPassUser ? 'rapidPassUser' : 'normal',
+        securityAnswer,
       };
 
       if (useEmail) {

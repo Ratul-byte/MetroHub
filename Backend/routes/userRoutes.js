@@ -1,5 +1,7 @@
 import express from 'express';
+import bcrypt from 'bcryptjs';
 import { User } from '../models/userModel.js';
+import { RapidPass } from '../models/rapidPassModel.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -7,8 +9,8 @@ const router = express.Router();
 // Update user profile
 router.put('/profile', protect, async (request, response) => {
   try {
-    const userId = request.user;
-    const { name, email, phoneNumber, password, role, passBalance } = request.body;
+    const userId = request.user._id;
+    const { name, email, phoneNumber, password, role, passBalance, rapidPassId } = request.body;
 
     const user = await User.findById(userId);
 
@@ -23,11 +25,40 @@ router.put('/profile', protect, async (request, response) => {
       const hashedPassword = await bcrypt.hash(password, 10);
       user.password = hashedPassword;
     }
-    if (role) user.role = role;
+
+    if (role && role !== user.role) {
+      if (role === 'rapidPassUser') {
+        if (!rapidPassId) {
+          return response.status(400).send({ message: 'Rapid Pass ID is required for rapid pass users.' });
+        }
+
+        const rapidPassIdAsNumber = parseInt(rapidPassId, 10);
+        if (isNaN(rapidPassIdAsNumber)) {
+          return response.status(400).send({ message: 'Invalid Rapid Pass ID format.' });
+        }
+
+        const rapidPass = await RapidPass.findOne({ rapidPassId: rapidPassIdAsNumber });
+
+        if (!rapidPass) {
+          return response.status(400).send({ message: 'Invalid Rapid Pass ID.' });
+        }
+
+        if (rapidPass.user !== 'Not used in MetroHub') {
+          return response.status(400).send({ message: 'This Rapid Pass ID is already in use.' });
+        }
+
+        user.rapidPassId = rapidPassIdAsNumber;
+        await RapidPass.findOneAndUpdate({ rapidPassId: rapidPassIdAsNumber }, { user: user.name });
+      } else if (user.role === 'rapidPassUser' && role !== 'rapidPassUser') {
+        await RapidPass.findOneAndUpdate({ rapidPassId: user.rapidPassId }, { user: 'Not used in MetroHub' });
+        user.rapidPassId = null;
+      }
+      user.role = role;
+    }
+
     if (passBalance) {
         user.passBalance = user.passBalance + passBalance;
     }
-
 
     const updatedUser = await user.save();
 

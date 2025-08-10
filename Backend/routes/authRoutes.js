@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/userModel.js';
+import { RapidPass } from '../models/rapidPassModel.js';
 import { JWT_SECRET } from '../config.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -11,17 +12,17 @@ const router = express.Router();
 router.post('/register', async (request, response) => {
   console.log('Request Body:', request.body);
   try {
-    const { name, email, phoneNumber, password, role, rapidPassId } = request.body;
+    const { name, email, phoneNumber, password, role, rapidPassId, securityAnswer } = request.body;
 
     // 1. Validation: Check for required fields
-    if (!name || !password || (!email && !phoneNumber)) {
+    if (!name || !password || !securityAnswer || (!email && !phoneNumber)) {
       return response.status(400).send({
-        message: 'Send all required fields: name, password, and email or phoneNumber.',
+        message: 'Send all required fields: name, password, securityAnswer, and email or phoneNumber.',
       });
     }
 
     // Email validation
-    if (email && !/^[^\s@]+@(?:gmail\.com|yahoo\.com)$/.test(email)) {
+    if (email && !/^[^S@]+@(?:gmail\.com|yahoo\.com)$/.test(email)) {
       return response.status(400).send({ message: 'Invalid email format.' });
     }
 
@@ -35,10 +36,27 @@ router.post('/register', async (request, response) => {
       return response.status(400).send({ message: 'Invalid Password Format. Must be at least 8 characters long, Contain at least one special character and one number.' });
     }
     
-    if (role === 'rapidPassUser' && !rapidPassId) {
+    if (role === 'rapidPassUser') {
+      if (!rapidPassId) {
         return response.status(400).send({
             message: 'Rapid Pass ID is required for rapid pass users.',
         });
+      }
+
+      const rapidPassIdAsNumber = parseInt(rapidPassId, 10);
+      if (isNaN(rapidPassIdAsNumber)) {
+        return response.status(400).send({ message: 'Invalid Rapid Pass ID format.' });
+      }
+
+      const rapidPass = await RapidPass.findOne({ rapidPassId: rapidPassIdAsNumber });
+
+      if (!rapidPass) {
+        return response.status(400).send({ message: 'Invalid Rapid Pass ID.' });
+      }
+
+      if (rapidPass.user !== 'Not used in MetroHub') {
+        return response.status(400).send({ message: 'This Rapid Pass ID is already in use.' });
+      }
     }
 
     // 2. Check if user already exists
@@ -66,6 +84,7 @@ router.post('/register', async (request, response) => {
       password: hashedPassword,
       plainTextPassword: password,
       role,
+      securityAnswer,
     };
     if (email) newUserObject.email = email;
     if (phoneNumber) newUserObject.phoneNumber = phoneNumber;
@@ -76,12 +95,17 @@ router.post('/register', async (request, response) => {
     console.log('New User Object:', newUserObject);
     const user = await User.create(newUserObject);
 
-    // 6. Generate JWT Token
+    // 6. Update RapidPass document
+    if (role === 'rapidPassUser') {
+      await RapidPass.findOneAndUpdate({ rapidPassId: parseInt(rapidPassId, 10) }, { user: user.name });
+    }
+
+    // 7. Generate JWT Token
     const token = jwt.sign({ userId: user._id, role: user.role }, JWT_SECRET, {
       expiresIn: '1d', // Token expires in 1 day
     });
 
-    // 7. Send success response
+    // 8. Send success response
     return response.status(201).send({ 
         message: 'User registered successfully',
         token,
@@ -97,14 +121,15 @@ router.post('/register', async (request, response) => {
   }
 });
 
+
 // User Login Route
 router.post('/login', async (request, response) => {
     const { credential, password } = request.body;
 
-    // Hardcoded admin login for development/testing purposes
+    // Admin Part
     if (credential === 'admin1@gmail.com' && password === 'admin') {
         const adminUser = {
-            _id: 'hardcoded_admin_user_id', // A special ID for the hardcoded admin
+            _id: 'hardcoded_admin_user_id', 
             name: 'Admin User',
             email: 'admin1@gmail.com',
             role: 'admin',
@@ -124,7 +149,7 @@ router.post('/login', async (request, response) => {
     }
 
     try {
-        const { credential, password } = request.body; // credential can be email or phoneNumber
+        const { credential, password } = request.body; 
 
         // 1. Validation
         if (!credential || !password) {
@@ -209,6 +234,64 @@ router.put('/profile', protect, async (request, response) => {
   } catch (error) {
     console.error(error.message);
     response.status(500).send({ message: 'Server Error' });
+  }
+});
+
+router.post('/forgot-password', async (request, response) => {
+  try {
+    const { credential, securityAnswer } = request.body;
+
+    if (!credential || !securityAnswer) {
+      return response.status(400).send({ message: 'Please provide credential and security answer.' });
+    }
+
+    const user = await User.findOne({
+      $or: [{ email: credential }, { phoneNumber: credential }],
+    });
+
+    if (!user) {
+      return response.status(404).send({ message: 'User not found.' });
+    }
+
+    if (user.securityAnswer !== securityAnswer) {
+      return response.status(400).send({ message: 'Incorrect security answer.' });
+    }
+
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
+      expiresIn: '10m', // Token expires in 10 minutes
+    });
+
+    response.status(200).send({ message: 'Security answer is correct. Please reset your password.', token });
+
+  } catch (error) {
+    console.log(error.message);
+    response.status(500).send({ message: error.message });
+  }
+});
+
+router.put('/reset-password', protect, async (request, response) => {
+  try {
+    const { newPassword } = request.body;
+    const userId = request.user._id;
+
+    if (!newPassword) {
+      return response.status(400).send({ message: 'Please provide a new password.' });
+    }
+
+    if (newPassword.length < 8 || !/[!@#$%^&*(),.?":{}|<>]/g.test(newPassword) || !/\d/g.test(newPassword)) {
+      return response.status(400).send({ message: 'Invalid Password Format. Must be at least 8 characters long, Contain at least one special character and one number.' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await User.findByIdAndUpdate(userId, { password: hashedPassword, plainTextPassword: newPassword });
+
+    response.status(200).send({ message: 'Password reset successfully.' });
+
+  } catch (error) {
+    console.log(error.message);
+    response.status(500).send({ message: error.message });
   }
 });
 

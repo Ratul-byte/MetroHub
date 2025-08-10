@@ -15,6 +15,7 @@ const Profile = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [depositAmount, setDepositAmount] = useState('');
+  const [rapidPassId, setRapidPassId] = useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -76,7 +77,7 @@ const Profile = () => {
     setMessage('');
     setError('');
     try {
-      const response = await axios.put('http://localhost:5001/api/user/profile', { role: 'rapidPassUser' }, {
+      const response = await axios.put('http://localhost:5001/api/user/profile', { role: 'rapidPassUser', rapidPassId: rapidPassId }, {
         headers: {
           'x-auth-token': token,
         },
@@ -145,9 +146,12 @@ const Profile = () => {
                   <p>Balance: ${user.passBalance.toFixed(2)}</p>
                 </div>
               ) : (
-                <Button onClick={handleBecomeRapidPassUser} disabled={loading} className="w-full bg-green-500 hover:bg-green-600">
-                  {loading ? 'Upgrading...' : 'Become a Rapid Pass User'}
-                </Button>
+                <>
+                  <Input type="text" placeholder="Enter Rapid Pass ID" value={rapidPassId} onChange={(e) => setRapidPassId(e.target.value)} />
+                  <Button onClick={handleBecomeRapidPassUser} disabled={loading} className="w-full bg-green-500 hover:bg-green-600">
+                    {loading ? 'Upgrading...' : 'Become a Rapid Pass User'}
+                  </Button>
+                </>
               )}
               <div className="mt-4">
                 <Input type="number" placeholder="Deposit Amount" value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />

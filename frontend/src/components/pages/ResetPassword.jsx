@@ -1,53 +1,38 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import logo from '../../assets/logo main 1.png'; 
+import { useLocation, useNavigate } from 'react-router-dom';
+import logo from '../../assets/logo main 1.png';
 
-const Login = () => {
-  const [credential, setCredential] = useState('');
+const ResetPassword = () => {
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const location = useLocation();
+  const { token } = location.state || {};
 
-  const handleLogin = async () => {
+  const handleResetPassword = async () => {
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
     setLoading(true);
     setError('');
     try {
-      const response = await axios.post('http://localhost:5001/api/auth/login', {
-        credential,
-        password,
-      });
-      login(response.data.user, response.data.token);
-      navigate('/');
+      await axios.put('http://localhost:5001/api/auth/reset-password', 
+        { newPassword: password }, 
+        { headers: { 'x-auth-token': token } }
+      );
+      window.alert('Password reset successfully. Please log in with your new password.');
+      navigate('/login');
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleForgotPassword = async () => {
-    const credential = window.prompt('Please enter your email or phone number.');
-    if (!credential) return;
-
-    const securityAnswer = window.prompt('What is your favourite character?');
-    if (!securityAnswer) return;
-
-    try {
-      const response = await axios.post('http://localhost:5001/api/auth/forgot-password', {
-        credential,
-        securityAnswer,
-      });
-
-      navigate('/reset-password', { state: { token: response.data.token } });
-
-    } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred');
     }
   };
 
@@ -62,11 +47,10 @@ const Login = () => {
       alignItems: 'flex-start', 
       paddingTop: '50px', 
     }}>
-      {/* Rectangle 2 - Login Card */}
       <div style={{
         position: 'relative', 
         width: '400px',
-        height: '500px',
+        height: 'auto',
         background: 'rgba(245, 245, 245, 0.5)',
         border: '2px solid #FFFFFF',
         borderRadius: '39px',
@@ -76,14 +60,11 @@ const Login = () => {
         padding: '20px',
         boxSizing: 'border-box',
       }}>
-        {/* Logo */}
         <img src={logo} alt="MetroHub Logo" style={{
           width: '135px',
           height: '87px',
           marginTop: '31px',
         }} />
-
-        {/* Log In to Metro Hub */}
         <h2 style={{
           fontFamily: 'Roboto',
           fontStyle: 'normal',
@@ -93,14 +74,12 @@ const Login = () => {
           textAlign: 'center',
           color: '#000000',
           marginTop: '10px', 
-        }}>Log In to Metro Hub</h2>
-
-        {/* Email or Phone Number Input */}
+        }}>Reset Password</h2>
         <input
-          type="text"
-          placeholder="Email or Phone Number"
-          value={credential}
-          onChange={(e) => setCredential(e.target.value)}
+          type={showPassword ? "text" : "password"}
+          placeholder="New Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           style={{
             boxSizing: 'border-box',
             width: '320px',
@@ -110,7 +89,7 @@ const Login = () => {
             borderRadius: '15px',
             paddingLeft: '20px',
             fontFamily: 'Roboto',
-            fontStyle: 'bold',
+            fontStyle: 'normal',
             fontWeight: '300',
             fontSize: '16px',
             lineHeight: '19px',
@@ -118,13 +97,11 @@ const Login = () => {
             marginTop: '40px', 
           }}
         />
-
-        {/* Password Input */}
         <input
           type={showPassword ? "text" : "password"}
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Confirm New Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
           style={{
             boxSizing: 'border-box',
             width: '320px',
@@ -142,8 +119,6 @@ const Login = () => {
             marginTop: '16px', 
           }}
         />
-
-        {/* Show Password Checkbox */}
         <div style={{
           display: 'flex',
           alignSelf: 'flex-start',
@@ -153,18 +128,16 @@ const Login = () => {
           <input type="checkbox" id="showPassword" style={{ marginRight: '8px', transform: 'scale(1.2)' }} onChange={() => setShowPassword(!showPassword)} />
           <label htmlFor="showPassword" style={{ color: '#1E1E1E', fontFamily: 'Roboto', fontSize: '16px' }}>Show Password</label>
         </div>
-
-        {/* Log In Button */}
         <button
-          onClick={handleLogin}
+          onClick={handleResetPassword}
           disabled={loading}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           style={{
             position: 'relative',
-            width: '150px',
+            width: '200px',
             height: '50px',
-            background: isHovered ? '#024C29': '#036638' , // Hover effect
+            background: isHovered ? '#024C29': '#036638' ,
             borderRadius: '25px',
             fontFamily: 'Roboto',
             fontStyle: 'normal',
@@ -178,18 +151,8 @@ const Login = () => {
             transition: 'background 0.3s ease',
           }}
         >
-          {loading ? 'Logging in...' : 'Log In'}
+          {loading ? 'Resetting...' : 'Reset Password'}
         </button>
-
-        {/* Register Link */}
-        <p style={{ marginTop: '20px', fontFamily: 'Roboto', fontSize: '14px', color: '#1E1E1E' }}>
-          Don't have an account? <Link to="/register" style={{ color: '#007bff', textDecoration: 'underline' }}>Register now</Link>
-        </p>
-
-        <p style={{ marginTop: '10px', fontFamily: 'Roboto', fontSize: '14px', color: '#1E1E1E' }}>
-          <a href="#" onClick={handleForgotPassword} style={{ color: '#007bff', textDecoration: 'underline' }}>Forgot Password?</a>
-        </p>
-
         {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
       </div>
       <style>
@@ -203,4 +166,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ResetPassword;
