@@ -57,14 +57,14 @@ const Profile = () => {
         payload.password = password;
       }
 
-      const response = await axios.put('http://localhost:5001/api/auth/profile', payload, {
+      const response = await axios.put('http://localhost:5001/api/user/profile', payload, {
         headers: {
           'x-auth-token': token,
         },
       });
-      setMessage(response.data.message);
+      setMessage("Profile updated successfully");
       // Update auth context with new user data if successful
-      login(response.data.user, token); // Re-login to update context
+      login(response.data, token); // Re-login to update context
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update profile.');
     } finally {
@@ -143,7 +143,7 @@ const Profile = () => {
               {user.role === 'rapidPassUser' ? (
                 <div className="text-center">
                   <p className="text-green-600">You are a Rapid Pass user.</p>
-                  <p>Balance: ${user.passBalance.toFixed(2)}</p>
+                  <p>Balance: ${user && user.passBalance ? user.passBalance.toFixed(2) : '0.00'}</p>
                 </div>
               ) : (
                 <>
