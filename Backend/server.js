@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import stationRoutes from './routes/stationRoutes.js'; // New import
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/stations', stationRoutes); // New route
 
 mongoose
   .connect(process.env.MONGODB_URL)

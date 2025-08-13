@@ -10,7 +10,7 @@ const router = express.Router();
 router.put('/profile', protect, async (request, response) => {
   try {
     const userId = request.user._id;
-    const { name, email, phoneNumber, password, role, passBalance, rapidPassId } = request.body;
+    const { name, email, phoneNumber, password, role, passBalance, rapidPassId, preferredRoutes } = request.body;
 
     const user = await User.findById(userId);
 
@@ -25,6 +25,8 @@ router.put('/profile', protect, async (request, response) => {
       const hashedPassword = await bcrypt.hash(password, 10);
       user.password = hashedPassword;
     }
+
+    if (preferredRoutes) user.preferredRoutes = preferredRoutes;
 
     if (role && role !== user.role) {
       if (role === 'rapidPassUser') {
