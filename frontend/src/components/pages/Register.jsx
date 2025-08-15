@@ -48,7 +48,7 @@ const Register = () => {
         payload.rapidPassId = rapidPassId;
       }
 
-      const response = await axios.post('import.meta.env.VITE_API_BASE_URL/api/auth/register', payload);
+      const response = await axios.post('http://localhost:5001/api/auth/register', payload);
 
       login(response.data.user, response.data.token);
       navigate('/');

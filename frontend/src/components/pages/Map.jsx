@@ -43,6 +43,35 @@ const Map = () => {
     }
   };
 
+  const handleFindNearbyStations = async () => { // Added async
+    if (source) {
+      try {
+        // Make API call to backend
+        const response = await axios.post('http://localhost:5001/api/stations/nearby', { location: source });
+        setNearbyStations(response.data);
+        setError('');
+      } catch (err) {
+        console.error('Error fetching nearby stations from backend:', err);
+        setError(err.response?.data?.message || 'Failed to fetch nearby stations. Please try again.');
+        setNearbyStations([]); // Clear previous results on error
+      }
+    } else {
+      setError('Please enter a location to find nearby stations.');
+    }
+  };
+
+  const handleCancelJourney = () => {
+    window.location.reload();
+  };
+
+  const handleGoBack = () => {
+    setSource('');
+    setDestination('');
+    setShowSourceInput(false);
+    setError('');
+    setNearbyStations([]);
+  };
+
   const handleSourceChange = (e) => {
     setSource(e.target.value);
     if (error) {
