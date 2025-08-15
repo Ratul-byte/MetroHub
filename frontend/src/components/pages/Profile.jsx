@@ -22,7 +22,7 @@ const Profile = () => {
       if (user && token) {
         try {
           setLoading(true);
-          const response = await axios.get('http://localhost:5001/api/auth/profile', {
+          const response = await axios.get('import.meta.env.VITE_API_BASE_URL/api/auth/profile', {
             headers: {
               'x-auth-token': token,
             },
@@ -77,7 +77,7 @@ const Profile = () => {
     setMessage('');
     setError('');
     try {
-      const response = await axios.put('http://localhost:5001/api/user/profile', { role: 'rapidPassUser', rapidPassId: rapidPassId }, {
+      const response = await axios.put('import.meta.env.VITE_API_BASE_URL/api/user/profile', { role: 'rapidPassUser', rapidPassId: rapidPassId }, {
         headers: {
           'x-auth-token': token,
         },
@@ -96,7 +96,7 @@ const Profile = () => {
     setMessage('');
     setError('');
     try {
-      const response = await axios.put('http://localhost:5001/api/user/profile', { passBalance: Number(depositAmount) }, {
+      const response = await axios.put('import.meta.env.VITE_API_BASE_URL/api/user/profile', { passBalance: Number(depositAmount) }, {
         headers: {
           'x-auth-token': token,
         },

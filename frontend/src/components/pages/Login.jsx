@@ -18,7 +18,7 @@ const Login = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.post('http://localhost:5001/api/auth/login', {
+      const response = await axios.post('import.meta.env.VITE_API_BASE_URL/api/auth/login', {
         credential,
         password,
       });
@@ -39,7 +39,7 @@ const Login = () => {
     if (!securityAnswer) return;
 
     try {
-      const response = await axios.post('http://localhost:5001/api/auth/forgot-password', {
+      const response = await axios.post('import.meta.env.VITE_API_BASE_URL/api/auth/forgot-password', {
         credential,
         securityAnswer,
       });

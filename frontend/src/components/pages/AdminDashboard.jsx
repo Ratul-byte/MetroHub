@@ -18,7 +18,7 @@ const AdminDashboard = () => {
             'x-auth-token': token,
           },
         };
-        const { data } = await axios.get('http://localhost:5001/api/admin/users', config);
+        const { data } = await axios.get('import.meta.env.VITE_API_BASE_URL/api/admin/users', config);
         setNormalUsersCount(data.normalUsersCount);
         setRapidPassUsersCount(data.rapidPassUsersCount);
         setLoading(false);
