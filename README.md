@@ -26,7 +26,7 @@ Module 2: Metro Schedule, Route Finder and User Accessibility
 (Member 2)Users can view station names, instructions, and service announcements in multiple languages (e.g., English and Bangla). Users can switch the app language with a toggle.
 
 Module 3: Ticket Booking & Notifications
-(Member 1)Users can book metro tickets with online payment methods, download slip for the ticket, and view booking history from their dashboard
+(Member 1)Users can book metro tickets with online payment methods, download QR code for the ticket, and view booking history from their dashboard
 (SSLCOMMERZ)
 (Member 3) For metro pass users, ticket costs are automatically deducted from their balance upon booking.
 (Member 1)Users receive mobile SMS confirmation and reminder for booked rides using Google Cloud SMS API
