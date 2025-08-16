@@ -11,6 +11,9 @@ import {
   MessageSquare, AlertCircle, CheckCircle
 } from "lucide-react";
 import UserManagement from './UserManagement'; // Import the UserManagement component
+import StationManagement from './StationManagement'; // Import the StationManagement component
+import RouteManagement from './RouteManagement'; // Import the RouteManagement component
+import ScheduleManagement from './ScheduleManagement'; // Import the ScheduleManagement component
 import logo from '../../assets/logo main 1.png'; // Use existing logo
 
 export default function AdminDashboard() {
@@ -74,8 +77,26 @@ export default function AdminDashboard() {
               User Management
             </button>
             <button 
+              onClick={() => setActiveSection("routes")}
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${activeSection === "routes" ? "bg-blue-500 text-white" : "text-gray-700 hover:bg-gray-100"}`}
+            >
+              Route Management
+            </button>
+            <button 
+              onClick={() => setActiveSection("stations")}
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${activeSection === "stations" ? "bg-blue-500 text-white" : "text-gray-700 hover:bg-gray-100"}`}
+            >
+              Station Management
+            </button>
+            <button 
               onClick={() => setActiveSection("schedules")}
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${activeSection === "schedules" ? "bg-blue-500 text-white" : "text-gray-700 hover:bg-gray-100"}`}
+            >
+              Schedule Management
+            </button>
+            <button 
+              onClick={() => setActiveSection("routes")}
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${activeSection === "routes" ? "bg-blue-500 text-white" : "text-gray-700 hover:bg-gray-100"}`}
             >
               Schedules & Routes
             </button>
@@ -119,7 +140,28 @@ export default function AdminDashboard() {
           </div>
         );
 
+      case "routes":
+        return (
+          <div className="space-y-6">
+            <RouteManagement />
+          </div>
+        );
+
+      case "stations":
+        return (
+          <div className="space-y-6">
+            <StationManagement />
+          </div>
+        );
+
       case "schedules":
+        return (
+          <div className="space-y-6">
+            <ScheduleManagement />
+          </div>
+        );
+
+      case "routes":
         return (
           <div className="space-y-6">
             <div className="flex justify-between items-center">

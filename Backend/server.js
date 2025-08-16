@@ -6,6 +6,8 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import stationRoutes from './routes/stationRoutes.js'; // New import
+import routeRoutes from './routes/routeRoutes.js'; // New import
+import scheduleRoutes from './routes/scheduleRoutes.js'; // New import
 
 dotenv.config();
 
@@ -24,6 +26,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/stations', stationRoutes); // New route
+app.use('/api/routes', routeRoutes); // New route
+app.use('/api/schedules', scheduleRoutes); // New route
 
 mongoose
   .connect(process.env.MONGODB_URL)
