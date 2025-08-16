@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import logo from '../../assets/logo main 1.png'; 
+import { useTranslation } from 'react-i18next'; // Added
+import LanguageSwitcher from '../ui/LanguageSwitcher'; // Added
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -18,14 +20,15 @@ const Register = () => {
   const [isHoveredToggle, setIsHoveredToggle] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { t } = useTranslation(); // Added
 
   const handleRegister = async () => {
     setLoading(true);
     setError('');
-    const securityAnswer = window.prompt('What is your favourite character?');
+    const securityAnswer = window.prompt(t('What is your favourite character?'));
 
     if (!securityAnswer) {
-      setError('Please provide an answer to the security question.');
+      setError(t('Please provide an answer to the security question.'));
       setLoading(false);
       return;
     }
@@ -53,7 +56,7 @@ const Register = () => {
       login(response.data.user, response.data.token);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred');
+      setError(err.response?.data?.message || t('An error occurred'));
     } finally {
       setLoading(false);
     }
@@ -70,6 +73,9 @@ const Register = () => {
       alignItems: 'flex-start', 
       paddingTop: '50px', 
     }}>
+      <div style={{ position: 'absolute', top: '20px', right: '20px' }}> {/* LanguageSwitcher container */}
+        <LanguageSwitcher />
+      </div>
       {/* Register Card */}
       <div style={{
         position: 'relative', 
@@ -101,12 +107,12 @@ const Register = () => {
           textAlign: 'center',
           color: '#000000',
           marginTop: '10px', 
-        }}>Register to Metro Hub</h2>
+        }}>{t('Register to Metro Hub')}</h2>
 
         {/* Name Input */}
         <input
           type="text"
-          placeholder="Name"
+          placeholder={t('Name')}
           value={name}
           onChange={(e) => setName(e.target.value)}
           style={{
@@ -130,7 +136,7 @@ const Register = () => {
         {/* Credential Input (Email or Phone Number) */}
         <input
           type={useEmail ? "email" : "text"}
-          placeholder={useEmail ? "Email" : "Phone Number"}
+          placeholder={useEmail ? t("Email") : t("Phone Number")}
           value={credential}
           onChange={(e) => setCredential(e.target.value)}
           style={{
@@ -173,13 +179,13 @@ const Register = () => {
             transition: 'background 0.3s ease',
           }}
         >
-          {useEmail ? 'Use Phone Number Instead' : 'Use Email Instead'}
+          {useEmail ? t('Use Phone Number Instead') : t('Use Email Instead')}
         </button>
 
         {/* Password Input */}
         <input
           type={showPassword ? "text" : "password"}
-          placeholder="Password"
+          placeholder={t('Password')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           style={{
@@ -208,7 +214,7 @@ const Register = () => {
           marginTop: '10px',
         }}>
           <input type="checkbox" id="showPassword" style={{ marginRight: '8px', transform: 'scale(1.2)' }} onChange={() => setShowPassword(!showPassword)} />
-          <label htmlFor="showPassword" style={{ color: '#1E1E1E', fontFamily: 'Roboto', fontSize: '16px' }}>Show Password</label>
+          <label htmlFor="showPassword" style={{ color: '#1E1E1E', fontFamily: 'Roboto', fontSize: '16px' }}>{t('Show Password')}</label>
         </div>
 
         {/* Rapid Pass User Checkbox */}
@@ -225,14 +231,14 @@ const Register = () => {
             onChange={(e) => setIsRapidPassUser(e.target.checked)}
             style={{ marginRight: '8px', transform: 'scale(1.2)' }}
           />
-          <label htmlFor="rapidPassCheckbox" style={{ color: '#1E1E1E', fontFamily: 'Roboto', fontSize: '16px' }}>I am a Rapid Pass User</label>
+          <label htmlFor="rapidPassCheckbox" style={{ color: '#1E1E1E', fontFamily: 'Roboto', fontSize: '16px' }}>{t('I am a Rapid Pass User')}</label>
         </div>
 
         {/* Rapid Pass ID Input */}
         {isRapidPassUser && (
           <input
             type="text"
-            placeholder="Rapid Pass ID"
+            placeholder={t('Rapid Pass ID')}
             value={rapidPassId}
             onChange={(e) => setRapidPassId(e.target.value)}
             style={{
@@ -278,15 +284,15 @@ const Register = () => {
             transition: 'background 0.3s ease',
           }}
         >
-          {loading ? 'Registering...' : 'Register'}
+          {loading ? t('Registering...') : t('Register')}
         </button>
 
         {/* Login Link */}
         <p style={{ marginTop: '20px', fontFamily: 'Roboto', fontSize: '14px', color: '#1E1E1E' }}>
-          Already have an account? <Link to="/login" style={{ color: '#007bff', textDecoration: 'underline' }}>Login now</Link>
+          {t('Already have an account?')} <Link to="/login" style={{ color: '#007bff', textDecoration: 'underline' }}>{t('Login now')}</Link>
         </p>
 
-        {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+        {error && <p style={{ color: 'red', marginTop: '10px' }}>{t(error)}</p>}
       </div>
       <style>
         {`

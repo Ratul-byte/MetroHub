@@ -108,21 +108,24 @@ const Features = () => {
       title: t('feature1_title'),
       description: t('feature1_description'),
       image: timeImage,
-      action: t('view_schedules')
+      action: t('view_schedules'),
+      path: '/search-schedules' // Added path for View Schedules
     },
     {
       icon: Ticket,
       title: t('feature2_title'),
       description: t('feature2_description'),
       image: ticketImage,
-      action: t('book_now')
+      action: t('book_now'),
+      path: '/book-tickets' // Assuming a book-tickets page exists, or it will go to login if not authenticated
     },
     {
       icon: MapPin,
       title: t('feature3_title'),
       description: t('feature3_description'),
       image: "https://images.unsplash.com/photo-1736117703288-3f918a212c31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZXRybyUyMG1hcCUyMHRyYW5zcG9ydGF0aW9ufGVufDF8fHx8MTc1NTIzODI4MXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      action: t('find_stations')
+      action: t('find_stations'),
+      path: '/map' // Path for Find Stations
     }
   ];
 
@@ -154,8 +157,8 @@ const Features = () => {
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
                   <p className="text-gray-600 mb-4">{feature.description}</p>
-                  {feature.action === t('find_stations') ? (
-                    <Link to="/map" className="w-full">
+                  {feature.path ? ( // Check if path exists
+                    <Link to={feature.path} className="w-full">
                       <Button variant="outline" className="w-full border-gray-200 text-black rounded-md hover:bg-black hover:text-white flex items-center justify-center">
                         {feature.action}
                         <ArrowRight className="h-4 w-4 ml-2" />

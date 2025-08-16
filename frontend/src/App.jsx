@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import Login from './components/pages/Login';
 import Register from './components/pages/Register';
 import Profile from './components/pages/Profile';
@@ -26,6 +26,16 @@ const Button = ({ className, variant, size, asChild = false, ...props }) => {
 const Header = () => {
   const { user, logout } = useAuth();
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const handleBookTickets = () => {
+    if (!user) {
+      navigate('/login'); // Redirect to sign-in page if no user
+    } else {
+      navigate('/book-tickets'); // Assuming a book-tickets page exists
+    }
+  };
+
   return (
     <header className="w-full bg-background border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,54 +44,64 @@ const Header = () => {
             <Link to="/">
               <img src={logo} alt="MetroHub Logo" className="h-12 w-auto" />
             </Link>
-            <span className="text-2xl font-semibold text-foreground">MetroHub</span>
+            <span className="text-2xl font-semibold text-foreground">{t('MetroHub')}</span>
           </div>
-          
+
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/search-schedules" className="text-foreground hover:text-primary transition-colors">
-              {t('schedules')}
+            <Link to="/" className="text-foreground hover:text-primary transition-colors hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2">
+              {t('Home')}
             </Link>
-            <a href="#booking" className="text-foreground hover:text-primary transition-colors">
-              {t('book_tickets')}
-            </a>
-            <a href="#map" className="text-foreground hover:text-primary transition-colors">
-              {t('find_stations')}
-            </a>
-            <a href="#about" className="text-foreground hover:text-primary transition-colors">
-              {t('about')}
-            </a>
+            <div className="relative group">
+              <button className="text-foreground hover:text-primary transition-colors focus:outline-none hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2">
+                {t('Services')}
+              </button>
+              <div className="absolute hidden group-hover:block bg-white shadow-lg rounded-md py-2 w-48 z-10">
+                <Link to="/search-schedules" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                  {t('View Schedules')}
+                </Link>
+                <Link to="/map" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                  {t('Find Station')}
+                </Link>
+                <button onClick={handleBookTickets} className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100">
+                  {t('Book Tickets')}
+                </button>
+              </div>
+            </div>
+            <Link to="/about" className="text-foreground hover:text-primary transition-colors hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2">
+              {t('About')}
+            </Link>
+            {user && user.role !== 'admin' && ( // Conditionally render View Profile
+              <Link to="/profile" className="text-foreground hover:text-primary transition-colors hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2">
+                {t('View Profile')}
+              </Link>
+            )}
           </nav>
-          
+
           <div className="flex items-center space-x-4">
-            <LanguageSwitcher />
+            <div className="mr-2"> {/* Added wrapper div with right margin */}
+              <LanguageSwitcher />
+            </div>
             {!user ? (
               <>
                 <Link to="/login">
                   <Button variant="ghost" className="hidden md:flex hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2">
-                    Sign In
+                    {t('Sign In')}
                   </Button>
                 </Link>
                 <Link to="/register">
                   <Button className="hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2">
-                    Register
+                    {t('Register')}
                   </Button>
                 </Link>
               </>
             ) : (
               <>
                 <span className="text-foreground text-lg font-semibold mr-4">
-                  {user.role === 'admin' ? 'Welcome Admin' : `Welcome, ${user.name}`}
+                  {user.role === 'admin' ? t('Welcome Admin') : t('Welcome, {{userName}}', { userName: user.name })}
                 </span>
                 <Button onClick={logout} variant="ghost" className="hover:bg-red-700 hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2">
-                  Sign Out
+                  {t('Sign Out')}
                 </Button>
-                {user.role !== 'admin' && (
-                  <Link to="/profile">
-                    <Button className="hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2">
-                      Update My Profile
-                    </Button>
-                  </Link>
-                )}
               </>
             )}
             <Button variant="ghost" size="icon" className="md:hidden">
@@ -118,10 +138,10 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">{t('services')}</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-foreground transition-colors">{t('real_time_schedules')}</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">{t('ticket_booking')}</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">{t('station_finder')}</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">{t('route_planning')}</a></li>
+              <li><Link to="/search-schedules" className="hover:text-foreground transition-colors">{t('real_time_schedules')}</Link></li>
+              <li><Link to="/book-tickets" className="hover:text-foreground transition-colors">{t('ticket_booking')}</Link></li> {/* Assuming /book-tickets exists, or will redirect to login */}
+              <li><Link to="/map" className="hover:text-foreground transition-colors">{t('station_finder')}</Link></li>
+              <li><Link to="/map" className="hover:text-foreground transition-colors">{t('route_planning')}</Link></li> {/* Linking to map as a fallback */}
             </ul>
           </div>
           
