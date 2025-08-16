@@ -12,7 +12,11 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors()); // Temporarily allow all origins for testing
+app.use(cors());
+///app.use(cors({
+///    origin: 'http://localhost:5173',
+///    credentials: true
+///}));
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
@@ -24,8 +28,12 @@ mongoose
   .connect(process.env.MONGODB_URL)
   .then(() => {
     console.log('App connected to database');
-    app.listen(process.env.PORT || 5001, () => {
-      console.log(`App is listening to port: ${process.env.PORT || 5001}`);
+    console.log(`DEBUG: process.env.PORT is: ${process.env.PORT}`);
+    // app.listen(5001, () => {
+    //   console.log(`App is listening to port: 5001`);
+    // });
+    app.listen(process.env.PORT, () => {
+      console.log(`App is listening to port: ${process.env.PORT}`);
     });
   })
   .catch((error) => {
