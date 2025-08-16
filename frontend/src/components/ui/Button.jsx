@@ -1,15 +1,8 @@
 import React from 'react';
 
-const Button = ({ children, onClick, type = 'button', className = '' }) => {
-  return (
-    <button
-      type={type}
-      onClick={onClick}
-      className={`w-full p-2 text-white rounded-md ${className}`}
-    >
-      {children}
-    </button>
-  );
+const Button = ({ className, variant, size, asChild = false, ...props }) => {
+  const Comp = asChild ? 'div' : 'button';
+  return <Comp className={`button ${variant} ${size} ${className}`} {...props} />;
 };
 
 export default Button;

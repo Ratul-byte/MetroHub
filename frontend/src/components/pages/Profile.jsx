@@ -134,7 +134,7 @@ const Profile = () => {
             <Input type="password" placeholder="New Password (leave blank to keep current)" value={password} onChange={(e) => setPassword(e.target.value)} />
             <Input type="text" placeholder="Preferred Routes (comma-separated)" value={preferredRoutes} onChange={(e) => setPreferredRoutes(e.target.value)} />
 
-            <Button onClick={handleUpdateProfile} disabled={loading} className="bg-blue-500 hover:bg-blue-600">
+            <Button onClick={handleUpdateProfile} disabled={loading} className="border-2 border-black text-black font-bold rounded-md transition-all duration-300 ease-in-out px-4 py-2 hover:bg-black hover:text-white">
               {loading ? 'Updating...' : 'Update Profile'}
             </Button>
 
@@ -147,15 +147,16 @@ const Profile = () => {
                 </div>
               ) : (
                 <>
-                  <Input type="text" placeholder="Enter Rapid Pass ID" value={rapidPassId} onChange={(e) => setRapidPassId(e.target.value)} />
-                  <Button onClick={handleBecomeRapidPassUser} disabled={loading} className="w-full bg-green-500 hover:bg-green-600">
+                  <Input type="text" placeholder="Enter Rapid Pass ID" value={rapidPassId} onChange={(e) => setRapidPassId(e.target.value)} className="mb-4" />
+                  <Button onClick={handleBecomeRapidPassUser} disabled={loading} className="w-full mt-2 border-2 border-blue-500 text-blue-500 font-bold rounded-md transition-all duration-300 ease-in-out px-4 py-2 hover:bg-blue-500 hover:text-white">
                     {loading ? 'Upgrading...' : 'Become a Rapid Pass User'}
                   </Button>
                 </>
               )}
               <div className="mt-4">
+                <p className="text-center text-lg font-semibold mb-2">Current Balance: ${user && user.passBalance ? user.passBalance.toFixed(2) : '0.00'}</p>
                 <Input type="number" placeholder="Deposit Amount" value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
-                <Button onClick={handleDeposit} disabled={loading || user.role !== 'rapidPassUser'} className="w-full mt-2 bg-indigo-500 hover:bg-indigo-600">
+                <Button onClick={handleDeposit} disabled={loading || user.role !== 'rapidPassUser'} className="w-full mt-2 border-2 border-green-500 text-green-500 font-bold rounded-md transition-all duration-300 ease-in-out px-4 py-2 hover:bg-green-500 hover:text-white">
                   {loading ? 'Depositing...' : 'Deposit'}
                 </Button>
               </div>

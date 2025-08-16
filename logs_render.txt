@@ -1,0 +1,25 @@
+==> Cloning from https://github.com/Ratul-byte/MetroHub
+==> Checking out commit 4213ec18d96de1a8f5a55b44a47cc8f057d6b094 in branch main
+==> Using Node.js version 22.16.0 (default)
+==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+==> Running build command 'npm install'...
+added 40 packages, changed 23 packages, and audited 137 packages in 1s
+20 packages are looking for funding
+  run `npm fund` for details
+found 0 vulnerabilities
+==> Uploading build...
+==> Uploaded in 3.9s. Compression took 1.3s
+==> Build successful 🎉
+==> Deploying...
+==> Running 'npm start'
+> backend@1.0.0 start
+> node server.js
+App connected to database
+App is listening to port: 10000
+==> Your service is live 🎉
+==> 
+==> ///////////////////////////////////////////////////////////
+==> 
+==> Available at your primary URL https://metrohub-gatv.onrender.com
+==> 
+==> ///////////////////////////////////////////////////////////

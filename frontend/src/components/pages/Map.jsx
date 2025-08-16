@@ -128,7 +128,7 @@ const Map = () => {
   return (
     <div className="relative h-full">
       {user && user.role !== 'admin' && (
-        <div className="absolute top-4 right-4 z-10 bg-yellow-100 p-4 rounded-md shadow-md flex items-center space-x-2">
+        <div className="absolute top-4 right-4 z-10 bg-white p-4 rounded-md shadow-md flex items-center space-x-2">
           {(showSourceInput || mapSrc.includes('saddr=')) && (
             <input
               type="text"
@@ -167,7 +167,7 @@ const Map = () => {
           {mapSrc.includes('saddr=') ? ( 
             <button
               onClick={handleCancelJourney}
-              className="w-auto p-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+              className="w-auto p-2 bg-transparent text-red-500 rounded-md border-2 border-red-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-red-500 hover:text-white"
             >
               Cancel Journey
             </button>
@@ -177,19 +177,19 @@ const Map = () => {
                 <>
                   <button
                     onClick={handleSearchLocation}
-                    className="w-auto p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                    className="w-auto p-2 bg-transparent text-blue-500 rounded-md border-2 border-blue-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-blue-500 hover:text-white"
                   >
                     Search
                   </button>
                   <button
                     onClick={() => setShowSourceInput(true)}
-                    className="w-auto p-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                    className="w-auto p-2 bg-transparent text-green-700 rounded-md border-2 border-green-700 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-green-700 hover:text-white"
                   >
-                    Go to Station
+                    Go to Location
                   </button>
                   <button
                     onClick={() => setShowNearbyStationsInput(true)}
-                    className="w-auto p-2 bg-purple-500 text-white rounded-md hover:bg-purple-600"
+                    className="w-auto p-2 bg-transparent text-purple-500 rounded-md border-2 border-purple-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-purple-500 hover:text-white"
                   >
                     Find Nearby Station
                   </button>
@@ -198,13 +198,13 @@ const Map = () => {
                 <>
                   <button
                     onClick={() => handleGetDirections()} // Call without arguments
-                    className="w-auto p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                    className="w-auto p-2 bg-transparent text-blue-500 rounded-md border-2 border-blue-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-blue-500 hover:text-white"
                   >
                     Get Directions
                   </button>
                   <button
                     onClick={handleGoBack}
-                    className="w-auto p-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+                    className="w-auto p-2 bg-transparent text-gray-500 rounded-md border-2 border-gray-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-gray-500 hover:text-white"
                   >
                     Go Back
                   </button>
@@ -220,7 +220,7 @@ const Map = () => {
                   />
                   <button
                     onClick={handleFindNearbyStations}
-                    className="w-auto p-2 bg-purple-500 text-white rounded-md hover:bg-purple-600"
+                    className="w-auto p-2 bg-transparent text-purple-500 rounded-md border-2 border-purple-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-purple-500 hover:text-white"
                   >
                     Search Nearby
                   </button>
@@ -229,7 +229,7 @@ const Map = () => {
                       setShowNearbyStationsInput(false);
                       setNearbyStations([]); // Clear nearby stations
                     }}
-                    className="w-auto p-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+                    className="w-auto p-2 bg-transparent text-gray-500 rounded-md border-2 border-gray-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-gray-500 hover:text-white"
                   >
                     Cancel
                   </button>
