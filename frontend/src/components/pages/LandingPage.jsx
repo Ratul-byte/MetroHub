@@ -7,6 +7,7 @@ import timeImage from '../../assets/time.png';
 import ticketImage from '../../assets/ticket.png';
 import { ArrowRight, Clock, Ticket, MapPin, Download, Mail, Phone, Github, Twitter, Linkedin, Menu } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Button = ({ className, variant, size, asChild = false, ...props }) => {
   const Comp = asChild ? 'div' : 'button';
@@ -42,6 +43,7 @@ const ImageWithFallback = ({ src, alt, ...props }) => {
 };
 
 const Hero = () => {
+  const { t } = useTranslation();
   return (
     <section className="relative bg-background overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
@@ -49,17 +51,16 @@ const Hero = () => {
           <div className="space-y-8">
             <div className="space-y-4">
               <h1 className="text-4xl lg:text-5xl xl:text-6xl text-foreground max-w-xl">
-                Your Metro Journey Made Simple
+                {t('hero_title')}
               </h1>
               <p className="text-lg text-muted-foreground max-w-lg">
-                Get real-time schedules, book tickets instantly, and find the nearest metro station. 
-                All in one convenient platform.
+                {t('hero_description')}
               </p>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="flex items-center gap-2 hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2 text-lg" onClick={() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })}>
-                Get Started Now
+                {t('get_started_now')}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               {/* <Button variant="outline" size="lg">
@@ -70,15 +71,15 @@ const Hero = () => {
             <div className="flex items-center gap-8 pt-4">
               <div className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-primary" />
-                <span className="text-sm text-muted-foreground">Real-time Updates</span>
+                <span className="text-sm text-muted-foreground">{t('real_time_updates')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Ticket className="h-5 w-5 text-primary" />
-                <span className="text-sm text-muted-foreground">Instant Booking</span>
+                <span className="text-sm text-muted-foreground">{t('instant_booking')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-primary" />
-                <span className="text-sm text-muted-foreground">Location-based</span>
+                <span className="text-sm text-muted-foreground">{t('location_based')}</span>
               </div>
             </div>
           </div>
@@ -100,27 +101,28 @@ const Hero = () => {
 };
 
 const Features = () => {
+  const { t } = useTranslation();
   const features = [
     {
       icon: Clock,
-      title: "Real-Time Schedules",
-      description: "Get up-to-the-minute metro schedules with live delay notifications and platform information.",
+      title: t('feature1_title'),
+      description: t('feature1_description'),
       image: timeImage,
-      action: "View Schedules"
+      action: t('view_schedules')
     },
     {
       icon: Ticket,
-      title: "Quick Ticket Booking",
-      description: "Book single trips, day passes, or monthly subscriptions with secure payment processing.",
+      title: t('feature2_title'),
+      description: t('feature2_description'),
       image: ticketImage,
-      action: "Book Now"
+      action: t('book_now')
     },
     {
       icon: MapPin,
-      title: "Station Finder",
-      description: "Find the closest metro station to your location with walking directions and accessibility info.",
+      title: t('feature3_title'),
+      description: t('feature3_description'),
       image: "https://images.unsplash.com/photo-1736117703288-3f918a212c31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZXRybyUyMG1hcCUyMHRyYW5zcG9ydGF0aW9ufGVufDF8fHx8MTc1NTIzODI4MXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      action: "Find Stations"
+      action: t('find_stations')
     }
   ];
 
@@ -129,10 +131,10 @@ const Features = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center space-y-4 mb-16">
           <h2 className="text-3xl lg:text-4xl text-foreground">
-            Everything You Need for Metro Travel
+            {t('features_section_title')}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Streamline your metro experience with our comprehensive suite of tools designed for modern commuters.
+            {t('features_section_description')}
           </p>
         </div>
         
@@ -152,7 +154,7 @@ const Features = () => {
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
                   <p className="text-gray-600 mb-4">{feature.description}</p>
-                  {feature.action === 'Find Stations' ? (
+                  {feature.action === t('find_stations') ? (
                     <Link to="/map" className="w-full">
                       <Button variant="outline" className="w-full border-gray-200 text-black rounded-md hover:bg-black hover:text-white flex items-center justify-center">
                         {feature.action}
@@ -176,16 +178,16 @@ const Features = () => {
 };
 
 const CallToAction = () => {
+  const { t } = useTranslation();
   return (
     <section className="py-16 lg:py-24 bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-3xl mx-auto space-y-8">
           <h2 className="text-3xl lg:text-4xl">
-            Ready to Transform Your Metro Experience?
+            {t('cta_title')}
           </h2>
           <p className="text-lg opacity-90 max-w-2xl mx-auto">
-            Join thousands of commuters who have already simplified their daily travel with MetroHub. 
-            Get started today and never miss another train.
+            {t('cta_description')}
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -194,7 +196,7 @@ const CallToAction = () => {
               variant="secondary"
               className="flex items-center gap-2"
             >
-              Start Planning Your Trip
+              {t('start_planning_trip')}
               <ArrowRight className="h-4 w-4" />
             </Button>
             {/* <Button 
@@ -208,9 +210,9 @@ const CallToAction = () => {
           </div>
           
           <div className="flex items-center justify-center space-x-8 pt-8 text-sm opacity-75">
-            <span>✓ Verified by DMTCL</span>
-            <span>✓ Works on all devices</span>
-            <span>✓ Real-time updates</span>
+            <span>{t('verified_dmtcl')}</span>
+            <span>{t('works_on_all_devices')}</span>
+            <span>{t('real_time_updates_cta')}</span>
           </div>
         </div>
       </div>

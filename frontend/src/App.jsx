@@ -12,6 +12,9 @@ import Map from './components/pages/Map';
 import AdminDashboard from './components/pages/AdminDashboard';
 import AdminRoute from './components/AdminRoute';
 import UserManagement from './components/pages/UserManagement';
+import SearchSchedules from './components/pages/SearchSchedules';
+import LanguageSwitcher from './components/ui/LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 import ResetPassword from './components/pages/ResetPassword';
 
@@ -22,6 +25,7 @@ const Button = ({ className, variant, size, asChild = false, ...props }) => {
 
 const Header = () => {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
   return (
     <header className="w-full bg-background border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,21 +38,22 @@ const Header = () => {
           </div>
           
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#schedules" className="text-foreground hover:text-primary transition-colors">
-              Schedules
-            </a>
+            <Link to="/search-schedules" className="text-foreground hover:text-primary transition-colors">
+              {t('schedules')}
+            </Link>
             <a href="#booking" className="text-foreground hover:text-primary transition-colors">
-              Book Tickets
+              {t('book_tickets')}
             </a>
             <a href="#map" className="text-foreground hover:text-primary transition-colors">
-              Find Stations
+              {t('find_stations')}
             </a>
             <a href="#about" className="text-foreground hover:text-primary transition-colors">
-              About
+              {t('about')}
             </a>
           </nav>
           
           <div className="flex items-center space-x-4">
+            <LanguageSwitcher />
             {!user ? (
               <>
                 <Link to="/login">
@@ -90,6 +95,7 @@ const Header = () => {
 };
 
 const Footer = () => {
+  const { t } = useTranslation();
   return (
     <footer className="bg-background border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -100,7 +106,7 @@ const Footer = () => {
               <span className="text-lg font-semibold">MetroHub</span>
             </div>
             <p className="text-sm text-muted-foreground max-w-xs">
-              Making metro travel easier and more efficient for everyone, one journey at a time.
+              {t('footer_tagline')}
             </p>
             <div className="flex space-x-4">
               <a href="#"><Github className="h-5 w-5 text-muted-foreground hover:text-foreground cursor-pointer transition-colors" /></a>
@@ -110,27 +116,27 @@ const Footer = () => {
           </div>
           
           <div>
-            <h3 className="font-semibold mb-4">Services</h3>
+            <h3 className="font-semibold mb-4">{t('services')}</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-foreground transition-colors">Real-time Schedules</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Ticket Booking</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Station Finder</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Route Planning</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('real_time_schedules')}</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('ticket_booking')}</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('station_finder')}</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('route_planning')}</a></li>
             </ul>
           </div>
           
           <div>
-            <h3 className="font-semibold mb-4">Support</h3>
+            <h3 className="font-semibold mb-4">{t('support')}</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-foreground transition-colors">Help Center</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Contact Us</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">FAQ</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('help_center')}</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('contact_us')}</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('faq')}</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('privacy_policy')}</a></li>
             </ul>
           </div>
           
           <div>
-            <h3 className="font-semibold mb-4">Contact</h3>
+            <h3 className="font-semibold mb-4">{t('contact')}</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
@@ -145,7 +151,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-border mt-8 pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; 2025 MetroHub. All rights reserved.</p>
+          <p>{t('copyright')}</p>
         </div>
       </div>
     </footer>
@@ -203,6 +209,7 @@ const App = () => {
               <Route path="" element={<AdminDashboard />} />
               <Route path="users" element={<UserManagement />} />
             </Route>
+            <Route path="/search-schedules" element={<SearchSchedules />} />
           </Routes>
         </div>
         <Footer />

@@ -1,5 +1,6 @@
 
 import MetroSchedule from '../models/metroScheduleModel.js';
+import MetroRoute from '../models/metroRouteModel.js';
 
 // @desc    Create a schedule
 // @route   POST /api/schedules
@@ -23,8 +24,28 @@ const createSchedule = async (req, res) => {
 // @route   GET /api/schedules
 // @access  Public
 const getSchedules = async (req, res) => {
-  const schedules = await MetroSchedule.find({}).populate('route');
-  res.json(schedules);
+  const { stationId, time } = req.query;
+  let query = {};
+
+  if (stationId) {
+    const routes = await MetroRoute.find({ stations: stationId });
+    const routeIds = routes.map((route) => route._id);
+    query.route = { $in: routeIds };
+  }
+
+  const schedules = await MetroSchedule.find(query).populate('route');
+
+  if (time) {
+    const filteredSchedules = schedules.filter((schedule) => {
+      const startTime = new Date(`1970-01-01T${schedule.startTime}`);
+      const endTime = new Date(`1970-01-01T${schedule.endTime}`);
+      const searchTime = new Date(`1970-01-01T${time}`);
+      return searchTime >= startTime && searchTime <= endTime;
+    });
+    res.json(filteredSchedules);
+  } else {
+    res.json(schedules);
+  }
 };
 
 // @desc    Get schedule by ID

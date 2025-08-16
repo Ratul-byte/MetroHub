@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios'; // for Nominatim API
+import { useTranslation } from 'react-i18next';
 
 const Map = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [mapSrc, setMapSrc] = useState('');
   const [hoverMapSrc, setHoverMapSrc] = useState(null); // New state
@@ -44,7 +46,7 @@ const Map = () => {
                 setMapSrc(`https://maps.google.com/maps?q=${destination}&t=&z=15&ie=UTF8&iwloc=&output=embed`);
       setError('');
     } else {
-      setError('Please enter a destination.');
+      setError(t('enter_destination_error'));
     }
   };
 
@@ -54,7 +56,7 @@ const Map = () => {
       setMapSrc(`https://maps.google.com/maps?saddr=${source}&daddr=${dest}&t=&z=15&ie=UTF8&iwloc=&output=embed`);
       setError('');
     } else {
-      setError('Please enter both a source and destination.');
+      setError(t('enter_source_destination_error'));
     }
   };
 
@@ -67,11 +69,11 @@ const Map = () => {
         setError('');
       } catch (err) {
         console.error('Error fetching nearby stations from backend:', err);
-        setError(err.response?.data?.message || 'Failed to fetch nearby stations. Please try again.');
+        setError(err.response?.data?.message || t('failed_fetch_nearby_stations'));
         setNearbyStations([]); // Clear previous results on error
       }
     } else {
-      setError('Please enter a location to find nearby stations.');
+      setError(t('enter_location_nearby_stations_error'));
     }
   };
 
@@ -132,7 +134,7 @@ const Map = () => {
           {(showSourceInput || mapSrc.includes('saddr=')) && (
             <input
               type="text"
-              placeholder="Enter your location..."
+              placeholder={t('enter_your_location')}
               value={source}
               onChange={handleSourceChange}
               className="w-64 p-2 border border-gray-300 rounded-md"
@@ -143,7 +145,7 @@ const Map = () => {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Enter destination..."
+                placeholder={t('enter_destination')}
                 value={destination}
                 onChange={handleDestinationChange}
                 className="w-64 p-2 border border-gray-300 rounded-md"
@@ -169,7 +171,7 @@ const Map = () => {
               onClick={handleCancelJourney}
               className="w-auto p-2 bg-transparent text-red-500 rounded-md border-2 border-red-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-red-500 hover:text-white"
             >
-              Cancel Journey
+              {t('cancel_journey')}
             </button>
           ) : ( // Existing logic for other buttons
             <>
@@ -179,19 +181,19 @@ const Map = () => {
                     onClick={handleSearchLocation}
                     className="w-auto p-2 bg-transparent text-blue-500 rounded-md border-2 border-blue-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-blue-500 hover:text-white"
                   >
-                    Search
+                    {t('search')}
                   </button>
                   <button
                     onClick={() => setShowSourceInput(true)}
                     className="w-auto p-2 bg-transparent text-green-700 rounded-md border-2 border-green-700 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-green-700 hover:text-white"
                   >
-                    Go to Location
+                    {t('go_to_location')}
                   </button>
                   <button
                     onClick={() => setShowNearbyStationsInput(true)}
                     className="w-auto p-2 bg-transparent text-purple-500 rounded-md border-2 border-purple-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-purple-500 hover:text-white"
                   >
-                    Find Nearby Station
+                    {t('find_nearby_station')}
                   </button>
                 </>
               ) : showSourceInput ? (
@@ -200,20 +202,20 @@ const Map = () => {
                     onClick={() => handleGetDirections()} // Call without arguments
                     className="w-auto p-2 bg-transparent text-blue-500 rounded-md border-2 border-blue-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-blue-500 hover:text-white"
                   >
-                    Get Directions
+                    {t('get_directions')}
                   </button>
                   <button
                     onClick={handleGoBack}
                     className="w-auto p-2 bg-transparent text-gray-500 rounded-md border-2 border-gray-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-gray-500 hover:text-white"
                   >
-                    Go Back
+                    {t('go_back')}
                   </button>
                 </>
               ) : (
                 <div className="flex items-center space-x-2">
                   <input
                     type="text"
-                    placeholder="Enter your location..."
+                    placeholder={t('enter_your_location')}
                     value={source}
                     onChange={handleSourceChange}
                     className="w-64 p-2 border border-gray-300 rounded-md"
@@ -222,7 +224,7 @@ const Map = () => {
                     onClick={handleFindNearbyStations}
                     className="w-auto p-2 bg-transparent text-purple-500 rounded-md border-2 border-purple-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-purple-500 hover:text-white"
                   >
-                    Search Nearby
+                    {t('search_nearby')}
                   </button>
                   <button
                     onClick={() => {
@@ -231,7 +233,7 @@ const Map = () => {
                     }}
                     className="w-auto p-2 bg-transparent text-gray-500 rounded-md border-2 border-gray-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-gray-500 hover:text-white"
                   >
-                    Cancel
+                    {t('cancel')}
                   </button>
                 </div>
               )}
@@ -239,7 +241,7 @@ const Map = () => {
           )}
         </div>
       )}
-      {loading && <div className="flex items-center justify-center h-full">Loading Map...</div>}
+      {loading && <div className="flex items-center justify-center h-full">{t('loading_map')}</div>}
       {error && (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white p-4 rounded-md shadow-md z-20">
           {error}
@@ -258,7 +260,7 @@ const Map = () => {
           )}
           {showNearbyStationsInput && nearbyStations.length > 0 && (
             <div className="absolute right-4 top-20 w-64 bg-white p-4 rounded-md shadow-md z-10 overflow-y-auto max-h-[calc(100%-100px)]">
-              <h3 className="text-lg font-semibold mb-2">Nearby Stations</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('nearby_stations')}</h3>
               <ul>
                 {nearbyStations.map(station => (
                   <li
@@ -272,7 +274,7 @@ const Map = () => {
                       onMouseLeave={handleStationLeave} // Leave handler
                       className="p-2 cursor-pointer hover:bg-gray-100 border-b border-gray-200 last:border-b-0"
                     >
-                      {station.name} (Distance: {station.distance} km)
+                      {station.name} ({t('distance')}: {station.distance} km)
                     </li>
                 ))}
               </ul>
