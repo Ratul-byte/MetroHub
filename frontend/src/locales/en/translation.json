@@ -8,10 +8,7 @@
   "time": "Time",
   "search": "Search",
   "search_results": "Search Results",
-  "route": "Route",
   "train_name": "Train Name",
-  "start_time": "Start Time",
-  "end_time": "End Time",
   "frequency_min": "Frequency (min)",
   "searching": "Searching...",
   "hero_title": "Your Metro Journey Made Simple",
@@ -127,5 +124,9 @@
   "Log In": "Log In",
   "Don't have an account?": "Don't have an account?",
   "Forgot Password?": "Forgot Password?",
-  "Please enter your email or phone number.": "Please enter your email or phone number."
+  "Please enter your email or phone number.": "Please enter your email or phone number.",
+  "source_station": "Source Station",
+  "destination_station": "Destination Station",
+  "departure_time": "Departure Time",
+  "arrival_time": "Arrival Time"
 }

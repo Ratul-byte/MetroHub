@@ -1,4 +1,3 @@
-
 import React from 'react';
 import logo from '../../assets/logo main 1.png';
 import homepageImg2 from '../../assets/homepage_img2.jpg';
@@ -6,8 +5,9 @@ import homepageImg3 from '../../assets/homepage_img3.jpg';
 import timeImage from '../../assets/time.png';
 import ticketImage from '../../assets/ticket.png';
 import { ArrowRight, Clock, Ticket, MapPin, Download, Mail, Phone, Github, Twitter, Linkedin, Menu } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../context/AuthContext';
 
 const Button = ({ className, variant, size, asChild = false, ...props }) => {
   const Comp = asChild ? 'div' : 'button';
@@ -102,6 +102,17 @@ const Hero = () => {
 
 const Features = () => {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleBookNow = () => {
+    if (user) {
+      navigate('/book-tickets');
+    } else {
+      navigate('/login');
+    }
+  };
+
   const features = [
     {
       icon: Clock,
@@ -117,7 +128,7 @@ const Features = () => {
       description: t('feature2_description'),
       image: ticketImage,
       action: t('book_now'),
-      path: '/book-tickets' // Assuming a book-tickets page exists, or it will go to login if not authenticated
+      onClick: handleBookNow
     },
     {
       icon: MapPin,
@@ -165,7 +176,7 @@ const Features = () => {
                       </Button>
                     </Link>
                   ) : (
-                    <Button variant="outline" className="w-full border-gray-200 text-black rounded-md hover:bg-black hover:text-white flex items-center justify-center">
+                    <Button onClick={feature.onClick} variant="outline" className="w-full border-gray-200 text-black rounded-md hover:bg-black hover:text-white flex items-center justify-center">
                       {feature.action}
                       <ArrowRight className="h-4 w-4 ml-2" />
                     </Button>

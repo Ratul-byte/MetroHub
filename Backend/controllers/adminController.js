@@ -1,4 +1,3 @@
-
 import { User } from '../models/userModel.js';
 import { RapidPass } from '../models/rapidPassModel.js';
 
@@ -58,4 +57,15 @@ const updateUserRole = async (req, res) => {
   }
 };
 
-export { getUsers, deleteUser, updateUserRole };
+// @desc    Get recent users
+// @route   GET /api/admin/recent-users
+// @access  Private/Admin
+const getRecentUsers = async (req, res) => {
+  const users = await User.find({ email: { $ne: 'admin1@gmail.com' } })
+    .sort({ createdAt: -1 })
+    .limit(5)
+    .select('-password -plainTextPassword'); // Exclude sensitive fields
+  res.json(users);
+};
+
+export { getUsers, deleteUser, updateUserRole, getRecentUsers };

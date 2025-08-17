@@ -16,25 +16,19 @@ const Map = () => {
   const [showSourceInput, setShowSourceInput] = useState(false);
   const [showNearbyStationsInput, setShowNearbyStationsInput] = useState(false);
   const [nearbyStations, setNearbyStations] = useState([]);
+  const [metroStations, setMetroStations] = useState([]);
 
-  const metroStations = [
-    { name: 'Uttara North Metro Station' },
-    { name: 'Uttara Center Metro Station' },
-    { name: 'Uttara South Metro Station' },
-    { name: 'Pallabi Metro Station' },
-    { name: 'Mirpur 11 Metro Station' },
-    { name: 'Mirpur 10 Metro Station' },
-    { name: 'Kazipara Metro Station' },
-    { name: 'Shewrapara Metro Station' },
-    { name: 'Agargaon Metro Station' },
-    { name: 'Bijoy Sarani Metro Station' },
-    { name: 'Farmgate Metro Station' },
-    { name: 'Karwan Bazar Metro Station' },
-    { name: 'Shahbag Metro Station' },
-    { name: 'Dhaka University Metro Station' },
-    { name: 'Bangladesh Secretariat Metro Station' },
-    { name: 'Motijheel Metro Station' }
-  ];
+  useEffect(() => {
+    const fetchStations = async () => {
+      try {
+        const { data } = await axios.get('http://localhost:5001/api/stations');
+        setMetroStations(data);
+      } catch (error) {
+        console.error('Failed to fetch stations', error);
+      }
+    };
+    fetchStations();
+  }, []);
 
   useEffect(() => {
     setMapSrc(`https://maps.google.com/maps?q=23.8103,90.4125&t=&z=12&ie=UTF8&iwloc=&output=embed`);

@@ -16,13 +16,10 @@ const SearchSchedules = () => {
   useEffect(() => {
     const fetchStations = async () => {
       try {
-        setLoading(true);
         const res = await axios.get('http://localhost:5001/api/stations');
         setStations(res.data);
       } catch (err) {
         setError('Failed to fetch stations.');
-      } finally {
-        setLoading(false);
       }
     };
     fetchStations();
@@ -30,15 +27,18 @@ const SearchSchedules = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
+    setSchedules([]); // Clear previous results
     try {
       setLoading(true);
       setError('');
-      const res = await axios.get('http://localhost:5001/api/schedules', {
-        params: {
-          stationId: selectedStation,
-          time,
-        },
-      });
+      const params = {};
+      if (selectedStation) {
+        params.station = selectedStation;
+      }
+      if (time) {
+        params.time = time;
+      }
+      const res = await axios.get('http://localhost:5001/api/schedules', { params });
       setSchedules(res.data);
     } catch (err) {
       setError('Failed to fetch schedules.');
@@ -61,7 +61,7 @@ const SearchSchedules = () => {
             >
               <option value="">{t('select_station')}</option>
               {stations.map((station) => (
-                <option key={station._id} value={station._id}>
+                <option key={station._id} value={station.name}>
                   {station.name}
                 </option>
               ))}
@@ -88,20 +88,22 @@ const SearchSchedules = () => {
             <table className="min-w-full bg-white">
               <thead className="bg-gray-200">
                 <tr>
-                  <th className="py-2 px-4 border-b">{t('route')}</th>
+                  <th className="py-2 px-4 border-b">{t('source_station')}</th>
+                  <th className="py-2 px-4 border-b">{t('destination_station')}</th>
                   <th className="py-2 px-4 border-b">{t('train_name')}</th>
-                  <th className="py-2 px-4 border-b">{t('start_time')}</th>
-                  <th className="py-2 px-4 border-b">{t('end_time')}</th>
+                  <th className="py-2 px-4 border-b">{t('departure_time')}</th>
+                  <th className="py-2 px-4 border-b">{t('arrival_time')}</th>
                   <th className="py-2 px-4 border-b">{t('frequency_min')}</th>
                 </tr>
               </thead>
               <tbody>
                 {schedules.map((schedule) => (
                   <tr key={schedule._id}>
-                    <td className="py-2 px-4 border-b">{schedule.route.name}</td>
+                    <td className="py-2 px-4 border-b">{schedule.sourceStation}</td>
+                    <td className="py-2 px-4 border-b">{schedule.destinationStation}</td>
                     <td className="py-2 px-4 border-b">{schedule.trainName}</td>
-                    <td className="py-2 px-4 border-b">{schedule.startTime}</td>
-                    <td className="py-2 px-4 border-b">{schedule.endTime}</td>
+                    <td className="py-2 px-4 border-b">{schedule.departureTime}</td>
+                    <td className="py-2 px-4 border-b">{schedule.arrivalTime}</td>
                     <td className="py-2 px-4 border-b">{schedule.frequency}</td>
                   </tr>
                 ))}

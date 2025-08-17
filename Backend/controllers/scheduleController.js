@@ -1,18 +1,17 @@
-
 import MetroSchedule from '../models/metroScheduleModel.js';
-import MetroRoute from '../models/metroRouteModel.js';
 
 // @desc    Create a schedule
 // @route   POST /api/schedules
 // @access  Private/Admin
 const createSchedule = async (req, res) => {
-  const { route, trainName, startTime, endTime, frequency } = req.body;
+  const { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency } = req.body;
 
   const schedule = new MetroSchedule({
-    route,
+    sourceStation,
+    destinationStation,
     trainName,
-    startTime,
-    endTime,
+    departureTime,
+    arrivalTime,
     frequency,
   });
 
@@ -24,35 +23,32 @@ const createSchedule = async (req, res) => {
 // @route   GET /api/schedules
 // @access  Public
 const getSchedules = async (req, res) => {
-  const { stationId, time } = req.query;
+  const { time, station } = req.query;
   let query = {};
 
-  if (stationId) {
-    const routes = await MetroRoute.find({ stations: stationId });
-    const routeIds = routes.map((route) => route._id);
-    query.route = { $in: routeIds };
+  if (station) {
+    query.$or = [{ sourceStation: station }, { destinationStation: station }];
   }
 
-  const schedules = await MetroSchedule.find(query).populate('route');
+  let schedules = await MetroSchedule.find(query);
 
   if (time) {
-    const filteredSchedules = schedules.filter((schedule) => {
-      const startTime = new Date(`1970-01-01T${schedule.startTime}`);
-      const endTime = new Date(`1970-01-01T${schedule.endTime}`);
+    schedules = schedules.filter((schedule) => {
+      const departureTime = new Date(`1970-01-01T${schedule.departureTime}`);
+      const arrivalTime = new Date(`1970-01-01T${schedule.arrivalTime}`);
       const searchTime = new Date(`1970-01-01T${time}`);
-      return searchTime >= startTime && searchTime <= endTime;
+      return searchTime >= departureTime && searchTime <= arrivalTime;
     });
-    res.json(filteredSchedules);
-  } else {
-    res.json(schedules);
   }
+
+  res.json(schedules);
 };
 
 // @desc    Get schedule by ID
 // @route   GET /api/schedules/:id
 // @access  Public
 const getScheduleById = async (req, res) => {
-  const schedule = await MetroSchedule.findById(req.params.id).populate('route');
+  const schedule = await MetroSchedule.findById(req.params.id);
 
   if (schedule) {
     res.json(schedule);
@@ -66,15 +62,16 @@ const getScheduleById = async (req, res) => {
 // @route   PUT /api/schedules/:id
 // @access  Private/Admin
 const updateSchedule = async (req, res) => {
-  const { route, trainName, startTime, endTime, frequency } = req.body;
+  const { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency } = req.body;
 
   const schedule = await MetroSchedule.findById(req.params.id);
 
   if (schedule) {
-    schedule.route = route;
+    schedule.sourceStation = sourceStation;
+    schedule.destinationStation = destinationStation;
     schedule.trainName = trainName;
-    schedule.startTime = startTime;
-    schedule.endTime = endTime;
+    schedule.departureTime = departureTime;
+    schedule.arrivalTime = arrivalTime;
     schedule.frequency = frequency;
 
     const updatedSchedule = await schedule.save();

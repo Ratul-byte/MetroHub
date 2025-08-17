@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
@@ -8,33 +7,29 @@ import Button from '../ui/Button';
 const ScheduleManagement = () => {
   const { token } = useAuth();
   const [schedules, setSchedules] = useState([]);
-  const [routes, setRoutes] = useState([]);
-  const [selectedRoute, setSelectedRoute] = useState('');
+  const [sourceStation, setSourceStation] = useState('');
+  const [destinationStation, setDestinationStation] = useState('');
   const [trainName, setTrainName] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
+  const [departureTime, setDepartureTime] = useState('');
+  const [arrivalTime, setArrivalTime] = useState('');
   const [frequency, setFrequency] = useState('');
   const [editingSchedule, setEditingSchedule] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchSchedulesAndRoutes = async () => {
+    const fetchSchedules = async () => {
       try {
         setLoading(true);
-        const [schedulesRes, routesRes] = await Promise.all([
-          axios.get('http://localhost:5001/api/schedules'),
-          axios.get('http://localhost:5001/api/routes'),
-        ]);
+        const schedulesRes = await axios.get('http://localhost:5001/api/schedules');
         setSchedules(schedulesRes.data);
-        setRoutes(routesRes.data);
       } catch (err) {
         setError('Failed to fetch data.');
       } finally {
         setLoading(false);
       }
     };
-    fetchSchedulesAndRoutes();
+    fetchSchedules();
   }, []);
 
   const handleCreateSchedule = async () => {
@@ -49,14 +44,15 @@ const ScheduleManagement = () => {
       };
       const { data } = await axios.post(
         'http://localhost:5001/api/schedules',
-        { route: selectedRoute, trainName, startTime, endTime, frequency },
+        { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency },
         config
       );
       setSchedules([...schedules, data]);
-      setSelectedRoute('');
+      setSourceStation('');
+      setDestinationStation('');
       setTrainName('');
-      setStartTime('');
-      setEndTime('');
+      setDepartureTime('');
+      setArrivalTime('');
       setFrequency('');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create schedule.');
@@ -77,17 +73,18 @@ const ScheduleManagement = () => {
       };
       const { data } = await axios.put(
         `http://localhost:5001/api/schedules/${editingSchedule._id}`,
-        { route: selectedRoute, trainName, startTime, endTime, frequency },
+        { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency },
         config
       );
       setSchedules(
         schedules.map((s) => (s._id === editingSchedule._id ? data : s))
       );
       setEditingSchedule(null);
-      setSelectedRoute('');
+      setSourceStation('');
+      setDestinationStation('');
       setTrainName('');
-      setStartTime('');
-      setEndTime('');
+      setDepartureTime('');
+      setArrivalTime('');
       setFrequency('');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update schedule.');
@@ -116,19 +113,21 @@ const ScheduleManagement = () => {
 
   const startEditing = (schedule) => {
     setEditingSchedule(schedule);
-    setSelectedRoute(schedule.route._id);
+    setSourceStation(schedule.sourceStation);
+    setDestinationStation(schedule.destinationStation);
     setTrainName(schedule.trainName);
-    setStartTime(schedule.startTime);
-    setEndTime(schedule.endTime);
+    setDepartureTime(schedule.departureTime);
+    setArrivalTime(schedule.arrivalTime);
     setFrequency(schedule.frequency);
   };
 
   const cancelEditing = () => {
     setEditingSchedule(null);
-    setSelectedRoute('');
+    setSourceStation('');
+    setDestinationStation('');
     setTrainName('');
-    setStartTime('');
-    setEndTime('');
+    setDepartureTime('');
+    setArrivalTime('');
     setFrequency('');
   };
 
@@ -141,18 +140,18 @@ const ScheduleManagement = () => {
           {editingSchedule ? 'Edit Schedule' : 'Create New Schedule'}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <select
-            value={selectedRoute}
-            onChange={(e) => setSelectedRoute(e.target.value)}
-            className="p-2 border border-gray-300 rounded-md"
-          >
-            <option value="">Select Route</option>
-            {routes.map((route) => (
-              <option key={route._id} value={route._id}>
-                {route.name}
-              </option>
-            ))}
-          </select>
+          <Input
+            type="text"
+            placeholder="Source Station"
+            value={sourceStation}
+            onChange={(e) => setSourceStation(e.target.value)}
+          />
+          <Input
+            type="text"
+            placeholder="Destination Station"
+            value={destinationStation}
+            onChange={(e) => setDestinationStation(e.target.value)}
+          />
           <Input
             type="text"
             placeholder="Train Name"
@@ -161,15 +160,15 @@ const ScheduleManagement = () => {
           />
           <Input
             type="time"
-            placeholder="Start Time"
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
+            placeholder="Departure Time"
+            value={departureTime}
+            onChange={(e) => setDepartureTime(e.target.value)}
           />
           <Input
             type="time"
-            placeholder="End Time"
-            value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
+            placeholder="Arrival Time"
+            value={arrivalTime}
+            onChange={(e) => setArrivalTime(e.target.value)}
           />
           <Input
             type="number"
@@ -208,10 +207,11 @@ const ScheduleManagement = () => {
             <table className="min-w-full bg-white">
               <thead className="bg-gray-200">
                 <tr>
-                  <th className="py-2 px-4 border-b">Route</th>
+                  <th className="py-2 px-4 border-b">Source Station</th>
+                  <th className="py-2 px-4 border-b">Destination Station</th>
                   <th className="py-2 px-4 border-b">Train Name</th>
-                  <th className="py-2 px-4 border-b">Start Time</th>
-                  <th className="py-2 px-4 border-b">End Time</th>
+                  <th className="py-2 px-4 border-b">Departure Time</th>
+                  <th className="py-2 px-4 border-b">Arrival Time</th>
                   <th className="py-2 px-4 border-b">Frequency (min)</th>
                   <th className="py-2 px-4 border-b">Actions</th>
                 </tr>
@@ -219,10 +219,11 @@ const ScheduleManagement = () => {
               <tbody>
                 {schedules.map((schedule) => (
                   <tr key={schedule._id}>
-                    <td className="py-2 px-4 border-b">{schedule.route.name}</td>
+                    <td className="py-2 px-4 border-b">{schedule.sourceStation}</td>
+                    <td className="py-2 px-4 border-b">{schedule.destinationStation}</td>
                     <td className="py-2 px-4 border-b">{schedule.trainName}</td>
-                    <td className="py-2 px-4 border-b">{schedule.startTime}</td>
-                    <td className="py-2 px-4 border-b">{schedule.endTime}</td>
+                    <td className="py-2 px-4 border-b">{schedule.departureTime}</td>
+                    <td className="py-2 px-4 border-b">{schedule.arrivalTime}</td>
                     <td className="py-2 px-4 border-b">{schedule.frequency}</td>
                     <td className="py-2 px-4 border-b">
                       <Button

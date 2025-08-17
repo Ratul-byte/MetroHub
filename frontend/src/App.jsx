@@ -182,6 +182,8 @@ const Footer = () => {
 
 const App = () => {
   const { user } = useAuth();
+  const isAdmin = user && user.role === 'admin';
+
   return (
     <Router>
       <div className="flex flex-col h-screen" style={{ margin: 0, overflowY: 'auto', fontFamily: "'Open Sans', sans-serif" }}>
@@ -205,14 +207,13 @@ const App = () => {
             }
           `}
         </style>
-        {/* <Navbar /> */}
-        <Header />
+        {!isAdmin && <Header />}
         <div className="flex-grow">
           <Routes>
             <Route
               path="/"
               element={
-                user && user.role === 'admin' ? (
+                isAdmin ? (
                   <AdminDashboard />
                 ) : (
                   <LandingPage />
@@ -232,7 +233,7 @@ const App = () => {
             <Route path="/search-schedules" element={<SearchSchedules />} />
           </Routes>
         </div>
-        <Footer />
+        {!isAdmin && <Footer />}
       </div>
     </Router>
   );

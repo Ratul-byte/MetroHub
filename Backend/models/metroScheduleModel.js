@@ -1,22 +1,24 @@
-
 import mongoose from 'mongoose';
 
 const metroScheduleSchema = mongoose.Schema(
   {
-    route: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'MetroRoute',
+    sourceStation: {
+      type: String,
+      required: true,
+    },
+    destinationStation: {
+      type: String,
       required: true,
     },
     trainName: {
       type: String,
       required: true,
     },
-    startTime: {
+    departureTime: {
       type: String,
       required: true,
     },
-    endTime: {
+    arrivalTime: {
       type: String,
       required: true,
     },

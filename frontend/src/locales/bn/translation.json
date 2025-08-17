@@ -8,10 +8,7 @@
   "time": "সময়",
   "search": "অনুসন্ধান",
   "search_results": "অনুসন্ধানের ফলাফল",
-  "route": "রুট",
   "train_name": "ট্রেনের নাম",
-  "start_time": "শুরুর সময়",
-  "end_time": "শেষ সময়",
   "frequency_min": "ফ্রিকোয়েন্সি (মিনিট)",
   "searching": "অনুসন্ধান করা হচ্ছে...",
   "hero_title": "আপনার মেট্রো যাত্রা সহজ করুন",
@@ -129,5 +126,9 @@
   "Log In": "লগইন",
   "Don't have an account?": "অ্যাকাউন্ট নেই?",
   "Forgot Password?": "পাসওয়ার্ড ভুলে গেছেন?",
-  "Please enter your email or phone number.": "অনুগ্রহ করে আপনার ইমেল বা ফোন নম্বর লিখুন।"
+  "Please enter your email or phone number.": "অনুগ্রহ করে আপনার ইমেল বা ফোন নম্বর লিখুন।",
+  "source_station": "উৎস স্টেশন",
+  "destination_station": "গন্তব্য স্টেশন",
+  "departure_time": "ছাড়ার সময়",
+  "arrival_time": "পৌঁছানোর সময়"
 }
