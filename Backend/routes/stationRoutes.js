@@ -6,12 +6,14 @@ import {
   getStationById,
   updateStation,
   deleteStation,
+  findNearbyStations,
 } from '../controllers/stationController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 router.route('/').get(getStations).post(protect, admin, createStation);
+router.route('/nearby').post(findNearbyStations);
 router
   .route('/:id')
   .get(getStationById)
