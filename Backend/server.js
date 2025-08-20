@@ -5,40 +5,51 @@ import mongoose from "mongoose";
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
-import stationRoutes from './routes/stationRoutes.js'; // New import
-import scheduleRoutes from './routes/scheduleRoutes.js'; // New import
+import stationRoutes from './routes/stationRoutes.js';
+import scheduleRoutes from './routes/scheduleRoutes.js';
 
 dotenv.config();
 
-
 const app = express();
 
-// Middleware
-app.use(cors());
-///app.use(cors({
-///    origin: 'http://localhost:5173',
-///    credentials: true
-///}));
+// controlled CORS and PORT fallback
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:3000,https://metro-hub.vercel.app,https://metrohub-v5sa.onrender.com')
+  .split(',')
+  .map(s => s.trim());
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    return allowedOrigins.includes(origin) ? callback(null, true) : callback(new Error('CORS origin not allowed'));
+  },
+  credentials: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE'
+}));
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/stations', stationRoutes); // New route
-app.use('/api/schedules', scheduleRoutes); // New route
+app.use('/api/stations', stationRoutes);
+app.use('/api/schedules', scheduleRoutes);
+
+// numeric PORT and startup logging
+const PORT = Number(process.env.PORT) || 5000;
+const MONGODB_URL = process.env.MONGODB_URL;
+if (!MONGODB_URL) {
+  console.error('FATAL: MONGODB_URL is not set');
+  process.exit(1);
+}
 
 mongoose
-  .connect(process.env.MONGODB_URL)
+  .connect(MONGODB_URL)
   .then(() => {
     console.log('App connected to database');
-    console.log(`DEBUG: process.env.PORT is: ${process.env.PORT}`);
-    // app.listen(5001, () => {
-    //   console.log(`App is listening to port: 5001`);
-    // });
-    app.listen(process.env.PORT, () => {
-      console.log(`App is listening to port: ${process.env.PORT}`);
+    app.listen(PORT, () => {
+      console.log(`App is listening on port: ${PORT}`);
     });
   })
   .catch((error) => {
-    console.log(error);
+    console.error('DB connection error:', error);
+    process.exit(1);
   });
