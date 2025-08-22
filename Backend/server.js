@@ -23,13 +23,15 @@ const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,ht
   .split(',')
   .map(s => s.trim().replace(/\/$/, ''));
 
+const vercelPreviewRegex = /https:\/\/.*-ratul-mushfiques-projects\.vercel\.app$/;
+
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || origin === 'null') {
       return callback(null, true);
     }
     const normalizedOrigin = origin.replace(/\/$/, '');
-    if (allowedOrigins.includes(normalizedOrigin)) {
+    if (allowedOrigins.includes(normalizedOrigin) || vercelPreviewRegex.test(normalizedOrigin)) {
       return callback(null, true);
     }
     return callback(new Error('CORS origin not allowed'));
