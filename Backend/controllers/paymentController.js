@@ -10,7 +10,7 @@ const INIT_URL = SSL_MODE === 'production'
   : 'https://sandbox.sslcommerz.com/gwprocess/v3/api.php';
 
 const makeUrls = () => {
-  const apiBase = `http://localhost:${process.env.PORT || 5001}` || process.env.API_URL;
+  const apiBase =  process.env.API_URL;
   return {
     success: `${apiBase}/api/payment/success`,
     fail: `${apiBase}/api/payment/fail`,
@@ -152,7 +152,7 @@ export const sslcommerzSuccess = async (req, res) => {
     ticket.qrCode = qr;
     await ticket.save();
 
-    const frontend = 'http://localhost:5173' || process.env.FRONTEND_URL;
+    const frontend = process.env.FRONTEND_URL;
     const redirectUrl = `${frontend}/payment-success?ticket=${ticket._id}`;
 
     // Send an HTML page with a JavaScript redirect
@@ -187,7 +187,7 @@ export const sslcommerzFail = async (req, res) => {
       ticket.rawResponse = { ...(ticket.rawResponse || {}), fail: body };
       await ticket.save();
     }
-    const frontend = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const frontend = process.env.FRONTEND_URL;
     return res.redirect(`${frontend}/payment-failed?ticket=${ticket?._id || ''}`);
   } catch (err) {
     console.error('sslcommerzFail error', err);
@@ -205,7 +205,7 @@ export const sslcommerzCancel = async (req, res) => {
       ticket.rawResponse = { ...(ticket.rawResponse || {}), cancel: body };
       await ticket.save();
     }
-    const frontend = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const frontend = process.env.FRONTEND_URL;
     return res.redirect(`${frontend}/payment-cancelled?ticket=${ticket?._id || ''}`);
   } catch (err) {
     console.error('sslcommerzCancel error', err);
