@@ -17,7 +17,7 @@ const UserManagement = () => {
           'x-auth-token': token,
         },
       };
-      const response = await axios.get('http://localhost:5001/api/admin/users', config);
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/users`, config);
       setUsers(response.data.users);
       setLoading(false);
     } catch (err) {
@@ -37,7 +37,7 @@ const UserManagement = () => {
           'x-auth-token': token,
         },
       };
-      await axios.put(`http://localhost:5001/api/admin/users/${id}/role`, { role: newRole }, config);
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/admin/users/${id}/role`, { role: newRole }, config);
       fetchUsers(); // Re-fetch users to update the list
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update user role.');
@@ -52,7 +52,7 @@ const UserManagement = () => {
             'x-auth-token': token,
           },
         };
-        await axios.delete(`http://localhost:5001/api/admin/users/${id}`, config);
+              await axios.delete(`${import.meta.env.VITE_API_URL}/api/admin/users/${id}`, config);
         fetchUsers(); // Re-fetch users to update the list
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to delete user.');

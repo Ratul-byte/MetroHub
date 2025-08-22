@@ -36,8 +36,8 @@ export default function AdminDashboard() {
           },
         };
         const [userCounts, recentUsers] = await Promise.all([
-          axios.get('http://localhost:5001/api/admin/users', config),
-          axios.get('http://localhost:5001/api/admin/recent-users', config)
+          axios.get(`${import.meta.env.VITE_API_URL}/api/admin/users`, config),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/admin/recent-users`, config)
         ]);
         setNormalUsersCount(userCounts.data.normalUsersCount);
         setRapidPassUsersCount(userCounts.data.rapidPassUsersCount);

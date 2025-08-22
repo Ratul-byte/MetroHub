@@ -21,7 +21,7 @@ const ScheduleManagement = () => {
     const fetchSchedules = async () => {
       try {
         setLoading(true);
-        const schedulesRes = await axios.get('http://localhost:5001/api/schedules');
+              const schedulesRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/schedules`);
         setSchedules(schedulesRes.data);
       } catch (err) {
         setError('Failed to fetch data.');
@@ -43,7 +43,7 @@ const ScheduleManagement = () => {
         },
       };
       const { data } = await axios.post(
-        'http://localhost:5001/api/schedules',
+                `${import.meta.env.VITE_API_URL}/api/schedules`,
         { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency },
         config
       );
@@ -72,7 +72,7 @@ const ScheduleManagement = () => {
         },
       };
       const { data } = await axios.put(
-        `http://localhost:5001/api/schedules/${editingSchedule._id}`,
+                `${import.meta.env.VITE_API_URL}/api/schedules/${editingSchedule._id}`,
         { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency },
         config
       );
@@ -102,7 +102,7 @@ const ScheduleManagement = () => {
           'x-auth-token': token,
         },
       };
-      await axios.delete(`http://localhost:5001/api/schedules/${id}`, config);
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/schedules/${id}`, config);
       setSchedules(schedules.filter((s) => s._id !== id));
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to delete schedule.');

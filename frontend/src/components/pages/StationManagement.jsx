@@ -19,7 +19,7 @@ const StationManagement = () => {
     const fetchStations = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5001/api/stations');
+              const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/stations`);
         setStations(response.data);
       } catch (err) {
         setError('Failed to fetch stations.');
@@ -41,7 +41,7 @@ const StationManagement = () => {
         },
       };
       const { data } = await axios.post(
-        'http://localhost:5001/api/stations',
+                `${import.meta.env.VITE_API_URL}/api/stations`,
         { name, latitude, longitude },
         config
       );
@@ -67,7 +67,7 @@ const StationManagement = () => {
         },
       };
       const { data } = await axios.put(
-        `http://localhost:5001/api/stations/${editingStation._id}`,
+                `${import.meta.env.VITE_API_URL}/api/stations/${editingStation._id}`,
         { name, latitude, longitude },
         config
       );
@@ -94,7 +94,7 @@ const StationManagement = () => {
           'x-auth-token': token,
         },
       };
-      await axios.delete(`http://localhost:5001/api/stations/${id}`, config);
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/stations/${id}`, config);
       setStations(stations.filter((s) => s._id !== id));
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to delete station.');
