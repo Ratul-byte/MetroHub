@@ -1,5 +1,6 @@
 import { User } from '../models/userModel.js';
 import { RapidPass } from '../models/rapidPassModel.js';
+import Ticket from '../models/ticketModel.js';
 
 // @desc    Get all users
 // @route   GET /api/admin/users
@@ -68,4 +69,17 @@ const getRecentUsers = async (req, res) => {
   res.json(users);
 };
 
-export { getUsers, deleteUser, updateUserRole, getRecentUsers };
+// @desc    Get all tickets
+// @route   GET /api/admin/tickets
+// @access  Private/Admin
+const getAllTickets = async (req, res) => {
+  try {
+    const tickets = await Ticket.find({}).populate('user', 'name email').populate('schedule');
+    res.json(tickets);
+  } catch (error) {
+    console.error('Error fetching all tickets:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+export { getUsers, deleteUser, updateUserRole, getRecentUsers, getAllTickets };

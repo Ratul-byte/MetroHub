@@ -148,7 +148,21 @@ export const sslcommerzSuccess = async (req, res) => {
 
     ticket.paymentStatus = 'paid';
     ticket.rawResponse = { ...(ticket.rawResponse || {}), success: body };
-    const qr = await QRCode.toDataURL(ticket._id.toString());
+
+    // Populate schedule details
+    await ticket.populate('schedule');
+
+    const ticketInfo = {
+      ticketId: ticket._id,
+      trainName: ticket.schedule.trainName,
+      sourceStation: ticket.schedule.sourceStation,
+      destinationStation: ticket.schedule.destinationStation,
+      departureTime: ticket.schedule.departureTime,
+      arrivalTime: ticket.schedule.arrivalTime,
+      amount: ticket.amount,
+    };
+
+    const qr = await QRCode.toDataURL(JSON.stringify(ticketInfo));
     ticket.qrCode = qr;
     await ticket.save();
 
@@ -222,7 +236,18 @@ export const sslcommerzIPN = async (req, res) => {
 
     if (body.status && body.status.toLowerCase() === 'success') {
       ticket.paymentStatus = 'paid';
-      const qr = await QRCode.toDataURL(ticket._id.toString());
+      await ticket.populate('schedule');
+      const ticketInfo = {
+        ticketId: ticket._id,
+        trainName: ticket.schedule.trainName,
+        sourceStation: ticket.schedule.sourceStation,
+        destinationStation: ticket.schedule.destinationStation,
+        departureTime: ticket.schedule.departureTime,
+        arrivalTime: ticket.schedule.arrivalTime,
+        amount: ticket.amount,
+      };
+  
+      const qr = await QRCode.toDataURL(JSON.stringify(ticketInfo));
       ticket.qrCode = qr;
     } else {
       ticket.paymentStatus = 'failed';

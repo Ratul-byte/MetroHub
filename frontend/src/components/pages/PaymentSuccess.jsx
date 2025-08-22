@@ -2,10 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const API = import.meta.env.VITE_API_URL;
 
 const PaymentSuccess = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const ticketId = searchParams.get('ticket');
   const [ticket, setTicket] = useState(null);
@@ -39,7 +41,7 @@ const PaymentSuccess = () => {
   }, [ticketId]);
 
   if (loading) {
-    return <div className="container mx-auto p-4">Loading...</div>;
+    return <div className="container mx-auto p-4">{t('loading')}</div>;
   }
 
   if (error) {
@@ -47,22 +49,37 @@ const PaymentSuccess = () => {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Payment Successful!</h1>
+    <div className="container mx-auto p-4 max-w-7xl">
+      <h1 className="text-2xl font-bold mb-4">{t('payment_successful')}!</h1>
       {ticket && (
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2">Your Ticket Details</h2>
-          <p><strong>Ticket ID:</strong> {ticket._id}</p>
-          <p><strong>Train:</strong> {ticket.schedule.trainName}</p>
-          <p><strong>From:</strong> {ticket.schedule.sourceStation}</p>
-          <p><strong>To:</strong> {ticket.schedule.destinationStation}</p>
-          <p><strong>Departure:</strong> {ticket.schedule.departureTime}</p>
-          <p><strong>Arrival:</strong> {ticket.schedule.arrivalTime}</p>
-          <p><strong>Fare:</strong> {ticket.amount} BDT</p>
+        <div className="bg-white p-6 rounded-lg shadow-md flex">
+          <div className="w-1/2 pr-4">
+            <h2 className="text-2xl font-semibold mb-4">{t('your_ticket_details')}</h2>
+            <p className="text-lg"><strong>{t('ticket_id')}</strong> {ticket._id}</p>
+            <p className="text-lg"><strong>{t('train')}</strong> {ticket.schedule.trainName}</p>
+            <p className="text-lg"><strong>{t('from')}</strong> {ticket.schedule.sourceStation}</p>
+            <p className="text-lg"><strong>{t('to')}</strong> {ticket.schedule.destinationStation}</p>
+            <p className="text-lg"><strong>{t('departure')}</strong> {ticket.schedule.departureTime}</p>
+            <p className="text-lg"><strong>{t('arrival')}</strong> {ticket.schedule.arrivalTime}</p>
+            <p className="text-lg"><strong>{t('fare')}</strong> {ticket.amount} {t('bdt')}</p>
+          </div>
           {ticket.qrCode && (
-            <div className="mt-4">
-              <h3 className="text-lg font-semibold">Your QR Code:</h3>
-              <img src={ticket.qrCode} alt="Ticket QR Code" />
+            <div className="w-1/2 flex flex-col items-center justify-center">
+              <h3 className="text-2xl font-semibold mb-4">{t('scan_qr_code')}</h3>
+              <img src={ticket.qrCode} alt="Ticket QR Code" className="w-64 h-64" />
+              <button
+                onClick={() => {
+                  const link = document.createElement('a');
+                  link.href = ticket.qrCode;
+                  link.download = `ticket_qr_${ticket._id}.png`;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+                className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                {t('download_qr_code')}
+              </button>
             </div>
           )}
         </div>
