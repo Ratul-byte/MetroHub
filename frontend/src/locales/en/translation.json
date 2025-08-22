@@ -128,5 +128,21 @@
   "source_station": "Source Station",
   "destination_station": "Destination Station",
   "departure_time": "Departure Time",
-  "arrival_time": "Arrival Time"
+  "arrival_time": "Arrival Time",
+  "failed_to_fetch_stations": "Failed to fetch stations.",
+  "book_ticket": "Book Ticket",
+  "Select Source Station": "Select Source Station",
+  "Select Destination Station": "Select Destination Station",
+  "select_source_and_destination": "Please select both source and destination stations.",
+  "estimated_fare": "Estimated Fare: {{amount}}",
+  "Proceed to Payment": "Proceed to Payment",
+  "processing_payment": "Processing payment...",
+  "book_ticket_now": "Book Ticket Now",
+  "payment_initiation_failed": "Failed to initiate payment.",
+  "payment_initiation_error": "Payment initiation error",
+  "booking_failed": "Booking failed. Please try again.",
+  "available_schedules": "Available Schedules",
+  "no_schedules_found": "No schedules found for the selected route.",
+  "searching_schedules": "Searching schedules...",
+  "no_results_found": "No results found."
 }

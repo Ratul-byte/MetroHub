@@ -26,6 +26,10 @@ const metroScheduleSchema = mongoose.Schema(
       type: Number, // in minutes
       required: true,
     },
+    fare: {
+      type: Number,
+      required: false, // Not all schedules might have a fare initially
+    },
   },
   {
     timestamps: true,

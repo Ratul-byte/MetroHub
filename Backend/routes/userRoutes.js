@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { User } from '../models/userModel.js';
 import { RapidPass } from '../models/rapidPassModel.js';
 import { protect } from '../middleware/authMiddleware.js';
+import { getTicketById } from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -70,5 +71,7 @@ router.put('/profile', protect, async (request, response) => {
     response.status(500).send({ message: error.message });
   }
 });
+
+router.get('/tickets/:ticketId', protect, getTicketById);
 
 export default router;

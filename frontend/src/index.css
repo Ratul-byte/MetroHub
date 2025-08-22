@@ -297,6 +297,7 @@ html {
   }
 }
 
+/*
 @layer base {
   @font-face {
     font-family: "Geist";
@@ -326,6 +327,7 @@ html {
     font-style: normal;
   }
 }
+*/
 
 @layer base {
   html {

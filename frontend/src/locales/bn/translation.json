@@ -130,5 +130,21 @@
   "source_station": "উৎস স্টেশন",
   "destination_station": "গন্তব্য স্টেশন",
   "departure_time": "ছাড়ার সময়",
-  "arrival_time": "পৌঁছানোর সময়"
+  "arrival_time": "পৌঁছানোর সময়",
+  "failed_to_fetch_stations": "স্টেশনগুলি আনতে ব্যর্থ।",
+  "Proceed to Payment": "পেমেন্টে এগিয়ে যান",
+  "book_ticket": "টিকিট বুকিং",
+  "Select Source Station": "উৎপত্তি স্টেশন নির্বাচন করুন",
+  "Select Destination Station": "গন্তব্য স্টেশন নির্বাচন করুন",
+  "select_source_and_destination": "অনুগ্রহ করে উৎস এবং গন্তব্য উভয় নির্বাচন করুন।",
+  "estimated_fare": "আনুমানিক ভাড়া: {{amount}}",
+  "processing_payment": "পেমেন্ট প্রক্রিয়াকরণ চলছে...",
+  "book_ticket_now": "এখন বুক করুন",
+  "payment_initiation_failed": "পেমেন্ট শুরু করতে ব্যর্থ হয়েছে।",
+  "payment_initiation_error": "পেমেন্ট শুরু করার সময় ত্রুটি।",
+  "booking_failed": "বুকিং ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
+  "available_schedules": "উপলব্ধ সময়সূচী",
+  "no_schedules_found": "নির্বাচিত রুটের জন্য কোনো সময়সূচী পাওয়া যায়নি।",
+  "searching_schedules": "সময়সূচী অনুসন্ধান করা হচ্ছে...",
+  "no_results_found": "কোনো ফলাফল পাওয়া যায়নি।"
 }
