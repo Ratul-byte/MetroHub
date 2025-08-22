@@ -21,12 +21,18 @@ const app = express();
 // controlled CORS and PORT fallback
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:3000,https://metro-hub.vercel.app,https://metrohub-fivz.onrender.com')
   .split(',')
-  .map(s => s.trim());
+  .map(s => s.trim().replace(/\/$/, ''));
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || origin === 'null') return callback(null, true);
-    return allowedOrigins.includes(origin) ? callback(null, true) : callback(new Error('CORS origin not allowed'));
+    if (!origin || origin === 'null') {
+      return callback(null, true);
+    }
+    const normalizedOrigin = origin.replace(/\/$/, '');
+    if (allowedOrigins.includes(normalizedOrigin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('CORS origin not allowed'));
   },
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE'
