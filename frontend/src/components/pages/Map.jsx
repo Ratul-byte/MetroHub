@@ -21,7 +21,7 @@ const Map = () => {
   useEffect(() => {
     const fetchStations = async () => {
       try {
-        const { data } = await axios.get('http://localhost:5001/api/stations');
+              const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/stations`);
         setMetroStations(data);
       } catch (error) {
         console.error('Failed to fetch stations', error);
@@ -58,7 +58,7 @@ const Map = () => {
     if (source) {
       try {
         // Make API call to backend
-        const response = await axios.post('http://localhost:5001/api/stations/nearby', { location: source });
+              const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/stations/nearby`, { location: source });
         setNearbyStations(response.data);
         setError('');
       } catch (err) {

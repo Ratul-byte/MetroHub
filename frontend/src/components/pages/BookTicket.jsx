@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+const API = import.meta.env.VITE_API_URL;
 
 const parseTimeToMinutes = (t = '00:00') => {
   const [hh = '0', mm = '0'] = String(t).split(':');

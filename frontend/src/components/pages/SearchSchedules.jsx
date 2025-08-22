@@ -16,7 +16,7 @@ const SearchSchedules = () => {
   useEffect(() => {
     const fetchStations = async () => {
       try {
-        const res = await axios.get('http://localhost:5001/api/stations');
+              const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/stations`);
         setStations(res.data);
       } catch (err) {
         setError('Failed to fetch stations.');
@@ -38,7 +38,7 @@ const SearchSchedules = () => {
       if (time) {
         params.time = time;
       }
-      const res = await axios.get('http://localhost:5001/api/schedules', { params });
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/schedules`, { params });
       setSchedules(res.data);
     } catch (err) {
       setError('Failed to fetch schedules.');
