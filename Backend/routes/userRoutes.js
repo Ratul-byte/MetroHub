@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { User } from '../models/userModel.js';
 import { RapidPass } from '../models/rapidPassModel.js';
 import { protect } from '../middleware/authMiddleware.js';
-import { getTicketById } from '../controllers/userController.js';
+import { getTicketById, getAllUserTickets } from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -73,5 +73,7 @@ router.put('/profile', protect, async (request, response) => {
 });
 
 router.get('/tickets/:ticketId', protect, getTicketById);
+
+router.get('/tickets', protect, getAllUserTickets);
 
 export default router;

@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from '../../assets/logo main 1.png';
 import homepageImg2 from '../../assets/homepage_img2.jpg';
 import homepageImg3 from '../../assets/homepage_img3.jpg';
 import timeImage from '../../assets/time.png';
 import ticketImage from '../../assets/ticket.png';
-import { ArrowRight, Clock, Ticket, MapPin, Download, Mail, Phone, Github, Twitter, Linkedin, Menu } from 'lucide-react';
+import { ArrowRight, Clock, Ticket, MapPin, Download, Mail, Phone, Github, Twitter, Linkedin, Menu, Globe } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
+import axios from 'axios';
 
 const Button = ({ className, variant, size, asChild = false, ...props }) => {
   const Comp = asChild ? 'div' : 'button';
@@ -31,7 +32,7 @@ const CardContent = ({ className, ...props }) => (
 );
 
 const ImageWithFallback = ({ src, alt, ...props }) => {
-  const [error, setError] = React.useState(false);
+  const [error, setError] = useState(false);
   const handleError = () => setError(true);
   return error ? (
     <div className="image-fallback" {...props}>
@@ -234,11 +235,77 @@ const CallToAction = () => {
   );
 };
 
+const MyTicketsSection = () => {
+  const { t } = useTranslation();
+  const { user, token } = useAuth();
+  const [tickets, setTickets] = useState([]);
+  const [loadingTickets, setLoadingTickets] = useState(true);
+  const [ticketsError, setTicketsError] = useState('');
+
+  useEffect(() => {
+    const fetchTickets = async () => {
+      if (user && token) {
+        try {
+          setLoadingTickets(true);
+          const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/tickets`, {
+            headers: {
+              'x-auth-token': token,
+            },
+          });
+          setTickets(response.data);
+        } catch (err) {
+          setTicketsError(err.response?.data?.message || t('failed_to_fetch_ticket_details'));
+        } finally {
+          setLoadingTickets(false);
+        }
+      }
+    };
+    fetchTickets();
+  }, [user, token]);
+
+  if (!user) {
+    return null; // Don't render if user is not logged in
+  }
+
+  return (
+    <section id="my-tickets" className="py-16 lg:py-24 bg-gray-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-3xl lg:text-4xl text-foreground text-center mb-8">
+          {t('my_tickets')}
+        </h2>
+        {loadingTickets ? (
+          <div className="text-center">{t('loading')}</div>
+        ) : ticketsError ? (
+          <div className="text-center text-red-500">{ticketsError}</div>
+        ) : tickets.length > 0 ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {tickets.map((ticket) => (
+              <div key={ticket._id} className="bg-white p-6 rounded-lg shadow-md">
+                <p><strong>{t('ticket_id')}</strong> {ticket._id}</p>
+                <p><strong>{t('train')}</strong> {ticket.schedule.trainName}</p>
+                <p><strong>{t('from')}</strong> {ticket.schedule.sourceStation}</p>
+                <p><strong>{t('to')}</strong> {ticket.schedule.destinationStation}</p>
+                <p><strong>{t('departure')}</strong> {ticket.schedule.departureTime}</p>
+                <p><strong>{t('arrival')}</strong> {ticket.schedule.arrivalTime}</p>
+                <p><strong>{t('fare')}</strong> {ticket.amount} {t('bdt')}</p>
+                <p><strong>{t('status')}</strong> {ticket.paymentStatus}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-gray-500">{t('no_tickets_found')}</p>
+        )}
+      </div>
+    </section>
+  );
+};
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       <main>
         <Hero />
+        <MyTicketsSection />
         <Features />
         <CallToAction />
       </main>

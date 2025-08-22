@@ -51,7 +51,7 @@ const parseTimeToMinutes = (t = '00:00') => {
   return Number(h) * 60 + Number(m);
 };
 
-export const getSchedules = async (req, res) => {
+const getSchedules = async (req, res) => {
   const { sourceStation, destinationStation } = req.query;
   try {
     // load station order from DB (preferred) or fallback
@@ -141,3 +141,76 @@ export const getSchedules = async (req, res) => {
     return res.status(500).json({ message: 'Server error' });
   }
 };
+
+// @desc    Create a new schedule
+// @route   POST /api/schedules
+// @access  Private/Admin
+const createSchedule = async (req, res) => {
+  const { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency } = req.body;
+
+  try {
+    const schedule = new MetroSchedule({
+      sourceStation,
+      destinationStation,
+      trainName,
+      departureTime,
+      arrivalTime,
+      frequency,
+    });
+
+    const createdSchedule = await schedule.save();
+    res.status(201).json(createdSchedule);
+  } catch (error) {
+    console.error('Error creating schedule:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Update a schedule
+// @route   PUT /api/schedules/:id
+// @access  Private/Admin
+const updateSchedule = async (req, res) => {
+  const { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency } = req.body;
+
+  try {
+    const schedule = await MetroSchedule.findById(req.params.id);
+
+    if (schedule) {
+      schedule.sourceStation = sourceStation || schedule.sourceStation;
+      schedule.destinationStation = destinationStation || schedule.destinationStation;
+      schedule.trainName = trainName || schedule.trainName;
+      schedule.departureTime = departureTime || schedule.departureTime;
+      schedule.arrivalTime = arrivalTime || schedule.arrivalTime;
+      schedule.frequency = frequency || schedule.frequency;
+
+      const updatedSchedule = await schedule.save();
+      res.json(updatedSchedule);
+    } else {
+      res.status(404).json({ message: 'Schedule not found' });
+    }
+  } catch (error) {
+    console.error('Error updating schedule:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Delete a schedule
+// @route   DELETE /api/schedules/:id
+// @access  Private/Admin
+const deleteSchedule = async (req, res) => {
+  try {
+    const schedule = await MetroSchedule.findById(req.params.id);
+
+    if (schedule) {
+      await MetroSchedule.deleteOne({ _id: req.params.id });
+      res.json({ message: 'Schedule removed' });
+    } else {
+      res.status(404).json({ message: 'Schedule not found' });
+    }
+  } catch (error) {
+    console.error('Error deleting schedule:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+export { getSchedules, createSchedule, updateSchedule, deleteSchedule };

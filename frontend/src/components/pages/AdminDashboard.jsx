@@ -21,6 +21,7 @@ export default function AdminDashboard() {
   const [normalUsersCount, setNormalUsersCount] = useState(0);
   const [rapidPassUsersCount, setRapidPassUsersCount] = useState(0);
   const [recentUsers, setRecentUsers] = useState([]);
+  const [allTickets, setAllTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { token, logout } = useAuth();
@@ -35,13 +36,15 @@ export default function AdminDashboard() {
             'x-auth-token': token,
           },
         };
-        const [userCounts, recentUsers] = await Promise.all([
+        const [userCounts, recentUsers, allTicketsResponse] = await Promise.all([
           axios.get(`${import.meta.env.VITE_API_URL}/api/admin/users`, config),
-          axios.get(`${import.meta.env.VITE_API_URL}/api/admin/recent-users`, config)
+          axios.get(`${import.meta.env.VITE_API_URL}/api/admin/recent-users`, config),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/admin/tickets`, config)
         ]);
         setNormalUsersCount(userCounts.data.normalUsersCount);
         setRapidPassUsersCount(userCounts.data.rapidPassUsersCount);
         setRecentUsers(recentUsers.data);
+        setAllTickets(allTicketsResponse.data);
         setLoading(false);
       } catch (err) {
         setError(err.response?.data?.message || 'An error occurred');
@@ -107,6 +110,12 @@ export default function AdminDashboard() {
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeSection === "fines" ? "bg-blue-500 text-white" : "text-gray-700 hover:bg-gray-100"}`}
             >
               Fine Management
+            </button>
+            <button 
+              onClick={() => setActiveSection("all-tickets")}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeSection === "all-tickets" ? "bg-blue-500 text-white" : "text-gray-700 hover:bg-gray-100"}`}
+            >
+              All Tickets
             </button>
           </nav>
           
@@ -292,6 +301,49 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        );
+
+      case "all-tickets":
+        return (
+          <div className="space-y-6">
+            <h1 className="text-2xl font-bold text-gray-800">All Booked Tickets</h1>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white">
+                <thead>
+                  <tr>
+                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Ticket ID</th>
+                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User Email</th>
+                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Train</th>
+                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">From</th>
+                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">To</th>
+                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Departure</th>
+                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Arrival</th>
+                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fare</th>
+                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allTickets.map((ticket) => (
+                    <tr key={ticket._id} className="hover:bg-gray-50">
+                      <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700 font-medium">{ticket._id}</td>
+                      <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{ticket.user.email}</td>
+                      <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{ticket.schedule.trainName}</td>
+                      <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{ticket.schedule.sourceStation}</td>
+                      <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{ticket.schedule.destinationStation}</td>
+                      <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{ticket.schedule.departureTime}</td>
+                      <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{ticket.schedule.arrivalTime}</td>
+                      <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{ticket.amount} BDT</td>
+                      <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ticket.paymentStatus === "paid" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                          {ticket.paymentStatus}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         );
