@@ -52,11 +52,28 @@ const parseTimeToMinutes = (t = '00:00') => {
 };
 
 const getSchedules = async (req, res) => {
-  const { sourceStation, destinationStation } = req.query;
-  try {
-    // load station order from DB (preferred) or fallback
-    const dbOrder = await getStationOrderFromDb();
-    const STATION_ORDER = Array.isArray(dbOrder) && dbOrder.length >= 2 ? dbOrder : FALLBACK_STATION_ORDER;
+    const { sourceStation, destinationStation, time, station } = req.query;
+    try {
+        const dbOrder = await getStationOrderFromDb();
+        const STATION_ORDER = Array.isArray(dbOrder) && dbOrder.length >= 2 ? dbOrder : FALLBACK_STATION_ORDER;
+
+        const query = {};
+
+        if (station) {
+            query.$or = [
+                { sourceStation: { $regex: station, $options: 'i' } },
+                { destinationStation: { $regex: station, $options: 'i' } }
+            ];
+        }
+
+        if (time) {
+            query.departureTime = { $regex: `^${time}` };
+        }
+
+        if (Object.keys(query).length > 0) {
+            const schedules = await MetroSchedule.find(query).lean();
+            return res.json(schedules);
+        }
 
     if (!sourceStation || !destinationStation) {
       const all = await MetroSchedule.find().lean();
