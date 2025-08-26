@@ -162,5 +162,9 @@
   "download_qr_code": "Download QR Code",
   "my_tickets": "Booking History",
   "status": "Status",
-  "no_tickets_found": "No tickets found."
+  "no_tickets_found": "No tickets found.",
+  "time_of_booking": "Time of Booking:",
+  "recent_booking_history": "Recent Booking History",
+  "here": "here",
+  "txt_2": "You can view your 30 most recent booking history, "
 }

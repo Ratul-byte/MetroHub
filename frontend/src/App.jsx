@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import ResetPassword from './components/pages/ResetPassword';
 import BookTicket from './components/pages/BookTicket'; // Import the new component
 import PaymentSuccess from './components/pages/PaymentSuccess';
+import BookingHistory from './components/pages/BookingHistory';
 
 const Button = ({ className, variant, size, asChild = false, ...props }) => {
   const Comp = asChild ? 'div' : 'button';
@@ -235,6 +236,7 @@ const App = () => {
             <Route path="/search-schedules" element={<SearchSchedules />} />
             <Route path="/book-tickets" element={<BookTicket />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/booking-history" element={<BookingHistory />} />
           </Routes>
         </div>
         {!isAdmin && <Footer />}

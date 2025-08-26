@@ -270,9 +270,14 @@ const MyTicketsSection = () => {
   return (
     <section id="my-tickets" className="py-16 lg:py-24 bg-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl lg:text-4xl text-foreground text-center mb-8">
+        <h2 className="text-3xl lg:text-4xl text-foreground text-center mb-2">
           {t('my_tickets')}
         </h2>
+        <div className="text-center mb-8">
+          {t("txt_2")}<Link to="/booking-history" className="text-blue-500 hover:underline">
+            {t('here')}
+          </Link>
+        </div>
         {loadingTickets ? (
           <div className="text-center">{t('loading')}</div>
         ) : ticketsError ? (

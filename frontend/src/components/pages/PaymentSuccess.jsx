@@ -56,12 +56,10 @@ const PaymentSuccess = () => {
           <div className="w-1/2 pr-4">
             <h2 className="text-2xl font-semibold mb-4">{t('your_ticket_details')}</h2>
             <p className="text-lg"><strong>{t('ticket_id')}</strong> {ticket._id}</p>
-            <p className="text-lg"><strong>{t('train')}</strong> {ticket.schedule.trainName}</p>
             <p className="text-lg"><strong>{t('from')}</strong> {ticket.schedule.sourceStation}</p>
             <p className="text-lg"><strong>{t('to')}</strong> {ticket.schedule.destinationStation}</p>
-            <p className="text-lg"><strong>{t('departure')}</strong> {ticket.schedule.departureTime}</p>
-            <p className="text-lg"><strong>{t('arrival')}</strong> {ticket.schedule.arrivalTime}</p>
             <p className="text-lg"><strong>{t('fare')}</strong> {ticket.amount} {t('bdt')}</p>
+            <p className="text-lg"><strong>{t('time_of_booking')}</strong> {new Date(ticket.createdAt).toLocaleString()}</p>
           </div>
           {ticket.qrCode && (
             <div className="w-1/2 flex flex-col items-center justify-center">
