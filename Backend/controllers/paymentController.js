@@ -2,6 +2,8 @@ import axios from 'axios';
 import QRCode from 'qrcode';
 import Ticket from '../models/ticketModel.js';
 import MetroSchedule from '../models/metroScheduleModel.js';
+import { sendEmail } from '../services/emailService.js';
+import { User } from '../models/userModel.js';
 
 // v3 sandbox/session endpoint
 const SSL_MODE = process.env.SSL_MODE || 'sandbox';
@@ -138,6 +140,10 @@ const findTicketByTran = async (tran_id, value_a) => {
   return ticket;
 };
 
+//import { sendSms } from '../services/smsService.js';
+
+// ... (rest of the file)
+
 export const sslcommerzSuccess = async (req, res) => {
   try {
     const body = req.body || req.query;
@@ -149,8 +155,9 @@ export const sslcommerzSuccess = async (req, res) => {
     ticket.paymentStatus = 'paid';
     ticket.rawResponse = { ...(ticket.rawResponse || {}), success: body };
 
-    // Populate schedule details
+    // Populate schedule and user details
     await ticket.populate('schedule');
+    const user = await User.findById(ticket.user);
 
     const ticketInfo = {
       ticketId: ticket._id,
@@ -162,9 +169,34 @@ export const sslcommerzSuccess = async (req, res) => {
       amount: ticket.amount,
     };
 
-    const qr = await QRCode.toDataURL(JSON.stringify(ticketInfo));
-    ticket.qrCode = qr;
+    const qrBuffer = await QRCode.toBuffer(JSON.stringify(ticketInfo));
+    ticket.qrCode = `data:image/png;base64,${qrBuffer.toString('base64')}`;
     await ticket.save();
+
+    // Send Email notification
+    if (user && user.email) {
+      const subject = 'Your MetroHub Ticket Confirmation';
+      const text = `Your ticket from ${ticket.schedule.sourceStation} to ${ticket.schedule.destinationStation} has been booked successfully.`;
+      const html = `
+        <h3>Your MetroHub Ticket Confirmation</h3>
+        <p>Your ticket from <strong>${ticket.schedule.sourceStation}</strong> to <strong>${ticket.schedule.destinationStation}</strong> has been booked successfully.</p>
+        <p><strong>Train:</strong> ${ticket.schedule.trainName}</p>
+        <p><strong>Departure:</strong> ${ticket.schedule.departureTime}</p>
+        <p><strong>Arrival:</strong> ${ticket.schedule.arrivalTime}</p>
+        <p><strong>Fare:</strong> ${ticket.amount} BDT</p>
+        <p>Thank you for using MetroHub!</p>
+        <p>Here is your QR code:</p>
+        <img src="cid:qrcode"/>
+      `;
+      const attachments = [
+        {
+          filename: 'qrcode.png',
+          content: qrBuffer,
+          cid: 'qrcode',
+        },
+      ];
+      await sendEmail(user.email, subject, text, html, attachments);
+    }
 
     const frontend = process.env.FRONTEND_URL;
     const redirectUrl = `${frontend}/payment-success?ticket=${ticket._id}`;
@@ -202,7 +234,7 @@ export const sslcommerzFail = async (req, res) => {
       await ticket.save();
     }
     const frontend = process.env.FRONTEND_URL;
-    return res.redirect(`${frontend}/payment-failed?ticket=${ticket?._id || ''}`);
+    return res.redirect(`${frontend}/book-tickets`);
   } catch (err) {
     console.error('sslcommerzFail error', err);
     return res.status(500).send('fail handler error');

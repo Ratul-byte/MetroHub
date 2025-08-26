@@ -56,7 +56,11 @@ const BookTicket = () => {
         );
         const data = res.data || [];
         setSchedules(data);
-        if (!data.length) setError(t('no_schedules_found') || 'No schedules found for selected route.');
+        if (data.length > 0) {
+          setSelectedSchedule(data[0]);
+        } else {
+          setError(t('no_schedules_found') || 'No schedules found for selected route.');
+        }
       } catch (err) {
         console.error('fetch schedules error', err);
         setError(t('no_schedules_found') || 'No schedules found for selected route.');
@@ -161,8 +165,9 @@ const BookTicket = () => {
                       const durationMin = dep && arr ? Math.abs(parseTimeToMinutes(arr) - parseTimeToMinutes(dep)) : null;
                       const path = (s.stations && s.stations.join(' -> ')) || (s.path) || '';
                       return (
-                        <label
+                        <div
                           key={s.trainName + (s.departureTime || s.fare)}
+                          onClick={() => handleSelect(s)}
                           className={`flex flex-col md:flex-row items-start md:items-center justify-between p-3 border rounded-md cursor-pointer ${selectedSchedule === s ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200'}`}
                         >
                           <div className="flex-1">
@@ -174,17 +179,7 @@ const BookTicket = () => {
                               {i18n?.language === 'bn' ? ' টাকা' : ' BDT'}
                             </div>
                           </div>
-
-                          <div className="ml-4 mt-3 md:mt-0 flex items-center">
-                            <input
-                              type="radio"
-                              name="selectedSchedule"
-                              checked={selectedSchedule === s}
-                              onChange={() => handleSelect(s)}
-                              className="h-5 w-5 text-indigo-600"
-                            />
-                          </div>
-                        </label>
+                        </div>
                       );
                     })}
                   </div>
@@ -198,7 +193,8 @@ const BookTicket = () => {
           )}
 
           <Button
-            type="submit"
+            type="button"
+            onClick={handleBookTicket}
             disabled={loading || !selectedSchedule}
             className={`w-full bg-indigo-600 text-white rounded-md py-2 px-4 transition transform hover:bg-indigo-700 hover:shadow-md hover:-translate-y-1 ${(!selectedSchedule || loading) ? 'opacity-60 cursor-not-allowed' : ''}`}
           >
