@@ -8,6 +8,7 @@ import adminRoutes from './routes/adminRoutes.js';
 import stationRoutes from './routes/stationRoutes.js';
 import scheduleRoutes from './routes/scheduleRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
+import qrRoutes from './routes/qrRoutes.cjs';
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/stations', stationRoutes);
 app.use('/api/schedules', scheduleRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/qr', qrRoutes);
 
 // numeric PORT and startup logging
 const PORT = Number(process.env.PORT) || 5000;

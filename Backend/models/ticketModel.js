@@ -35,7 +35,23 @@ const ticketSchema = mongoose.Schema(
         },
     },
     {
-        timestamps: true,
+        createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  journeyStartTime: {
+    type: Date,
+  },
+  journeyEndTime: {
+    type: Date,
+  },
+  fine: {
+    type: Number,
+    default: 0,
+  },
+  scannedAt: {
+    type: Date,
+  },
     }
 );
 

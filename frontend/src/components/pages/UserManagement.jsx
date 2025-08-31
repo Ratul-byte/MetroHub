@@ -95,6 +95,7 @@ const UserManagement = () => {
                 <th className="py-2 px-4 border-b">Role</th>
                 <th className="py-2 px-4 border-b">Rapid Pass ID</th>
                 <th className="py-2 px-4 border-b">Pass Balance</th>
+                <th className="py-2 px-4 border-b">Fine</th>
               </tr>
             </thead>
             <tbody>
@@ -106,7 +107,8 @@ const UserManagement = () => {
                   <td className="py-2 px-4 border-b">{user.phoneNumber}</td>
                   <td className="py-2 px-4 border-b">{user.role}</td>
                   <td className="py-2 px-4 border-b">{user.rapidPassId || 'N/A'}</td>
-                  <td className="py-2 px-4 border-b">{user.passBalance !== undefined ? `$${user.passBalance.toFixed(2)}` : 'N/A'}</td>
+                  <td className="py-2 px-4 border-b">{user.passBalance !== undefined ? `${user.passBalance.toFixed(2)}` : 'N/A'}</td>
+                  <td className="py-2 px-4 border-b">{user.fine !== undefined ? `${user.fine.toFixed(2)}` : 'N/A'}</td>
                 </tr>
               ))}
             </tbody>

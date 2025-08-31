@@ -322,6 +322,9 @@ export default function AdminDashboard() {
                     <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Arrival</th>
                     <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fare</th>
                     <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Journey Start</th>
+                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Journey End</th>
+                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fine</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -340,6 +343,9 @@ export default function AdminDashboard() {
                           {ticket.paymentStatus}
                         </span>
                       </td>
+                      <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{ticket.journeyStartTime ? new Date(ticket.journeyStartTime).toLocaleString() : 'N/A'}</td>
+                      <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{ticket.journeyEndTime ? new Date(ticket.journeyEndTime).toLocaleString() : 'N/A'}</td>
+                      <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{ticket.fine} BDT</td>
                     </tr>
                   ))}
                 </tbody>

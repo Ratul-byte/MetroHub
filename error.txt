@@ -1,0 +1,15 @@
+PS D:\Metro2\MetroHub\Backend> npm start       
+
+> backend@1.0.0 start
+> node server.js
+
+file:///D:/Metro2/MetroHub/Backend/controllers/qrController.js:2
+import User from '../models/userModel.js';     
+       ^^^^
+SyntaxError: The requested module '../models/userModel.js' does not provide an export named 'default'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:220:21)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:321:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:644:26)        
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.17.1
