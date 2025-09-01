@@ -293,3 +293,61 @@ export const sslcommerzIPN = async (req, res) => {
     return res.status(500).send('ipn handler error');
   }
 };
+
+export const payFromBalance = async (req, res) => {
+  try {
+    const { scheduleId, amount } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.role !== 'rapidPassUser') {
+      return res.status(403).json({ message: 'User is not a rapid pass user' });
+    }
+
+    if (user.passBalance < amount) {
+      return res.status(400).json({ message: 'Insufficient balance' });
+    }
+
+    const schedule = await MetroSchedule.findById(scheduleId);
+    if (!schedule) {
+      return res.status(404).json({ message: 'Schedule not found' });
+    }
+
+    user.passBalance -= amount;
+    await user.save();
+
+    const tranId = `tran_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
+    const ticketData = {
+      user: req.user._id,
+      schedule: scheduleId,
+      amount,
+      transactionId: tranId,
+      paymentStatus: 'paid',
+    };
+
+    const ticket = await Ticket.create(ticketData);
+
+    const ticketInfo = {
+      ticketId: ticket._id,
+      trainName: schedule.trainName,
+      sourceStation: schedule.sourceStation,
+      destinationStation: schedule.destinationStation,
+      departureTime: schedule.departureTime,
+      arrivalTime: schedule.arrivalTime,
+      amount: ticket.amount,
+    };
+
+    const qrBuffer = await QRCode.toBuffer(JSON.stringify(ticketInfo));
+    ticket.qrCode = `data:image/png;base64,${qrBuffer.toString('base64')}`;
+    await ticket.save();
+
+    res.status(201).json(ticket);
+  } catch (err) {
+    console.error('payFromBalance error', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

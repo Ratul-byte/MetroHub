@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
 
+import { useAuth } from '../../context/AuthContext';
+
 const API = import.meta.env.VITE_API_URL;
 
 const parseTimeToMinutes = (t = '00:00') => {
@@ -21,6 +23,7 @@ const formatFareForLocale = (amount, i18n) => {
 
 const BookTicket = () => {
   const { t, i18n } = useTranslation();
+  const { user } = useAuth();
   const [stations, setStations] = useState([]);
   const [sourceStation, setSourceStation] = useState('');
   const [destinationStation, setDestinationStation] = useState('');
@@ -112,6 +115,44 @@ const BookTicket = () => {
     }
   };
 
+  const handlePayFromBalance = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    if (!selectedSchedule) {
+      setError(t('please_select_schedule') || 'Please select a schedule.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const payload = {
+        scheduleId: selectedSchedule.segmentIds ? selectedSchedule.segmentIds[0] : selectedSchedule.scheduleId || null,
+        amount: selectedSchedule.fare || 0,
+      };
+
+      const res = await axios.post(`${API}/api/payment/pay-from-balance`, payload, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+          'Content-Type': 'application/json'
+        },
+      });
+
+      const ticket = res.data;
+      if (ticket && ticket._id) {
+        window.location.href = `/payment-success?ticket=${ticket._id}`;
+      } else {
+        setError(t('payment_failed') || 'Payment failed.');
+      }
+    } catch (err) {
+      console.error('Pay from balance error', err.response?.data || err.message);
+      setError(err.response?.data?.message || t('payment_failed') || 'Payment failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">{t('book_tickets')}</h1>
@@ -119,7 +160,7 @@ const BookTicket = () => {
       {error && <p className="text-red-500 bg-red-100 p-3 rounded mb-4">{error}</p>}
 
       <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-        <form onSubmit={handleBookTicket}>
+        <form>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t('source_station')}</label>
@@ -192,14 +233,26 @@ const BookTicket = () => {
             </>
           )}
 
-          <Button
-            type="button"
-            onClick={handleBookTicket}
-            disabled={loading || !selectedSchedule}
-            className={`w-full bg-indigo-600 text-white rounded-md py-2 px-4 transition transform hover:bg-indigo-700 hover:shadow-md hover:-translate-y-1 ${(!selectedSchedule || loading) ? 'opacity-60 cursor-not-allowed' : ''}`}
-          >
-            {loading ? t('processing_payment') : t('Proceed to Payment')}
-          </Button>
+          <div className="flex gap-4">
+            <Button
+              type="button"
+              onClick={handleBookTicket}
+              disabled={loading || !selectedSchedule}
+              className={`w-full bg-indigo-600 text-white rounded-md py-2 px-4 transition transform hover:bg-indigo-700 hover:shadow-md hover:-translate-y-1 ${(!selectedSchedule || loading) ? 'opacity-60 cursor-not-allowed' : ''}`}
+            >
+              {loading ? t('processing_payment') : t('Proceed to Payment')}
+            </Button>
+            {user && user.role === 'rapidPassUser' && (
+              <Button
+                type="button"
+                onClick={handlePayFromBalance}
+                disabled={loading || !selectedSchedule}
+                className={`w-full bg-green-600 text-white rounded-md py-2 px-4 transition transform hover:bg-green-700 hover:shadow-md hover:-translate-y-1 ${(!selectedSchedule || loading) ? 'opacity-60 cursor-not-allowed' : ''}`}
+              >
+                {loading ? t('processing_payment') : t('Pay from Rapid Pass Balance')}
+              </Button>
+            )}
+          </div>
         </form>
       </div>
     </div>
