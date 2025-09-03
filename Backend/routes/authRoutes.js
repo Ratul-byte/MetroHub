@@ -183,7 +183,9 @@ router.post('/login', async (request, response) => {
             user: {
                 id: user._id,
                 name: user.name,
-                role: user.role
+                role: user.role,
+                rapidPassId: user.rapidPassId,
+                passBalance: user.passBalance
             }
         });
 

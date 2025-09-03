@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import logo from '../../assets/logo main 1.png';
+import React, { useState } from 'react';
 import homepageImg2 from '../../assets/homepage_img2.jpg';
-import homepageImg3 from '../../assets/homepage_img3.jpg';
 import timeImage from '../../assets/time.png';
 import ticketImage from '../../assets/ticket.png';
-import { ArrowRight, Clock, Ticket, MapPin, Download, Mail, Phone, Github, Twitter, Linkedin, Menu, Globe } from 'lucide-react';
+import { ArrowRight, Clock, Ticket, MapPin } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../context/AuthContext';
-import axios from 'axios';
 
 const Button = ({ className, variant, size, asChild = false, ...props }) => {
   const Comp = asChild ? 'div' : 'button';
@@ -19,23 +15,11 @@ const Card = ({ className, ...props }) => (
   <div className={`card ${className}`} {...props} />
 );
 
-const CardHeader = ({ className, ...props }) => (
-  <div className={`card-header ${className}`} {...props} />
-);
-
-const CardTitle = ({ className, ...props }) => (
-  <h4 className={`card-title ${className}`} {...props} />
-);
-
-const CardContent = ({ className, ...props }) => (
-  <div className={`card-content ${className}`} {...props} />
-);
-
 const ImageWithFallback = ({ src, alt, ...props }) => {
   const [error, setError] = useState(false);
   const handleError = () => setError(true);
   return error ? (
-    <div className="image-fallback" {...props}>
+    <div className="image-fallback">
       Error
     </div>
   ) : (
@@ -64,9 +48,6 @@ const Hero = () => {
                 {t('get_started_now')}
                 <ArrowRight className="h-4 w-4" />
               </Button>
-              {/* <Button variant="outline" size="lg">
-                View Demo
-              </Button> */}
             </div>
             
             <div className="flex items-center gap-8 pt-4">
@@ -103,15 +84,10 @@ const Hero = () => {
 
 const Features = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   const handleBookNow = () => {
-    if (user) {
-      navigate('/book-tickets');
-    } else {
-      navigate('/login');
-    }
+    navigate('/login');
   };
 
   const features = [
@@ -121,7 +97,7 @@ const Features = () => {
       description: t('feature1_description'),
       image: timeImage,
       action: t('view_schedules'),
-      path: '/search-schedules' // Added path for View Schedules
+      path: '/search-schedules'
     },
     {
       icon: Ticket,
@@ -137,7 +113,7 @@ const Features = () => {
       description: t('feature3_description'),
       image: "https://images.unsplash.com/photo-1736117703288-3f918a212c31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZXRybyUyMG1hcCUyMHRyYW5zcG9ydGF0aW9ufGVufDF8fHx8MTc1NTIzODI4MXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
       action: t('find_stations'),
-      path: '/map' // Path for Find Stations
+      path: '/map'
     }
   ];
 
@@ -169,7 +145,7 @@ const Features = () => {
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
                   <p className="text-gray-600 mb-4">{feature.description}</p>
-                  {feature.path ? ( // Check if path exists
+                  {feature.path ? (
                     <Link to={feature.path} className="w-full">
                       <Button variant="outline" className="w-full border-gray-200 text-black rounded-md hover:bg-black hover:text-white flex items-center justify-center">
                         {feature.action}
@@ -214,14 +190,6 @@ const CallToAction = () => {
               {t('start_planning_trip')}
               <ArrowRight className="h-4 w-4" />
             </Button>
-            {/* <Button 
-              size="lg" 
-              variant="outline"
-              className="flex items-center gap-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
-            >
-              <Download className="h-4 w-4" />
-              Download MetroHub App
-            </Button> */}
           </div>
           
           <div className="flex items-center justify-center space-x-8 pt-8 text-sm opacity-75">
@@ -235,82 +203,11 @@ const CallToAction = () => {
   );
 };
 
-const MyTicketsSection = () => {
-  const { t } = useTranslation();
-  const { user, token } = useAuth();
-  const [tickets, setTickets] = useState([]);
-  const [loadingTickets, setLoadingTickets] = useState(true);
-  const [ticketsError, setTicketsError] = useState('');
-
-  useEffect(() => {
-    const fetchTickets = async () => {
-      if (user && token) {
-        try {
-          setLoadingTickets(true);
-          const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/tickets`, {
-            headers: {
-              'x-auth-token': token,
-            },
-          });
-          setTickets(response.data);
-        } catch (err) {
-          setTicketsError(err.response?.data?.message || t('failed_to_fetch_ticket_details'));
-        } finally {
-          setLoadingTickets(false);
-        }
-      }
-    };
-    fetchTickets();
-  }, [user, token]);
-
-  if (!user) {
-    return null; // Don't render if user is not logged in
-  }
-
-  return (
-    <section id="my-tickets" className="py-16 lg:py-24 bg-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl lg:text-4xl text-foreground text-center mb-2">
-          {t('my_tickets')}
-        </h2>
-        <div className="text-center mb-8">
-          {t("txt_2")}<Link to="/booking-history" className="text-blue-500 hover:underline">
-            {t('here')}
-          </Link>
-        </div>
-        {loadingTickets ? (
-          <div className="text-center">{t('loading')}</div>
-        ) : ticketsError ? (
-          <div className="text-center text-red-500">{ticketsError}</div>
-        ) : tickets.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tickets.map((ticket) => (
-              <div key={ticket._id} className="bg-white p-6 rounded-lg shadow-md">
-                <p><strong>{t('ticket_id')}</strong> {ticket._id}</p>
-                <p><strong>{t('train')}</strong> {ticket.schedule.trainName}</p>
-                <p><strong>{t('from')}</strong> {ticket.schedule.sourceStation}</p>
-                <p><strong>{t('to')}</strong> {ticket.schedule.destinationStation}</p>
-                <p><strong>{t('departure')}</strong> {ticket.schedule.departureTime}</p>
-                <p><strong>{t('arrival')}</strong> {ticket.schedule.arrivalTime}</p>
-                <p><strong>{t('fare')}</strong> {ticket.amount} {t('bdt')}</p>
-                <p><strong>{t('status')}</strong> {ticket.paymentStatus}</p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-center text-gray-500">{t('no_tickets_found')}</p>
-        )}
-      </div>
-    </section>
-  );
-};
-
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       <main>
         <Hero />
-        <MyTicketsSection />
         <Features />
         <CallToAction />
       </main>

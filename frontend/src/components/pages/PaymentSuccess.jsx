@@ -59,7 +59,14 @@ const PaymentSuccess = () => {
             <p className="text-lg"><strong>{t('from')}</strong> {ticket.schedule.sourceStation}</p>
             <p className="text-lg"><strong>{t('to')}</strong> {ticket.schedule.destinationStation}</p>
             <p className="text-lg"><strong>{t('fare')}</strong> {ticket.amount} {t('bdt')}</p>
-            <p className="text-lg"><strong>{t('time_of_booking')}</strong> {new Date(ticket.createdAt).toLocaleString()}</p>
+            <p className="text-lg"><strong>{t('fare')}</strong> {ticket.amount} {t('bdt')}</p>
+            <p className="text-lg"><strong>{t('time_of_booking')}</strong> {new Date(ticket.createdAt).toLocaleString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}</p>
           </div>
           {ticket.qrCode && (
             <div className="w-1/2 flex flex-col items-center justify-center">
