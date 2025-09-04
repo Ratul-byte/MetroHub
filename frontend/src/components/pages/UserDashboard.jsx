@@ -6,6 +6,7 @@ import axios from 'axios';
 import { ArrowRight, Clock, Ticket, MapPin, TrendingUp, Wallet, Shield, Cross, DollarSignIcon } from 'lucide-react';
 import timeImage from '../../assets/time.png';
 import ticketImage from '../../assets/ticket.png';
+import mapImage from '../../assets/map.png';
 import { Icon } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import image0 from '../../assets/Hero/0.jpg';
@@ -14,6 +15,9 @@ import image2 from '../../assets/Hero/2.jpg';
 import image3 from '../../assets/Hero/3.jpg';
 import image4 from '../../assets/Hero/4.jpg';
 import image5 from '../../assets/Hero/5.png';
+import timeImage2 from '../../assets/timeu.png';
+import ticketImage2 from '../../assets/ticket2.png';
+
 
 
 const Button = ({ className, variant, size, asChild = false, ...props }) => {
@@ -41,10 +45,17 @@ const UserHero = () => {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [hoveredButton, setHoveredButton] = useState(null);
 
   const heroImages = [
     image0, image1, image2, image3, image4, image5
   ];
+
+  const buttonImages = {
+    book: ticketImage2,
+    schedule: timeImage2,
+    map: mapImage
+  };
 
   // Auto-slide effect
   useEffect(() => {
@@ -54,6 +65,14 @@ const UserHero = () => {
 
     return () => clearInterval(interval);
   }, [heroImages.length]);
+
+  const handleMouseEnter = (image) => {
+    setHoveredButton(image);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredButton(null);
+  };
 
   return (
     <section className="relative bg-background overflow-hidden">
@@ -70,7 +89,7 @@ const UserHero = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/book-tickets">
+                <Link to="/book-tickets" onMouseEnter={() => handleMouseEnter(buttonImages.book)} onMouseLeave={handleMouseLeave}>
                     <Button size="lg" className="hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2 border-black border-2">
                         <div className="flex items-center justify-center">
                         <Ticket className="h-4 w-7" />
@@ -81,7 +100,7 @@ const UserHero = () => {
                         </div>
                     </Button>
                 </Link>
-                <Link to="/search-schedules">
+                <Link to="/search-schedules" onMouseEnter={() => handleMouseEnter(buttonImages.schedule)} onMouseLeave={handleMouseLeave}>
                     <Button size="lg" className="hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2 border-black border-2">
                         <div className="flex items-center justify-center">
                         <Clock className="h-4 w-7" />
@@ -92,7 +111,7 @@ const UserHero = () => {
                         </div>
                     </Button>
                 </Link>
-                <Link to="/map">
+                <Link to="/map" onMouseEnter={() => handleMouseEnter(buttonImages.map)} onMouseLeave={handleMouseLeave}>
                     <Button size="lg" className="hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2 border-black border-2">
                         <div className="flex items-center justify-center">
                         <MapPin className="h-4 w-7" />
@@ -142,14 +161,14 @@ const UserHero = () => {
             <div className="relative overflow-hidden rounded-2xl shadow-2xl">
               <AnimatePresence mode="wait">
                 <motion.img
-                  key={currentSlide} 
-                  src={heroImages[currentSlide]}
+                  key={hoveredButton || currentSlide} 
+                  src={hoveredButton || heroImages[currentSlide]}
                   alt="Metro Station"
                   className="w-full h-96 lg:h-[500px] object-cover center rounded-2xl"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  exit={{ opacity: 1 }}
-                  transition={{ duration: 1.1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
                 />
               </AnimatePresence>
 
@@ -179,7 +198,7 @@ const MyTicketsSection = () => {
               'x-auth-token': token,
             },
           });
-          setTickets(response.data);
+          setTickets(response.data.slice(0, 3));
         } catch (err) {
           setTicketsError(err.response?.data?.message || t('failed_to_fetch_ticket_details'));
         } finally {
@@ -324,8 +343,9 @@ export default function UserDashboard() {
       <main>
         <UserHero />
         <MyTicketsSection />
-        <Features />
+        {/* <Features /> */}
       </main>
     </div>
   );
 }
+

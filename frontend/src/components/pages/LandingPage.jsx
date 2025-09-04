@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import homepageImg2 from '../../assets/homepage_img2.jpg';
 import timeImage from '../../assets/time.png';
 import ticketImage from '../../assets/ticket.png';
+import ticketImage2 from '../../assets/ticket2.png';
+import mapImage from '../../assets/map.png';
 import { ArrowRight, Clock, Ticket, MapPin } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import AnimatedSection from '../ui/AnimatedSection';
 
 const Button = ({ className, variant, size, asChild = false, ...props }) => {
   const Comp = asChild ? 'div' : 'button';
@@ -103,7 +106,7 @@ const Features = () => {
       icon: Ticket,
       title: t('feature2_title'),
       description: t('feature2_description'),
-      image: ticketImage,
+      image: ticketImage2,
       action: t('book_now'),
       onClick: handleBookNow
     },
@@ -111,7 +114,7 @@ const Features = () => {
       icon: MapPin,
       title: t('feature3_title'),
       description: t('feature3_description'),
-      image: "https://images.unsplash.com/photo-1736117703288-3f918a212c31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZXRybyUyMG1hcCUyMHRyYW5zcG9ydGF0aW9ufGVufDF8fHx8MTc1NTIzODI4MXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      image: mapImage,
       action: t('find_stations'),
       path: '/map'
     }
@@ -207,9 +210,15 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       <main>
-        <Hero />
-        <Features />
-        <CallToAction />
+        <AnimatedSection>
+          <Hero />
+        </AnimatedSection>
+        <AnimatedSection delay={0.7}>
+          <Features />
+        </AnimatedSection>
+        <AnimatedSection delay={0.3}>
+          <CallToAction />
+        </AnimatedSection>
       </main>
     </div>
   );

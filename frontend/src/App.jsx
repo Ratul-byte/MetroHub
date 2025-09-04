@@ -21,6 +21,8 @@ import ResetPassword from './components/pages/ResetPassword';
 import BookTicket from './components/pages/BookTicket'; // Import the new component
 import PaymentSuccess from './components/pages/PaymentSuccess';
 import BookingHistory from './components/pages/BookingHistory';
+import {Extras} from './components/pages/Extras';
+import {AboutUs} from './components/pages/AboutUs';
 
 const Button = ({ className, variant, size, asChild = false, ...props }) => {
   const Comp = asChild ? 'div' : 'button';
@@ -126,7 +128,9 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <img src={logo} alt="MetroHub Logo" className="h-8 w-auto" />
+              <Link to="/extras">
+                <img src={logo} alt="MetroHub Logo" className="h-8 w-auto" />
+              </Link>
               <span className="text-lg font-semibold">MetroHub</span>
             </div>
             <p className="text-sm text-muted-foreground max-w-xs">
@@ -245,6 +249,8 @@ const App = () => {
             <Route path="/book-tickets" element={<BookTicket />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/booking-history" element={<BookingHistory />} />
+            <Route path="/extras" element={<Extras />} />
+            <Route path="/about" element={<AboutUs />} />
           </Routes>
         </div>
         {!isAdmin && <Footer />}

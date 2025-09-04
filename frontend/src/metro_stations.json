@@ -1,0 +1,138 @@
+[
+  {
+    "name": "Uttara North Metro Station",
+    "latitude": 23.8759,
+    "longitude": 90.3977,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 1,
+    "__v": 1.0
+  },
+  {
+    "name": "Uttara Center Metro Station",
+    "latitude": 23.8667,
+    "longitude": 90.3933,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 2,
+    "__v": 1.0
+  },
+  {
+    "name": "Uttara South Metro Station",
+    "latitude": 23.8575,
+    "longitude": 90.3892,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 3,
+    "__v": 1.0
+  },
+  {
+    "name": "Pallabi Metro Station",
+    "latitude": 23.84,
+    "longitude": 90.38,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 4,
+    "__v": 1.0
+  },
+  {
+    "name": "Mirpur 11 Metro Station",
+    "latitude": 23.818,
+    "longitude": 90.373,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 5,
+    "__v": 1.0
+  },
+  {
+    "name": "Mirpur 10 Metro Station",
+    "latitude": 23.8077,
+    "longitude": 90.3689,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 6,
+    "__v": 1.0
+  },
+  {
+    "name": "Kazipara Metro Station",
+    "latitude": 23.798,
+    "longitude": 90.365,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 7,
+    "__v": 1.0
+  },
+  {
+    "name": "Shewrapara Metro Station",
+    "latitude": 23.793,
+    "longitude": 90.369,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 8,
+    "__v": 1.0
+  },
+  {
+    "name": "Agargaon Metro Station",
+    "latitude": 23.789,
+    "longitude": 90.378,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 9,
+    "__v": 1.0
+  },
+  {
+    "name": "Bijoy Sarani Metro Station",
+    "latitude": 23.768,
+    "longitude": 90.392,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 10,
+    "__v": 1.0
+  },
+  {
+    "name": "Farmgate Metro Station",
+    "latitude": 23.7588,
+    "longitude": 90.39,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 11,
+    "__v": 1.0
+  },
+  {
+    "name": "Karwan Bazar Metro Station",
+    "latitude": 23.75,
+    "longitude": 90.395,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 12,
+    "__v": 1.0
+  },
+  {
+    "name": "Shahbag Metro Station",
+    "latitude": 23.738,
+    "longitude": 90.398,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 13,
+    "__v": 1.0
+  },
+  {
+    "name": "Dhaka University Metro Station",
+    "latitude": 23.73,
+    "longitude": 90.405,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 14,
+    "__v": 1.0
+  },
+  {
+    "name": "Bangladesh Secretariat Metro Station",
+    "latitude": 23.72,
+    "longitude": 90.412,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 15,
+    "__v": 1.0
+  },
+  {
+    "name": "Motijheel Metro Station",
+    "latitude": 23.7266,
+    "longitude": 90.419,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 16,
+    "__v": 1.0
+  },
+  {
+    "name": "Malibagh Metro Station",
+    "latitude": 23.74657,
+    "longitude": 90.4123,
+    "dateCreated": "2025-09-05T02:08:00+06:00",
+    "serial": 17,
+    "__v": 1.0
+  }
+]

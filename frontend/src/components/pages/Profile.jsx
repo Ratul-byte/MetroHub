@@ -152,7 +152,7 @@ const Profile = () => {
               {user.role === 'rapidPassUser' ? (
                 <div className="text-center">
                   <p className="text-green-600">{t('you_are_rapid_pass_user')}</p>
-                  <p>{t('balance')}: ৳{user && user.passBalance ? user.passBalance.toFixed(2) : '0.00'}</p>
+
                 </div>
               ) : (
                 <>

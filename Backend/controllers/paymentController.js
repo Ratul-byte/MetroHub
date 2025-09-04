@@ -316,8 +316,12 @@ export const payFromBalance = async (req, res) => {
       return res.status(404).json({ message: 'Schedule not found' });
     }
 
+    console.log(`User ${user._id} passBalance before deduction: ${user.passBalance}`);
+    console.log(`Amount to deduct: ${amount}`);
     user.passBalance -= amount;
+    console.log(`User ${user._id} passBalance after deduction: ${user.passBalance}`);
     await user.save();
+    console.log(`User ${user._id} saved with new passBalance.`);
 
     const tranId = `tran_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 

@@ -1,8 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Button from "../ui/Button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
+import { Badge } from "../ui/badge.jsx";
+import { Separator } from "../ui/separator.jsx";
+import { Clock, MapPin, CreditCard, Wallet, Train, ArrowRight, CheckCircle, ChevronDown } from "lucide-react";
+import { Alert, AlertDescription } from "../ui/alert.jsx";
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
-import Button from '../ui/Button';
-
 import { useAuth } from '../../context/AuthContext';
 
 const API = import.meta.env.VITE_API_URL;
@@ -21,17 +26,21 @@ const formatFareForLocale = (amount, i18n) => {
   }
 };
 
-const BookTicket = () => {
+export default function BookTicket() {
   const { t, i18n } = useTranslation();
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [stations, setStations] = useState([]);
-  const [sourceStation, setSourceStation] = useState('');
-  const [destinationStation, setDestinationStation] = useState('');
+  const [sourceStation, setSourceStation] = useState("");
+  const [destinationStation, setDestinationStation] = useState("");
   const [schedules, setSchedules] = useState([]);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [loading, setLoading] = useState(false);
   const [schedulesLoading, setSchedulesLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("gateway");
+  const [isPaymentVisible, setIsPaymentVisible] = useState(false);
+
+  const paymentSectionRef = useRef(null);
 
   useEffect(() => {
     const fetchStations = async () => {
@@ -48,7 +57,7 @@ const BookTicket = () => {
   useEffect(() => {
     setSelectedSchedule(null);
     setSchedules([]);
-    setError('');
+    setError("");
     if (!sourceStation || !destinationStation) return;
 
     const fetchSchedules = async () => {
@@ -75,19 +84,43 @@ const BookTicket = () => {
     fetchSchedules();
   }, [sourceStation, destinationStation, t]);
 
-  const handleSelect = (sched) => {
-    setSelectedSchedule(sched);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsPaymentVisible(entry.isIntersecting);
+      },
+      {
+        threshold: 0.2,
+        rootMargin: "-100px 0px 0px 0px",
+      }
+    );
+
+    if (paymentSectionRef.current) {
+      observer.observe(paymentSectionRef.current);
+    }
+
+    return () => {
+      if (paymentSectionRef.current) {
+        observer.unobserve(paymentSectionRef.current);
+      }
+    };
+  }, [selectedSchedule]);
+
+  const scrollToPayment = () => {
+    paymentSectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   };
 
-  const handleBookTicket = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+  const handleBookTicket = async () => {
     if (!selectedSchedule) {
-      setError(t('please_select_schedule') || 'Please select a schedule.');
-      setLoading(false);
+      setError("Please select a schedule.");
       return;
     }
+
+    setLoading(true);
+    setError("");
 
     try {
       const token = localStorage.getItem('token');
@@ -115,15 +148,14 @@ const BookTicket = () => {
     }
   };
 
-  const handlePayFromBalance = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+  const handlePayFromBalance = async () => {
     if (!selectedSchedule) {
-      setError(t('please_select_schedule') || 'Please select a schedule.');
-      setLoading(false);
+      setError("Please select a schedule.");
       return;
     }
+
+    setLoading(true);
+    setError("");
 
     try {
       const token = localStorage.getItem('token');
@@ -141,6 +173,14 @@ const BookTicket = () => {
 
       const ticket = res.data;
       if (ticket && ticket._id) {
+        // Fetch updated user data after successful payment
+        const userRes = await axios.get(`${API}/api/user/profile`, {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : undefined,
+          },
+        });
+        console.log('User profile API response:', userRes.data);
+        updateUser(userRes.data); // Update user context with new balance
         window.location.href = `/payment-success?ticket=${ticket._id}`;
       } else {
         setError(t('payment_failed') || 'Payment failed.');
@@ -154,109 +194,408 @@ const BookTicket = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{t('book_tickets')}</h1>
-
-      {error && <p className="text-red-500 bg-red-100 p-3 rounded mb-4">{error}</p>}
-
-      <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-        <form>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('source_station')}</label>
-              <select
-                value={sourceStation}
-                onChange={(e) => setSourceStation(e.target.value)}
-                className="p-2 border border-gray-300 rounded-md w-full"
-              >
-                <option value="">{t('Select Source Station')}</option>
-                {stations.map((st) => (
-                  <option key={st._id} value={st.name}>{st.name}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('destination_station')}</label>
-              <select
-                value={destinationStation}
-                onChange={(e) => setDestinationStation(e.target.value)}
-                className="p-2 border border-gray-300 rounded-md w-full"
-              >
-                <option value="">{t('Select Destination Station')}</option>
-                {stations.map((st) => (
-                  <option key={st._id} value={st.name}>{st.name}</option>
-                ))}
-              </select>
-            </div>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold mb-2">Book Your Ticket</h1>
+            <p className="text-muted-foreground">Select your route and travel with ease on Dhaka Metro Rail</p>
           </div>
 
-          {sourceStation && destinationStation && (
-            <>
-              <div className="mb-4">
-                <h2 className="text-lg font-medium mb-2">{t('available_schedules') || 'Available Schedules'}</h2>
-
-                {schedulesLoading && <p>{t('loading') || 'Loading schedules...'}</p>}
-
-                {!schedulesLoading && schedules.length > 0 && (
-                  <div className="space-y-3">
-                    {schedules.map((s) => {
-                      const dep = s.departureTime || (s.stations && s.stations[0] && s.stations[0].departureTime) || '';
-                      const arr = s.arrivalTime || (s.stations && s.stations[s.stations.length - 1] && s.stations[s.stations.length - 1].arrivalTime) || '';
-                      const durationMin = dep && arr ? Math.abs(parseTimeToMinutes(arr) - parseTimeToMinutes(dep)) : null;
-                      const path = (s.stations && s.stations.join(' -> ')) || (s.path) || '';
-                      return (
-                        <div
-                          key={s.trainName + (s.departureTime || s.fare)}
-                          onClick={() => handleSelect(s)}
-                          className={`flex flex-col md:flex-row items-start md:items-center justify-between p-3 border rounded-md cursor-pointer ${selectedSchedule === s ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200'}`}
-                        >
-                          <div className="flex-1">
-                            <div className="font-semibold">{s.trainName}</div>
-                            <div className="text-sm text-gray-600">{s.direction || ''} · {dep} → {arr} {durationMin ? `· ${durationMin} min` : ''}</div>
-                            {path && <div className="text-sm text-gray-700 mt-2">{path}</div>}
-                            <div className="text-sm text-gray-800 mt-2 font-medium">
-                              {t('estimated_fare', { amount: formatFareForLocale(s.fare || 0, i18n) })}
-                              {i18n?.language === 'bn' ? ' টাকা' : ' BDT'}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {!schedulesLoading && schedules.length === 0 && (
-                  <p className="text-sm text-gray-500">{t('no_schedules_found') || 'No schedules found for this route.'}</p>
-                )}
-              </div>
-            </>
+          {error && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
 
-          <div className="flex gap-4">
-            <Button
-              type="button"
-              onClick={handleBookTicket}
-              disabled={loading || !selectedSchedule}
-              className={`w-full bg-indigo-600 text-white rounded-md py-2 px-4 transition transform hover:bg-indigo-700 hover:shadow-md hover:-translate-y-1 ${(!selectedSchedule || loading) ? 'opacity-60 cursor-not-allowed' : ''}`}
-            >
-              {loading ? t('processing_payment') : t('Proceed to Payment')}
-            </Button>
-            {user && user.role === 'rapidPassUser' && (
-              <Button
-                type="button"
-                onClick={handlePayFromBalance}
-                disabled={loading || !selectedSchedule}
-                className={`w-full bg-green-600 text-white rounded-md py-2 px-4 transition transform hover:bg-green-700 hover:shadow-md hover:-translate-y-1 ${(!selectedSchedule || loading) ? 'opacity-60 cursor-not-allowed' : ''}`}
+          <div className="space-y-6">
+            {/* Station Selection */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5" />
+                  Select Your Route
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-2 space-y-6">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-m font-semibold">From</label>
+                    <select
+                      value={sourceStation}
+                      onChange={(e) => setSourceStation(e.target.value)}
+                      className={`w-full rounded-xl p-2 border-2 ${sourceStation ? 'border-black' : 'border-gray-300'}`}>
+                      <option value="">Select departure station</option>
+                      {stations.map((station) => (
+                        <option key={station._id} value={station.name}>
+                          {station.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-m font-semibold">To</label>
+                    <select
+                      value={destinationStation}
+                      onChange={(e) => setDestinationStation(e.target.value)}
+                      className={`w-full rounded-xl p-2 border-2 ${destinationStation ? 'border-black' : 'border-gray-300'}`}>
+                      <option value="">Select destination station</option>
+                      {stations.filter(s => s.name !== sourceStation).map((station) => (
+                        <option key={station._id} value={station.name}>
+                          {station.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {sourceStation && destinationStation && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Separator className="my-6" />
+                    
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold flex items-center gap-2">
+                        <Clock className="h-5 w-5" />
+                        Available Schedules
+                      </h3>
+
+                      {schedulesLoading ? (
+                        <div className="space-y-3">
+                          {[1, 2, 3].map((i) => (
+                            <div key={i} className="animate-pulse">
+                              <div className="h-20 bg-muted rounded-lg"></div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : schedules.length > 0 ? (
+                        <div className="space-y-3">
+                          {schedules.map((schedule) => {
+                            const departureMinutes = parseTimeToMinutes(schedule.departureTime);
+                            const arrivalMinutes = parseTimeToMinutes(schedule.arrivalTime);
+                            const duration = arrivalMinutes - departureMinutes;
+                            
+                            return (
+                              <motion.div
+                                key={schedule._id}
+                                whileHover={{ scale: 1.02 }}
+                                transition={{ type: "spring", stiffness: 300 }}
+                              >
+                                <Card 
+                                  className={`cursor-pointer transition-all ${
+                                    selectedSchedule?._id === schedule._id 
+                                      ? 'ring-2 ring-primary bg-primary/5' 
+                                      : 'hover:shadow-md'
+                                  }`}
+                                  onClick={() => setSelectedSchedule(schedule)}
+                                >
+                                  <CardContent className="p-4">
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex-1">
+                                        <div className="flex items-center gap-2 mb-2">
+                                          <Train className="h-4 w-4 text-primary" />
+                                          <span className="font-semibold">{schedule.trainName}</span>
+                                          <Badge variant="outline">{schedule.direction}</Badge>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                          <span>{schedule.departureTime}</span>
+                                          <ArrowRight className="h-4 w-4" />
+                                          <span>{schedule.arrivalTime}</span>
+                                          <span>• {duration} min</span>
+                                        </div>
+                                        
+                                        <div className="mt-2 text-sm text-muted-foreground">
+                                          {schedule.path}
+                                        </div>
+                                      </div>
+                                      
+                                      <div className="text-right">
+                                        <div className="text-lg font-bold text-primary">
+                                          ৳{formatFareForLocale(schedule.fare, i18n)}
+                                        </div>
+                                        {selectedSchedule?._id === schedule._id && (
+                                          <CheckCircle className="h-5 w-5 text-green-600 ml-auto mt-1" />
+                                        )}
+                                      </div>
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8 text-muted-foreground">
+                          <Train className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                          <p>No schedules found for this route.</p>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Journey Summary */}
+            {selectedSchedule && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
               >
-                {loading ? t('processing_payment') : t('Pay from Rapid Pass Balance')}
-              </Button>
+                <Card className="rounded-xl border shadow-lg">
+                  <CardHeader className="p-4">
+                    <CardTitle className="flex items-center gap-2 text-2xl font-bold">
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                      Journey Summary
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-m text-muted-foreground">Route</span>
+                          <span className="text-base font-medium">{sourceStation} ---→ {destinationStation}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-m text-muted-foreground">Train</span>
+                          <span className="text-base font-medium">{selectedSchedule.trainName}</span>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-m text-muted-foreground">Departure</span>
+                          <span className="text-base font-medium">{selectedSchedule.departureTime}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-m text-muted-foreground">Arrival</span>
+                          <span className="text-base font-medium">{selectedSchedule.arrivalTime}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <Separator className="my-4" />
+                    <div className="flex justify-between items-center">
+                      <span className="text-2xl font-bold">Total Fare</span>
+                      <span className="text-2xl font-bold text-primary">৳{formatFareForLocale(selectedSchedule.fare, i18n)}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+
+            {/* Payment Method Selection - More Prominent */}
+            {selectedSchedule && (
+              <motion.div
+                ref={paymentSectionRef}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+              >
+                <Card className="rounded-xl border shadow-lg">
+                  <CardHeader className="p-4">
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <CreditCard className="h-6 w-6" />
+                      Choose Payment Method
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">Select how you'd like to pay for your journey</p>
+                  </CardHeader>
+                  <CardContent className="space-y-4 p-6">
+                    {user.role === "rapidPassUser" ? (
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <motion.div 
+                          className={`p-6 border-2 rounded-xl cursor-pointer transition-all ${
+                            paymentMethod === "gateway" 
+                              ? 'border-primary bg-primary/10 shadow-lg' 
+                              : 'border-border hover:border-primary/30 hover:shadow-md'
+                          }`}
+                          onClick={() => setPaymentMethod("gateway")}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <div className="text-center space-y-3">
+                            <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center ${
+                              paymentMethod === "gateway" ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                            }`}>
+                              <CreditCard className="h-8 w-8" />
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-lg">Payment Gateway</h3>
+                              <p className="text-sm text-muted-foreground">
+                                Credit/Debit Card, Mobile Banking, bKash, Nagad
+                              </p>
+                            </div>
+                            {paymentMethod === "gateway" && (
+                              <div className="flex items-center justify-center gap-2 text-primary">
+                                <CheckCircle className="h-5 w-5" />
+                                <span className="text-sm font-medium">Selected</span>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+
+                        <motion.div 
+                          className={`p-6 border-2 rounded-xl cursor-pointer transition-all ${
+                            paymentMethod === "balance" 
+                              ? 'border-primary bg-primary/10 shadow-lg' 
+                              : 'border-border hover:border-primary/30 hover:shadow-md'
+                          }`}
+                          onClick={() => setPaymentMethod("balance")}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <div className="text-center space-y-3">
+                            <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center ${
+                              paymentMethod === "balance" ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                            }`}>
+                              <Wallet className="h-8 w-8" />
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-lg">Rapid Pass Balance</h3>
+                              <p className="text-sm text-muted-foreground">
+                                Pay instantly from your wallet
+                              </p>
+                              <div className="mt-2">
+                                <span className="text-lg font-bold text-green-600">
+                                  ৳{user && user.passBalance ? user.passBalance.toFixed(2) : '0.00'} Available
+                                </span>
+                              </div>
+                            </div>
+                            {paymentMethod === "balance" && (
+                              <div className="flex items-center justify-center gap-2 text-primary">
+                                <CheckCircle className="h-5 w-5" />
+                                <span className="text-sm font-medium">Selected</span>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      </div>
+                    ) : (
+                      <div className="p-6 border-2 border-primary rounded-xl bg-primary/5">
+                        <div className="text-center space-y-3">
+                          <div className="w-16 h-16 mx-auto rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                            <CreditCard className="h-8 w-8" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-lg">Payment Gateway</h3>
+                            <p className="text-sm text-muted-foreground">
+                              Secure payment via Credit/Debit Card, Mobile Banking, bKash, Nagad
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Payment Button */}
+                    <div className="pt-4 flex justify-center items-center">
+                      <Button 
+                        onClick={paymentMethod === 'gateway' ? handleBookTicket : handlePayFromBalance}
+                        disabled={loading || !selectedSchedule || (paymentMethod === "balance" && user.balance < selectedSchedule.fare)}
+                                                  className="text-lg hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2 border-black border-2"
+                        size="lg"
+                      >
+                        {loading ? (
+                          <div className="flex items-center gap-3">
+                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                            <span>Processing Payment...</span>
+                          </div>
+                        ) : paymentMethod === "balance" && user.balance < selectedSchedule.fare ? (
+                          "Insufficient Balance"
+                        ) : (
+                          <div className="flex items-center gap-3 center px-4">
+                            {paymentMethod === "balance" ? <Wallet className="h-5 w-5" /> : <CreditCard className="h-5 w-5" />}
+                            <span>
+                              {paymentMethod === "balance" ? "Pay from Balance" : "Proceed to Payment"} - ৳{formatFareForLocale(selectedSchedule.fare, i18n)}
+                            </span>
+                          </div>
+                        )}
+                      </Button>
+                      
+                      {paymentMethod === "balance" && user.balance < selectedSchedule.fare && (
+                        <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                          <p className="text-sm text-orange-700">
+                            Insufficient balance. Please top up your Rapid Pass or choose Payment Gateway.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             )}
           </div>
-        </form>
+
+          {/* Floating Scroll to Payment Button */}
+          <AnimatePresence>
+            {selectedSchedule && !isPaymentVisible && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0, y: 20 }}
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1, 
+                  y: 0,
+                }}
+                exit={{ opacity: 0, scale: 0, y: 20 }}
+                transition={{ duration: 0.3, type: "spring", stiffness: 400 }}
+                className="fixed bottom-6 right-6 z-50 group"
+              >
+                <motion.div
+                  animate={{ 
+                    y: [0, -4, 0],
+                  }}
+                  transition={{ 
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  <Button
+                    onClick={scrollToPayment}
+                    size="lg"
+                    className="rounded-full h-16 w-16 shadow-lg hover:shadow-xl transition-all duration-200 bg-primary hover:bg-primary/90 relative overflow-hidden"
+                    aria-label="Scroll to payment section"
+                  >
+                    <motion.div
+                      animate={{ 
+                        y: [0, 3, 0],
+                      }}
+                      transition={{ 
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      <ChevronDown className="h-6 w-6" />
+                    </motion.div>
+                    
+                    {/* Ripple effect */}
+                    <motion.div
+                      className="absolute inset-0 rounded-full bg-white/20"
+                      initial={{ scale: 0, opacity: 1 }}
+                      animate={{ scale: 2, opacity: 0 }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
+                  </Button>
+                </motion.div>
+                
+                {/* Tooltip */}
+                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap backdrop-blur-sm">
+                  Go to Payment
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black/80"></div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </div>
   );
-};
-
-export default BookTicket;
+}

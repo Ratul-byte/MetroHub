@@ -30,6 +30,7 @@ const PaymentSuccess = () => {
           },
         });
         setTicket(res.data);
+        console.log('API response ticket data:', res.data);
       } catch (err) {
         setError('Failed to fetch ticket details.');
       } finally {
@@ -58,7 +59,6 @@ const PaymentSuccess = () => {
             <p className="text-lg"><strong>{t('ticket_id')}</strong> {ticket._id}</p>
             <p className="text-lg"><strong>{t('from')}</strong> {ticket.schedule.sourceStation}</p>
             <p className="text-lg"><strong>{t('to')}</strong> {ticket.schedule.destinationStation}</p>
-            <p className="text-lg"><strong>{t('fare')}</strong> {ticket.amount} {t('bdt')}</p>
             <p className="text-lg"><strong>{t('fare')}</strong> {ticket.amount} {t('bdt')}</p>
             <p className="text-lg"><strong>{t('time_of_booking')}</strong> {new Date(ticket.createdAt).toLocaleString('en-US', {
               year: 'numeric',
