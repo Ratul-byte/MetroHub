@@ -190,6 +190,7 @@ const CallToAction = () => {
               variant="secondary"
               className="flex items-center gap-2"
             >
+              {onclick=() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })}
               {t('start_planning_trip')}
               <ArrowRight className="h-4 w-4" />
             </Button>

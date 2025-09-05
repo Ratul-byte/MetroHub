@@ -48,7 +48,7 @@ export default function BookTicket() {
         const res = await axios.get(`${API}/api/stations`);
         setStations(res.data || []);
       } catch (err) {
-        setError(t('failed_to_fetch_stations') || 'Failed to fetch stations.');
+        setError(t('failed_to_fetch_stations'));
       }
     };
     fetchStations();
@@ -71,11 +71,11 @@ export default function BookTicket() {
         if (data.length > 0) {
           setSelectedSchedule(data[0]);
         } else {
-          setError(t('no_schedules_found') || 'No schedules found for selected route.');
+          setError(t('no_schedules_found'));
         }
       } catch (err) {
         console.error('fetch schedules error', err);
-        setError(t('no_schedules_found') || 'No schedules found for selected route.');
+        setError(t('no_schedules_found'));
       } finally {
         setSchedulesLoading(false);
       }
@@ -115,7 +115,7 @@ export default function BookTicket() {
 
   const handleBookTicket = async () => {
     if (!selectedSchedule) {
-      setError("Please select a schedule.");
+      setError(t('please_select_schedule'));
       return;
     }
 
@@ -139,10 +139,10 @@ export default function BookTicket() {
 
       const gateway = res.data?.url || res.data?.GatewayPageURL || res.data?.redirect_url;
       if (gateway) window.location.replace(gateway);
-      else setError(t('payment_initiation_failed') || 'Failed to initiate payment.');
+      else setError(t('payment_initiation_failed'));
     } catch (err) {
       console.error('Payment initiation error', err.response?.data || err.message);
-      setError(err.response?.data?.message || t('booking_failed') || 'Booking failed.');
+      setError(err.response?.data?.message || t('booking_failed'));
     } finally {
       setLoading(false);
     }
@@ -150,7 +150,7 @@ export default function BookTicket() {
 
   const handlePayFromBalance = async () => {
     if (!selectedSchedule) {
-      setError("Please select a schedule.");
+      setError(t('please_select_schedule'));
       return;
     }
 
@@ -183,7 +183,7 @@ export default function BookTicket() {
         updateUser(userRes.data); // Update user context with new balance
         window.location.href = `/payment-success?ticket=${ticket._id}`;
       } else {
-        setError(t('payment_failed') || 'Payment failed.');
+        setError(t('payment_failed'));
       }
     } catch (err) {
       console.error('Pay from balance error', err.response?.data || err.message);
@@ -202,8 +202,8 @@ export default function BookTicket() {
           transition={{ duration: 0.5 }}
         >
           <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-2">Book Your Ticket</h1>
-            <p className="text-muted-foreground">Select your route and travel with ease on Dhaka Metro Rail</p>
+            <h1 className="text-4xl font-bold mb-2">{t('book_your_ticket')}</h1>
+            <p className="text-muted-foreground">{t('select_route_description')}</p>
           </div>
 
           {error && (
@@ -218,18 +218,18 @@ export default function BookTicket() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapPin className="h-5 w-5" />
-                  Select Your Route
+                  {t('select_your_route')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-2 space-y-6">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-m font-semibold">From</label>
+                    <label className="text-m font-semibold">{t('from')}</label>
                     <select
                       value={sourceStation}
                       onChange={(e) => setSourceStation(e.target.value)}
                       className={`w-full rounded-xl p-2 border-2 ${sourceStation ? 'border-black' : 'border-gray-300'}`}>
-                      <option value="">Select departure station</option>
+                      <option value="">{t('select_departure_station')}</option>
                       {stations.map((station) => (
                         <option key={station._id} value={station.name}>
                           {station.name}
@@ -239,12 +239,12 @@ export default function BookTicket() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-m font-semibold">To</label>
+                    <label className="text-m font-semibold">{t('to')}</label>
                     <select
                       value={destinationStation}
                       onChange={(e) => setDestinationStation(e.target.value)}
                       className={`w-full rounded-xl p-2 border-2 ${destinationStation ? 'border-black' : 'border-gray-300'}`}>
-                      <option value="">Select destination station</option>
+                      <option value="">{t('select_destination_station')}</option>
                       {stations.filter(s => s.name !== sourceStation).map((station) => (
                         <option key={station._id} value={station.name}>
                           {station.name}
@@ -265,7 +265,7 @@ export default function BookTicket() {
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold flex items-center gap-2">
                         <Clock className="h-5 w-5" />
-                        Available Schedules
+                        {t('available_schedules')}
                       </h3>
 
                       {schedulesLoading ? (
@@ -310,7 +310,7 @@ export default function BookTicket() {
                                           <span>{schedule.departureTime}</span>
                                           <ArrowRight className="h-4 w-4" />
                                           <span>{schedule.arrivalTime}</span>
-                                          <span>• {duration} min</span>
+                                          <span>• {duration} {t('min')}</span>
                                         </div>
                                         
                                         <div className="mt-2 text-sm text-muted-foreground">
@@ -336,7 +336,7 @@ export default function BookTicket() {
                       ) : (
                         <div className="text-center py-8 text-muted-foreground">
                           <Train className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                          <p>No schedules found for this route.</p>
+                          <p>{t('no_schedules_found_for_this_route')}</p>
                         </div>
                       )}
                     </div>
@@ -356,35 +356,35 @@ export default function BookTicket() {
                   <CardHeader className="p-4">
                     <CardTitle className="flex items-center gap-2 text-2xl font-bold">
                       <CheckCircle className="h-5 w-5 text-green-600" />
-                      Journey Summary
+                      {t('journey_summary')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="space-y-3">
                         <div className="flex justify-between">
-                          <span className="text-m text-muted-foreground">Route</span>
+                          <span className="text-m text-muted-foreground">{t('route')}</span>
                           <span className="text-base font-medium">{sourceStation} ---→ {destinationStation}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-m text-muted-foreground">Train</span>
+                          <span className="text-m text-muted-foreground">{t('train')}</span>
                           <span className="text-base font-medium">{selectedSchedule.trainName}</span>
                         </div>
                       </div>
                       <div className="space-y-3">
                         <div className="flex justify-between">
-                          <span className="text-m text-muted-foreground">Departure</span>
+                          <span className="text-m text-muted-foreground">{t('departure')}</span>
                           <span className="text-base font-medium">{selectedSchedule.departureTime}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-m text-muted-foreground">Arrival</span>
+                          <span className="text-m text-muted-foreground">{t('arrival')}</span>
                           <span className="text-base font-medium">{selectedSchedule.arrivalTime}</span>
                         </div>
                       </div>
                     </div>
                     <Separator className="my-4" />
                     <div className="flex justify-between items-center">
-                      <span className="text-2xl font-bold">Total Fare</span>
+                      <span className="text-2xl font-bold">{t('total_fare')}</span>
                       <span className="text-2xl font-bold text-primary">৳{formatFareForLocale(selectedSchedule.fare, i18n)}</span>
                     </div>
                   </CardContent>
@@ -404,9 +404,9 @@ export default function BookTicket() {
                   <CardHeader className="p-4">
                     <CardTitle className="flex items-center gap-2 text-xl">
                       <CreditCard className="h-6 w-6" />
-                      Choose Payment Method
+                      {t('choose_payment_method')}
                     </CardTitle>
-                    <p className="text-sm text-muted-foreground">Select how you'd like to pay for your journey</p>
+                    <p className="text-sm text-muted-foreground">{t('select_payment_description')}</p>
                   </CardHeader>
                   <CardContent className="space-y-4 p-6">
                     {user.role === "rapidPassUser" ? (
@@ -428,15 +428,15 @@ export default function BookTicket() {
                               <CreditCard className="h-8 w-8" />
                             </div>
                             <div>
-                              <h3 className="font-semibold text-lg">Payment Gateway</h3>
+                              <h3 className="font-semibold text-lg">{t('payment_gateway')}</h3>
                               <p className="text-sm text-muted-foreground">
-                                Credit/Debit Card, Mobile Banking, bKash, Nagad
+                                {t('payment_gateway_description')}
                               </p>
                             </div>
                             {paymentMethod === "gateway" && (
                               <div className="flex items-center justify-center gap-2 text-primary">
                                 <CheckCircle className="h-5 w-5" />
-                                <span className="text-sm font-medium">Selected</span>
+                                <span className="text-sm font-medium">{t('selected')}</span>
                               </div>
                             )}
                           </div>
@@ -459,20 +459,20 @@ export default function BookTicket() {
                               <Wallet className="h-8 w-8" />
                             </div>
                             <div>
-                              <h3 className="font-semibold text-lg">Rapid Pass Balance</h3>
+                              <h3 className="font-semibold text-lg">{t('rapid_pass_balance')}</h3>
                               <p className="text-sm text-muted-foreground">
-                                Pay instantly from your wallet
+                                {t('pay_instantly_from_wallet')}
                               </p>
                               <div className="mt-2">
                                 <span className="text-lg font-bold text-green-600">
-                                  ৳{user && user.passBalance ? user.passBalance.toFixed(2) : '0.00'} Available
+                                  ৳{user && user.passBalance ? user.passBalance.toFixed(2) : '0.00'} {t('available')}
                                 </span>
                               </div>
                             </div>
                             {paymentMethod === "balance" && (
                               <div className="flex items-center justify-center gap-2 text-primary">
                                 <CheckCircle className="h-5 w-5" />
-                                <span className="text-sm font-medium">Selected</span>
+                                <span className="text-sm font-medium">{t('selected')}</span>
                               </div>
                             )}
                           </div>
@@ -487,7 +487,7 @@ export default function BookTicket() {
                           <div>
                             <h3 className="font-semibold text-lg">Payment Gateway</h3>
                             <p className="text-sm text-muted-foreground">
-                              Secure payment via Credit/Debit Card, Mobile Banking, bKash, Nagad
+                              {t('secure_payment_description')}
                             </p>
                           </div>
                         </div>
@@ -505,15 +505,15 @@ export default function BookTicket() {
                         {loading ? (
                           <div className="flex items-center gap-3">
                             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                            <span>Processing Payment...</span>
+                            <span>{t('processing_payment')}</span>
                           </div>
                         ) : paymentMethod === "balance" && user.balance < selectedSchedule.fare ? (
-                          "Insufficient Balance"
+                          t('insufficient_balance')
                         ) : (
                           <div className="flex items-center gap-3 center px-4">
                             {paymentMethod === "balance" ? <Wallet className="h-5 w-5" /> : <CreditCard className="h-5 w-5" />}
                             <span>
-                              {paymentMethod === "balance" ? "Pay from Balance" : "Proceed to Payment"} - ৳{formatFareForLocale(selectedSchedule.fare, i18n)}
+                              {paymentMethod === "balance" ? t('pay_from_balance') : t('proceed_to_payment')} - ৳{formatFareForLocale(selectedSchedule.fare, i18n)}
                             </span>
                           </div>
                         )}
@@ -522,7 +522,7 @@ export default function BookTicket() {
                       {paymentMethod === "balance" && user.balance < selectedSchedule.fare && (
                         <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
                           <p className="text-sm text-orange-700">
-                            Insufficient balance. Please top up your Rapid Pass or choose Payment Gateway.
+                            {t('insufficient_balance_top_up_message')}
                           </p>
                         </div>
                       )}
@@ -588,7 +588,7 @@ export default function BookTicket() {
                 
                 {/* Tooltip */}
                 <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap backdrop-blur-sm">
-                  Go to Payment
+                  {t('go_to_payment')}
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black/80"></div>
                 </div>
               </motion.div>
