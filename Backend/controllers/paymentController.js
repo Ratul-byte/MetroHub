@@ -72,6 +72,7 @@ export const initiatePayment = async (req, res) => {
     };
 
     const ticket = await Ticket.create(ticketData);
+    console.log('Newly created ticket object (from paymentController):', ticket);
     console.log('ticket created id=', ticket._id);
 
     const urls = makeUrls();
@@ -169,7 +170,8 @@ export const sslcommerzSuccess = async (req, res) => {
       amount: ticket.amount,
     };
 
-    const qrBuffer = await QRCode.toBuffer(JSON.stringify(ticketInfo));
+    const qrUrl = `${process.env.API_URL}/api/qr/scan?ticketId=${ticket._id}`;
+    const qrBuffer = await QRCode.toBuffer(qrUrl);
     ticket.qrCode = `data:image/png;base64,${qrBuffer.toString('base64')}`;
     await ticket.save();
 
@@ -279,7 +281,8 @@ export const sslcommerzIPN = async (req, res) => {
         amount: ticket.amount,
       };
   
-      const qr = await QRCode.toDataURL(JSON.stringify(ticketInfo));
+      const qrUrl = `${process.env.API_URL}/api/qr/scan?ticketId=${ticket._id}`;
+      const qr = await QRCode.toDataURL(qrUrl);
       ticket.qrCode = qr;
     } else {
       ticket.paymentStatus = 'failed';
@@ -345,7 +348,8 @@ export const payFromBalance = async (req, res) => {
       amount: ticket.amount,
     };
 
-    const qrBuffer = await QRCode.toBuffer(JSON.stringify(ticketInfo));
+    const qrUrl = `${process.env.API_URL}/api/qr/scan?ticketId=${ticket._id}`;
+    const qrBuffer = await QRCode.toBuffer(qrUrl);
     ticket.qrCode = `data:image/png;base64,${qrBuffer.toString('base64')}`;
     await ticket.save();
 

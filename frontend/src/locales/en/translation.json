@@ -198,6 +198,7 @@
   "bdt": "BDT",
   "scan_qr_code": "Scan QR Code",
   "download_qr_code": "Download QR Code",
+  "simulate_scan": "Simulate Scan",
   "my_tickets": "Booking History",
   "status": "Status",
   "no_tickets_found": "No tickets found.",

@@ -33,14 +33,13 @@ const ticketSchema = mongoose.Schema(
             type: Object,
             required: false,
         },
-    },
-    {
-        timestamps: true,
         journeyStartTime: {
             type: Date,
+            default: null // Explicitly set default to null
         },
         journeyEndTime: {
             type: Date,
+            default: null // Explicitly set default to null
         },
         fine: {
             type: Number,
@@ -48,7 +47,11 @@ const ticketSchema = mongoose.Schema(
         },
         scannedAt: {
             type: Date,
+            default: null // Explicitly set default to null
         },
+    },
+    {
+        timestamps: true,
     }
 );
 

@@ -85,6 +85,15 @@ const PaymentSuccess = () => {
               >
                 {t('download_qr_code')}
               </button>
+              <button
+                onClick={() => {
+                  const scanUrl = `${API}/api/qr/scan?ticketId=${ticket._id}`;
+                  window.open(scanUrl, '_blank');
+                }}
+                className="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+              >
+                {t('simulate_scan')}
+              </button>
             </div>
           )}
         </div>
