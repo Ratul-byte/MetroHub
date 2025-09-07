@@ -49,6 +49,14 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    tripsThisMonth: {
+      type: Number,
+      default: 0,
+    },
+    lastTripDate: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

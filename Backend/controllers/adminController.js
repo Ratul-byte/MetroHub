@@ -1,6 +1,8 @@
 import { User } from '../models/userModel.js';
 import { RapidPass } from '../models/rapidPassModel.js';
 import Ticket from '../models/ticketModel.js';
+import MetroStation from '../models/metroStationModel.js';
+import MetroSchedule from '../models/metroScheduleModel.js';
 
 // @desc    Get all users
 // @route   GET /api/admin/users
@@ -82,4 +84,124 @@ const getAllTickets = async (req, res) => {
   }
 };
 
-export { getUsers, deleteUser, updateUserRole, getRecentUsers, getAllTickets };
+export { getUsers, deleteUser, updateUserRole, getRecentUsers, getAllTickets, getActiveTrainsCount, getMetroStationsCount, getActiveFinesCount, getTotalOutstandingFines, getFinesPaidThisMonthCount, getOverdueFinesCount, getRecentFines };
+
+// @desc    Get active trains count
+// @route   GET /api/admin/statistics/active-trains
+// @access  Private/Admin
+const getActiveTrainsCount = async (req, res) => {
+  try {
+    // This is a placeholder. You need to define what an "active" train is.
+    // For example, you could count schedules that are currently running.
+    const now = new Date();
+    const activeSchedules = await MetroSchedule.countDocuments({
+      departureTime: { $lte: now },
+      arrivalTime: { $gte: now },
+    });
+    res.json({ count: activeSchedules });
+  } catch (error) {
+    console.error('Error fetching active trains count:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Get metro stations count
+// @route   GET /api/admin/statistics/metro-stations
+// @access  Private/Admin
+const getMetroStationsCount = async (req, res) => {
+  try {
+    const count = await MetroStation.countDocuments();
+    res.json({ count });
+  } catch (error) {
+    console.error('Error fetching metro stations count:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Get active fines count
+// @route   GET /api/admin/statistics/active-fines
+// @access  Private/Admin
+const getActiveFinesCount = async (req, res) => {
+  try {
+    const count = await User.countDocuments({ fine: { $gt: 0 } });
+    res.json({ count });
+  } catch (error) {
+    console.error('Error fetching active fines count:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Get total outstanding fines
+// @route   GET /api/admin/statistics/total-outstanding-fines
+// @access  Private/Admin
+const getTotalOutstandingFines = async (req, res) => {
+  try {
+    const result = await User.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalFines: { $sum: '$fine' },
+        },
+      },
+    ]);
+    res.json({ total: result[0]?.totalFines || 0 });
+  } catch (error) {
+    console.error('Error fetching total outstanding fines:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Get fines paid this month count
+// @route   GET /api/admin/statistics/fines-paid-this-month
+// @access  Private/Admin
+const getFinesPaidThisMonthCount = async (req, res) => {
+  try {
+    // This is a placeholder. You need a way to track when fines are paid.
+    // This assumes you have a `fineLastPaidAt` field in your User model.
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const count = await User.countDocuments({
+      fineLastPaidAt: { $gte: startOfMonth },
+    });
+    res.json({ count });
+  } catch (error) {
+    console.error('Error fetching fines paid this month count:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Get overdue fines count
+// @route   GET /api/admin/statistics/overdue-fines
+// @access  Private/Admin
+const getOverdueFinesCount = async (req, res) => {
+  try {
+    // This is a placeholder. You need to define what an "overdue" fine is.
+    // This assumes you have a `fineCreatedAt` field in your User model.
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30));
+    const count = await User.countDocuments({
+      fine: { $gt: 0 },
+      fineCreatedAt: { $lte: thirtyDaysAgo },
+    });
+    res.json({ count });
+  } catch (error) {
+    console.error('Error fetching overdue fines count:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Get recent fines
+// @route   GET /api/admin/recent-fines
+// @access  Private/Admin
+const getRecentFines = async (req, res) => {
+  try {
+    const finedUsers = await User.find({ fine: { $gt: 0 } })
+      .sort({ updatedAt: -1 })
+      .limit(10)
+      .select('name email fine updatedAt'); // Select relevant fields including updatedAt
+    res.json(finedUsers);
+  } catch (error) {
+    console.error('Error fetching recent fines:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
