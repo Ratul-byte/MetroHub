@@ -108,6 +108,14 @@ const StationManagement = () => {
     setName(station.name);
     setLatitude(station.latitude);
     setLongitude(station.longitude);
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }, 0);
   };
 
   const cancelEditing = () => {
@@ -147,13 +155,14 @@ const StationManagement = () => {
         </div>
         <div className="flex justify-end mt-4">
           {editingStation && (
-            <Button onClick={cancelEditing} className="mr-2" variant="secondary">
+            <Button onClick={cancelEditing} className="mr-2 hover:scale-105 transition-transform duration-200" variant="secondary">
               Cancel
             </Button>
           )}
           <Button
             onClick={editingStation ? handleUpdateStation : handleAddStation}
             disabled={loading}
+            className="hover:scale-105 transition-transform duration-200"
           >
             {loading
               ? editingStation
@@ -175,22 +184,22 @@ const StationManagement = () => {
             <table className="min-w-full bg-white">
               <thead className="bg-gray-200">
                 <tr>
-                  <th className="py-2 px-4 border-b">Name</th>
-                  <th className="py-2 px-4 border-b">Latitude</th>
-                  <th className="py-2 px-4 border-b">Longitude</th>
-                  <th className="py-2 px-4 border-b">Actions</th>
+                  <th className="py-2 px-4 border-b text-center">Name</th>
+                  <th className="py-2 px-4 border-b text-center">Latitude</th>
+                  <th className="py-2 px-4 border-b text-center">Longitude</th>
+                  <th className="py-2 px-4 border-b text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {stations.map((station) => (
                   <tr key={station._id}>
-                    <td className="py-2 px-4 border-b">{station.name}</td>
-                    <td className="py-2 px-4 border-b">{station.latitude}</td>
-                    <td className="py-2 px-4 border-b">{station.longitude}</td>
-                    <td className="py-2 px-4 border-b">
+                    <td className="py-2 px-4 border-b text-center">{station.name}</td>
+                    <td className="py-2 px-4 border-b text-center">{station.latitude}</td>
+                    <td className="py-2 px-4 border-b text-center">{station.longitude}</td>
+                    <td className="py-2 px-4 border-b text-center">
                       <Button
                         onClick={() => startEditing(station)}
-                        className="mr-2"
+                        className="mr-2 hover:scale-105 transition-transform duration-200"
                         size="sm"
                       >
                         Edit
@@ -200,6 +209,7 @@ const StationManagement = () => {
                         disabled={loading}
                         variant="danger"
                         size="sm"
+                        className="hover:scale-105 transition-transform duration-200"
                       >
                         Delete
                       </Button>

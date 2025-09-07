@@ -119,6 +119,14 @@ const ScheduleManagement = () => {
     setDepartureTime(schedule.departureTime);
     setArrivalTime(schedule.arrivalTime);
     setFrequency(schedule.frequency);
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }, 0);
   };
 
   const cancelEditing = () => {
@@ -179,13 +187,14 @@ const ScheduleManagement = () => {
         </div>
         <div className="flex justify-end mt-4">
           {editingSchedule && (
-            <Button onClick={cancelEditing} className="mr-2" variant="secondary">
+            <Button onClick={cancelEditing} className="mr-2 hover:scale-105 transition-transform duration-200" variant="secondary">
               Cancel
             </Button>
           )}
           <Button
             onClick={editingSchedule ? handleUpdateSchedule : handleCreateSchedule}
             disabled={loading}
+            className="hover:scale-105 transition-transform duration-200"
           >
             {loading
               ? editingSchedule
@@ -207,28 +216,28 @@ const ScheduleManagement = () => {
             <table className="min-w-full bg-white">
               <thead className="bg-gray-200">
                 <tr>
-                  <th className="py-2 px-4 border-b">Source Station</th>
-                  <th className="py-2 px-4 border-b">Destination Station</th>
-                  <th className="py-2 px-4 border-b">Train Name</th>
-                  <th className="py-2 px-4 border-b">Departure Time</th>
-                  <th className="py-2 px-4 border-b">Arrival Time</th>
-                  <th className="py-2 px-4 border-b">Frequency (min)</th>
-                  <th className="py-2 px-4 border-b">Actions</th>
+                  <th className="py-2 px-4 border-b text-center">Source Station</th>
+                  <th className="py-2 px-4 border-b text-center">Destination Station</th>
+                  <th className="py-2 px-4 border-b text-center">Train Name</th>
+                  <th className="py-2 px-4 border-b text-center">Departure Time</th>
+                  <th className="py-2 px-4 border-b text-center">Arrival Time</th>
+                  <th className="py-2 px-4 border-b text-center">Frequency (min)</th>
+                  <th className="py-2 px-4 border-b text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {schedules.map((schedule) => (
                   <tr key={schedule._id}>
-                    <td className="py-2 px-4 border-b">{schedule.sourceStation}</td>
-                    <td className="py-2 px-4 border-b">{schedule.destinationStation}</td>
-                    <td className="py-2 px-4 border-b">{schedule.trainName}</td>
-                    <td className="py-2 px-4 border-b">{schedule.departureTime}</td>
-                    <td className="py-2 px-4 border-b">{schedule.arrivalTime}</td>
-                    <td className="py-2 px-4 border-b">{schedule.frequency}</td>
-                    <td className="py-2 px-4 border-b">
+                    <td className="py-2 px-4 border-b text-center">{schedule.sourceStation}</td>
+                    <td className="py-2 px-4 border-b text-center">{schedule.destinationStation}</td>
+                    <td className="py-2 px-4 border-b text-center">{schedule.trainName}</td>
+                    <td className="py-2 px-4 border-b text-center">{schedule.departureTime}</td>
+                    <td className="py-2 px-4 border-b text-center">{schedule.arrivalTime}</td>
+                    <td className="py-2 px-4 border-b text-center">{schedule.frequency}</td>
+                    <td className="py-2 px-4 border-b text-center">
                       <Button
                         onClick={() => startEditing(schedule)}
-                        className="mr-2"
+                        className="mr-2 hover:scale-105 transition-transform duration-200"
                         size="sm"
                       >
                         Edit
@@ -238,6 +247,7 @@ const ScheduleManagement = () => {
                         disabled={loading}
                         variant="danger"
                         size="sm"
+                        className="hover:scale-105 transition-transform duration-200"
                       >
                         Delete
                       </Button>
@@ -254,3 +264,4 @@ const ScheduleManagement = () => {
 };
 
 export default ScheduleManagement;
+;
