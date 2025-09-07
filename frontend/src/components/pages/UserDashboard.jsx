@@ -43,9 +43,41 @@ const ImageWithFallback = ({ src, alt, ...props }) => {
 
 const UserHero = () => {
   const { t, i18n } = useTranslation();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [hoveredButton, setHoveredButton] = useState(null);
+  const [fine, setFine] = useState(0);
+  const [tripsThisMonth, setTripsThisMonth] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (user && token) {
+        try {
+          setLoading(true);
+          const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile`, {
+            headers: {
+              'x-auth-token': token,
+            },
+          });
+          const userData = response.data;
+          setFine(userData.fine || 0);
+          setTripsThisMonth(userData.tripsThisMonth || 0);
+        } catch (err) {
+          setError(err.response?.data?.message || t('failed_fetch_profile'));
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchProfile();
+
+    const intervalId = setInterval(fetchProfile, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, [user, token, t]);
 
   const heroImages = [
     image0, image1, image2, image3, image4, image5
@@ -129,7 +161,7 @@ const UserHero = () => {
                 <div className="flex items-center justify-center mb-2">
                   <TrendingUp className="h-5 w-5 text-blue-600" />
                 </div>
-                <div className="text-2xl font-bold text-blue-600">12</div>
+                <div className="text-2xl font-bold text-blue-600">{tripsThisMonth}</div>
                 <div className="text-sm font-bold text-blue-600">
                   {i18n.language === "en" ? "Trips This Month" : "এই মাসে যাত্রা"}
                 </div>
@@ -149,7 +181,7 @@ const UserHero = () => {
                 <div className="flex items-center justify-center mb-2">
                   <DollarSignIcon className="h-5 w-5 text-red-600" />
                 </div>
-                <div className="text-2xl font-bold text-red-600">৳0</div>
+                <div className="text-2xl font-bold text-red-600">৳{fine.toFixed(2)}</div>
                 <div className="text-sm font-bold text-red-600">
                   {i18n.language === "en" ? "Due Fines" : "জরিমানা বাকি"}
                 </div>

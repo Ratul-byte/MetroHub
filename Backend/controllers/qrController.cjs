@@ -100,6 +100,20 @@ exports.scanQrCode = async (req, res) => {
 
       await ticket.save();
       console.log('Ticket after second scan save:', ticket); // New log
+
+      const user = await User.findById(ticket.user);
+      if (user) {
+        const now = new Date();
+        if (user.lastTripDate && user.lastTripDate.getMonth() === now.getMonth() && user.lastTripDate.getFullYear() === now.getFullYear()) {
+          user.tripsThisMonth += 1;
+        } else {
+          user.tripsThisMonth = 1;
+        }
+        user.lastTripDate = now;
+        await user.save();
+        console.log(`User ${user._id} trips this month updated to ${user.tripsThisMonth}.`);
+      }
+
       const button = `<div class="button-container"><a href="${scanUrl}" class="scan-button">Scan Again (Invalid)</a></div>`;
       res.send(baseHtml('Journey Ended', 'Journey Ended', button));
     } else {

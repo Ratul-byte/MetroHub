@@ -22,6 +22,13 @@ export default function AdminDashboard() {
   const [rapidPassUsersCount, setRapidPassUsersCount] = useState(0);
   const [recentUsers, setRecentUsers] = useState([]);
   const [allTickets, setAllTickets] = useState([]);
+  const [activeTrainsCount, setActiveTrainsCount] = useState(0);
+  const [metroStationsCount, setMetroStationsCount] = useState(0);
+  const [activeFinesCount, setActiveFinesCount] = useState(0);
+  const [totalOutstandingFines, setTotalOutstandingFines] = useState(0);
+  const [finesPaidThisMonthCount, setFinesPaidThisMonthCount] = useState(0);
+  const [overdueFinesCount, setOverdueFinesCount] = useState(0);
+  const [recentFines, setRecentFines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { token, logout } = useAuth();
@@ -36,15 +43,32 @@ export default function AdminDashboard() {
             'x-auth-token': token,
           },
         };
-        const [userCounts, recentUsers, allTicketsResponse] = await Promise.all([
+        const [
+          userCounts,
+          recentUsers,
+          allTicketsResponse,
+          activeTrainsCount,
+          metroStationsCount,
+          activeFinesCount,
+          recentFines,
+        ] = await Promise.all([
           axios.get(`${import.meta.env.VITE_API_URL}/api/admin/users`, config),
           axios.get(`${import.meta.env.VITE_API_URL}/api/admin/recent-users`, config),
-          axios.get(`${import.meta.env.VITE_API_URL}/api/admin/tickets`, config)
+          axios.get(`${import.meta.env.VITE_API_URL}/api/admin/tickets`, config),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/admin/statistics/active-trains`, config),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/admin/statistics/metro-stations`, config),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/admin/statistics/active-fines`, config),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/admin/recent-fines`, config),
         ]);
         setNormalUsersCount(userCounts.data.normalUsersCount);
         setRapidPassUsersCount(userCounts.data.rapidPassUsersCount);
         setRecentUsers(recentUsers.data);
         setAllTickets(allTicketsResponse.data);
+        setActiveTrainsCount(activeTrainsCount.data.count);
+        setMetroStationsCount(metroStationsCount.data.count);
+        setActiveFinesCount(activeFinesCount.data.count);
+        setRecentFines(recentFines.data);
+        console.log("Recent Fines Data:", recentFines.data);
         setLoading(false);
       } catch (err) {
         setError(err.response?.data?.message || 'An error occurred');
@@ -188,7 +212,7 @@ export default function AdminDashboard() {
                     <AlertTriangle className="h-6 w-6 text-red-600" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-800">47</div>
+                    <div className="text-2xl font-bold text-gray-800">{activeFinesCount}</div>
                     <div className="text-sm text-gray-500">Active Fines</div>
                   </div>
                 </div>
@@ -258,30 +282,24 @@ export default function AdminDashboard() {
                 <table className="min-w-full bg-white">
                   <thead>
                     <tr>
-                      <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
-                      <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Station</th>
-                      <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Overstay Duration</th>
+                      <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User Name</th>
+                      <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User Email</th>
                       <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fine Amount</th>
-                      <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
+                      <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Last Updated</th>
                       <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
                       <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {[
-                      { user: "John Doe", station: "Shahbag", duration: "2h 30m", amount: "৳50", date: "Jan 15, 2025", status: "Outstanding" },
-                      { user: "Jane Smith", station: "Uttara North", duration: "3h 15m", amount: "৳50", date: "Jan 14, 2025", status: "Paid" },
-                      { user: "Mike Johnson", station: "New Market", duration: "1h 45m", amount: "৳50", date: "Jan 13, 2025", status: "Overdue" }
-                    ].map((fine, index) => (
-                      <tr key={index} className="hover:bg-gray-50">
-                        <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700 font-medium">{fine.user}</td>
-                        <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{fine.station}</td>
-                        <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{fine.duration}</td>
-                        <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{fine.amount}</td>
-                        <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{fine.date}</td>
+                    {recentFines.map((fine) => (
+                      <tr key={fine._id} className="hover:bg-gray-50">
+                        <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700 font-medium">{fine.name}</td>
+                        <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{fine.email}</td>
+                        <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">৳{fine.fine}</td>
+                        <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">{new Date(fine.updatedAt).toLocaleDateString()}</td>
                         <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${fine.status === "Paid" ? "bg-green-100 text-green-800" : fine.status === "Overdue" ? "bg-red-100 text-red-800" : "bg-gray-100 text-gray-800"}`}>
-                            {fine.status}
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            Outstanding
                           </span>
                         </td>
                         <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-700">
@@ -289,11 +307,9 @@ export default function AdminDashboard() {
                             <Button variant="ghost" size="sm" className="p-2 rounded-md hover:bg-gray-100">
                               <Edit className="h-4 w-4 text-gray-600" />
                             </Button>
-                            {fine.status === "Outstanding" && (
-                              <Button variant="ghost" size="sm" className="p-2 rounded-md hover:bg-gray-100">
-                                <Bell className="h-4 w-4 text-gray-600" />
-                              </Button>
-                            )}
+                            <Button variant="ghost" size="sm" className="p-2 rounded-md hover:bg-gray-100">
+                              <Bell className="h-4 w-4 text-gray-600" />
+                            </Button>
                           </div>
                         </td>
                       </tr>
@@ -383,7 +399,7 @@ export default function AdminDashboard() {
                     <Train className="h-6 w-6 text-green-600" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-800">24</div>
+                    <div className="text-2xl font-bold text-gray-800">{activeTrainsCount}</div>
                     <div className="text-sm text-gray-500">Active Trains</div>
                   </div>
                 </div>
@@ -395,7 +411,7 @@ export default function AdminDashboard() {
                     <MapPin className="h-6 w-6 text-purple-600" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-800">18</div>
+                    <div className="text-2xl font-bold text-gray-800">{metroStationsCount}</div>
                     <div className="text-sm text-gray-500">Metro Stations</div>
                   </div>
                 </div>
@@ -407,7 +423,7 @@ export default function AdminDashboard() {
                     <AlertTriangle className="h-6 w-6 text-red-600" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-800">47</div>
+                    <div className="text-2xl font-bold text-gray-800">{activeFinesCount}</div>
                     <div className="text-sm text-gray-500">Active Fines</div>
                   </div>
                 </div>
@@ -416,32 +432,6 @@ export default function AdminDashboard() {
 
             {/* Recent System Activity */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white p-6 rounded-lg shadow">
-                <h3 className="text-xl font-semibold mb-4 text-gray-800 flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5 text-gray-600" />
-                  System Alerts
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
-                    <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
-                    <div className="flex-1">
-                      <div className="font-medium text-red-900">Service Interruption</div>
-                      <div className="text-sm text-red-700">Line 1 experiencing delays due to technical issues</div>
-                      <div className="text-xs text-red-600 mt-1">10 minutes ago</div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                    <Clock className="h-5 w-5 text-yellow-600 mt-0.5" />
-                    <div className="flex-1">
-                      <div className="font-medium text-yellow-900">Multiple Overstay Fines</div>
-                      <div className="text-sm text-yellow-700">5 new fines issued in the last hour</div>
-                      <div className="text-xs text-yellow-600 mt-1">45 minutes ago</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               <div className="bg-white p-6 rounded-lg shadow">
                 <h3 className="text-xl font-semibold mb-4 text-gray-800 flex items-center gap-2">
                   <Settings className="h-5 w-5 text-gray-600" />

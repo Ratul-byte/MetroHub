@@ -8,6 +8,7 @@ import { ArrowRight, Clock, Ticket, MapPin } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import AnimatedSection from '../ui/AnimatedSection';
+import ScrollToTop from '../ui/ScrollToTop';
 
 const Button = ({ className, variant, size, asChild = false, ...props }) => {
   const Comp = asChild ? 'div' : 'button';
@@ -47,7 +48,7 @@ const Hero = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="flex items-center gap-2 hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2 text-lg" onClick={() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })}>
+              <Button size="lg" className="flex items-center gap-2 hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2 text-lg" onClick={() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })}> 
                 {t('get_started_now')}
                 <ArrowRight className="h-4 w-4" />
               </Button>
@@ -188,9 +189,9 @@ const CallToAction = () => {
             <Button 
               size="lg" 
               variant="secondary"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 hover:scale-110 transition-transform"
+              onClick={() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })}
             >
-              {onclick=() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })}
               {t('start_planning_trip')}
               <ArrowRight className="h-4 w-4" />
             </Button>

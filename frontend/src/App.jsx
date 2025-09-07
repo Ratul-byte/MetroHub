@@ -16,6 +16,7 @@ import UserManagement from './components/pages/UserManagement';
 import SearchSchedules from './components/pages/SearchSchedules';
 import LanguageSwitcher from './components/ui/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
+import ScrollToTop from './components/ui/ScrollToTop';
 
 import ResetPassword from './components/pages/ResetPassword';
 import BookTicket from './components/pages/BookTicket'; // Import the new component
@@ -59,7 +60,7 @@ const Header = () => {
             </Link>
             <div className="relative group">
               <button className="text-foreground hover:text-primary transition-colors focus:outline-none hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2">
-                {t('Services')}
+                {t('services')}
               </button>
               <div className="absolute hidden group-hover:block bg-white shadow-lg rounded-md py-2 w-48 z-10">
                 <Link to="/search-schedules" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
@@ -220,6 +221,7 @@ const App = () => {
         </style>
         {!isAdmin && <Header />}
         <div className="flex-grow">
+          <ScrollToTop />
           <Routes>
             <Route
               path="/"
