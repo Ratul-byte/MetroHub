@@ -72,6 +72,7 @@ export const initiatePayment = async (req, res) => {
     };
 
     const ticket = await Ticket.create(ticketData);
+    console.log('Newly created ticket object (from paymentController):', ticket);
     console.log('ticket created id=', ticket._id);
 
     const urls = makeUrls();
@@ -169,7 +170,8 @@ export const sslcommerzSuccess = async (req, res) => {
       amount: ticket.amount,
     };
 
-    const qrBuffer = await QRCode.toBuffer(JSON.stringify(ticketInfo));
+    const qrUrl = `${process.env.API_URL}/api/qr/scan?ticketId=${ticket._id}`;
+    const qrBuffer = await QRCode.toBuffer(qrUrl);
     ticket.qrCode = `data:image/png;base64,${qrBuffer.toString('base64')}`;
     await ticket.save();
 
@@ -279,7 +281,8 @@ export const sslcommerzIPN = async (req, res) => {
         amount: ticket.amount,
       };
   
-      const qr = await QRCode.toDataURL(JSON.stringify(ticketInfo));
+      const qrUrl = `${process.env.API_URL}/api/qr/scan?ticketId=${ticket._id}`;
+      const qr = await QRCode.toDataURL(qrUrl);
       ticket.qrCode = qr;
     } else {
       ticket.paymentStatus = 'failed';
@@ -291,5 +294,68 @@ export const sslcommerzIPN = async (req, res) => {
   } catch (err) {
     console.error('sslcommerzIPN error', err);
     return res.status(500).send('ipn handler error');
+  }
+};
+
+export const payFromBalance = async (req, res) => {
+  try {
+    const { scheduleId, amount } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.role !== 'rapidPassUser') {
+      return res.status(403).json({ message: 'User is not a rapid pass user' });
+    }
+
+    if (user.passBalance < amount) {
+      return res.status(400).json({ message: 'Insufficient balance' });
+    }
+
+    const schedule = await MetroSchedule.findById(scheduleId);
+    if (!schedule) {
+      return res.status(404).json({ message: 'Schedule not found' });
+    }
+
+    console.log(`User ${user._id} passBalance before deduction: ${user.passBalance}`);
+    console.log(`Amount to deduct: ${amount}`);
+    user.passBalance -= amount;
+    console.log(`User ${user._id} passBalance after deduction: ${user.passBalance}`);
+    await user.save();
+    console.log(`User ${user._id} saved with new passBalance.`);
+
+    const tranId = `tran_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
+    const ticketData = {
+      user: req.user._id,
+      schedule: scheduleId,
+      amount,
+      transactionId: tranId,
+      paymentStatus: 'paid',
+    };
+
+    const ticket = await Ticket.create(ticketData);
+
+    const ticketInfo = {
+      ticketId: ticket._id,
+      trainName: schedule.trainName,
+      sourceStation: schedule.sourceStation,
+      destinationStation: schedule.destinationStation,
+      departureTime: schedule.departureTime,
+      arrivalTime: schedule.arrivalTime,
+      amount: ticket.amount,
+    };
+
+    const qrUrl = `${process.env.API_URL}/api/qr/scan?ticketId=${ticket._id}`;
+    const qrBuffer = await QRCode.toBuffer(qrUrl);
+    ticket.qrCode = `data:image/png;base64,${qrBuffer.toString('base64')}`;
+    await ticket.save();
+
+    res.status(201).json(ticket);
+  } catch (err) {
+    console.error('payFromBalance error', err);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };

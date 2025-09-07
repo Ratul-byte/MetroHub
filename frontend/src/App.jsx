@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate, Navigate, Outlet } from 'react-router-dom';
 import Login from './components/pages/Login';
 import Register from './components/pages/Register';
 import Profile from './components/pages/Profile';
@@ -8,6 +8,7 @@ import { useAuth } from './context/AuthContext';
 import logo from './assets/logo main 1.png';
 import { Menu, Github, Twitter, Linkedin, Mail, Phone } from 'lucide-react';
 import LandingPage from './components/pages/LandingPage';
+import UserDashboard from './components/pages/UserDashboard';
 import Map from './components/pages/Map';
 import AdminDashboard from './components/pages/AdminDashboard';
 import AdminRoute from './components/AdminRoute';
@@ -20,6 +21,8 @@ import ResetPassword from './components/pages/ResetPassword';
 import BookTicket from './components/pages/BookTicket'; // Import the new component
 import PaymentSuccess from './components/pages/PaymentSuccess';
 import BookingHistory from './components/pages/BookingHistory';
+import {Extras} from './components/pages/Extras';
+import {AboutUs} from './components/pages/AboutUs';
 
 const Button = ({ className, variant, size, asChild = false, ...props }) => {
   const Comp = asChild ? 'div' : 'button';
@@ -125,7 +128,9 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <img src={logo} alt="MetroHub Logo" className="h-8 w-auto" />
+              <Link to="/extras">
+                <img src={logo} alt="MetroHub Logo" className="h-8 w-auto" />
+              </Link>
               <span className="text-lg font-semibold">MetroHub</span>
             </div>
             <p className="text-sm text-muted-foreground max-w-xs">
@@ -181,7 +186,10 @@ const Footer = () => {
   );
 };
 
-
+const PrivateRoute = () => {
+    const { user } = useAuth();
+    return user ? <Outlet /> : <Navigate to="/login" />;
+  };
 
 const App = () => {
   const { user } = useAuth();
@@ -218,6 +226,8 @@ const App = () => {
               element={
                 isAdmin ? (
                   <AdminDashboard />
+                ) : user ? (
+                  <UserDashboard />
                 ) : (
                   <LandingPage />
                 )
@@ -228,15 +238,19 @@ const App = () => {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/map" element={<Map />} />
-            <Route path="/welcome" element={<LandingPage />} />
             <Route path="/admin" element={<AdminRoute />}>
               <Route path="" element={<AdminDashboard />} />
               <Route path="users" element={<UserManagement />} />
+            </Route>
+            <Route path="/dashboard" element={<PrivateRoute />}>
+                <Route path="" element={<UserDashboard />} />
             </Route>
             <Route path="/search-schedules" element={<SearchSchedules />} />
             <Route path="/book-tickets" element={<BookTicket />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/booking-history" element={<BookingHistory />} />
+            <Route path="/extras" element={<Extras />} />
+            <Route path="/about" element={<AboutUs />} />
           </Routes>
         </div>
         {!isAdmin && <Footer />}

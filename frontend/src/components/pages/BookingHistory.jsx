@@ -54,9 +54,15 @@ const BookingHistory = () => {
                 <p><strong>{t('train')}</strong> {ticket.schedule.trainName}</p>
                 <p><strong>{t('from')}</strong> {ticket.schedule.sourceStation}</p>
                 <p><strong>{t('to')}</strong> {ticket.schedule.destinationStation}</p>
-                <p><strong>{t('departure')}</strong> {ticket.schedule.departureTime}</p>
-                <p><strong>{t('arrival')}</strong> {ticket.schedule.arrivalTime}</p>
+                
                 <p><strong>{t('fare')}</strong> {ticket.amount} {t('bdt')}</p>
+                <p><strong>{t('time_of_booking')}</strong> {new Date(ticket.createdAt).toLocaleString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}</p>
                 <p><strong>{t('status')}</strong> {ticket.paymentStatus}</p>
               </div>
             ))}

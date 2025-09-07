@@ -72,6 +72,21 @@ router.put('/profile', protect, async (request, response) => {
   }
 });
 
+// Get user profile
+router.get('/profile', protect, async (request, response) => {
+  try {
+    const user = await User.findById(request.user._id).select('-password'); // Exclude password
+    if (user) {
+      response.json(user);
+    } else {
+      response.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error(error.message);
+    response.status(500).send({ message: 'Server Error' });
+  }
+});
+
 router.get('/tickets/:ticketId', protect, getTicketById);
 
 router.get('/tickets', protect, getAllUserTickets);

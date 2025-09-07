@@ -143,10 +143,13 @@ const getSchedules = async (req, res) => {
       }
 
       results.push({
+        from: segments[srcIndex].sourceStation,
+        to: segments[dstIndex].destinationStation,
         trainName,
         departureTime: segments[srcIndex].departureTime,
         arrivalTime: segments[dstIndex].arrivalTime,
-        fare,
+        price: fare, // Renamed fare to price
+        frequency: segments[srcIndex].frequency, // Assuming frequency is on the segment
         segmentIds: segments.slice(srcIndex, dstIndex + 1).map(s => s._id),
       });
     }

@@ -18,6 +18,7 @@ const Profile = () => {
   const [error, setError] = useState('');
   const [depositAmount, setDepositAmount] = useState('');
   const [rapidPassId, setRapidPassId] = useState('');
+  const [fine, setFine] = useState(0);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -34,6 +35,7 @@ const Profile = () => {
           setEmail(userData.email || '');
           setPhoneNumber(userData.phoneNumber || '');
           setPreferredRoutes(userData.preferredRoutes.join(', ') || '');
+          setFine(userData.fine || 0);
         } catch (err) {
           setError(err.response?.data?.message || t('failed_fetch_profile'));
         } finally {
@@ -41,8 +43,13 @@ const Profile = () => {
         }
       }
     };
+
     fetchProfile();
-  }, [user, token]);
+
+    const intervalId = setInterval(fetchProfile, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, [user, token, t]);
 
   const handleUpdateProfile = async () => {
     setLoading(true);
@@ -145,7 +152,7 @@ const Profile = () => {
               {user.role === 'rapidPassUser' ? (
                 <div className="text-center">
                   <p className="text-green-600">{t('you_are_rapid_pass_user')}</p>
-                  <p>{t('balance')}: ${user && user.passBalance ? user.passBalance.toFixed(2) : '0.00'}</p>
+
                 </div>
               ) : (
                 <>
@@ -156,7 +163,8 @@ const Profile = () => {
                 </>
               )}
               <div className="mt-4">
-                <p className="text-center text-lg font-semibold mb-2">{t('current_balance')}: ${user && user.passBalance ? user.passBalance.toFixed(2) : '0.00'}</p>
+                <p className="text-center text-lg font-semibold mb-2">{t('current_balance')}: ৳{user && user.passBalance ? user.passBalance.toFixed(2) : '0.00'}</p>
+                <p className="text-center text-lg font-semibold mb-2 text-red-500">{t('current_fine')}: ৳{fine.toFixed(2)}</p>
                 <Input type="number" placeholder={t('deposit_amount')} value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
                 <Button onClick={handleDeposit} disabled={loading || user.role !== 'rapidPassUser'} className="w-full mt-2 border-2 border-green-500 text-green-500 font-bold rounded-md transition-all duration-300 ease-in-out px-4 py-2 hover:bg-green-500 hover:text-white">
                   {loading ? t('depositing') : t('deposit')}

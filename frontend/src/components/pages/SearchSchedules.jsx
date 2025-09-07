@@ -3,6 +3,7 @@ import axios from 'axios';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 
 const SearchSchedules = () => {
   const { t } = useTranslation();
@@ -19,7 +20,7 @@ const SearchSchedules = () => {
               const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/stations`);
         setStations(res.data);
       } catch (err) {
-        setError('Failed to fetch stations.');
+        setError(t('failed_to_fetch_stations'));
       }
     };
     fetchStations();
@@ -41,77 +42,106 @@ const SearchSchedules = () => {
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/schedules`, { params });
       setSchedules(res.data);
     } catch (err) {
-      setError('Failed to fetch schedules.');
+      setError(t('failed_to_fetch_schedules'));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{t('search_schedules')}</h1>
-      {error && <p className="text-red-500 bg-red-100 p-3 rounded mb-4">{error}</p>}
-      <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-        <form onSubmit={handleSearch}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="min-h-screen bg-background">
+    <div className="container mx-auto px-4 py-8">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="container mx-auto p-4"
+    >
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">{t('search_schedules_title')}</h1>
+        <p className="text-muted-foreground">{t('search_schedules_description')}</p>
+      </div>
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label htmlFor="station" className="block text-gray-700 text-m font-bold mb-2">
+              {t('station')}:
+            </label>
             <select
+              id="station"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               value={selectedStation}
               onChange={(e) => setSelectedStation(e.target.value)}
-              className="p-2 border border-gray-300 rounded-md"
             >
-              <option value="">{t('select_station')}</option>
+              <option value="">{t('select_a_station')}</option>
               {stations.map((station) => (
                 <option key={station._id} value={station.name}>
                   {station.name}
                 </option>
               ))}
             </select>
-            <Input
+          </div>
+          <div>
+            <label htmlFor="time" className="block text-gray-700 text-m font-bold mb-2">
+              {t('time')}:
+            </label>
+            <input
               type="time"
-              placeholder={t('time')}
+              id="time"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               value={time}
               onChange={(e) => setTime(e.target.value)}
             />
-            <Button type="submit" disabled={loading}>
-              {loading ? t('searching') : t('search')}
-            </Button>
           </div>
-        </form>
-      </div>
+        </div>
+        <button
+          onClick={handleSearch}
+          className="text-m hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2 border-black border-2 flex items-center justify-center"
+          disabled={loading}
+        >
+          {loading ? (
+            <>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+              <span>{t('searching_schedules')}</span>
+            </>
+          ) : (
+            t('search_schedules_button')
+          )}
+        </button>
+        {error && <p className="text-red-500">{error}</p>}
 
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">{t('search_results')}</h2>
-        {loading && schedules.length === 0 ? (
-          <p>{t('loading_schedules')}</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white">
-              <thead className="bg-gray-200">
-                <tr>
-                  <th className="py-2 px-4 border-b">{t('source_station')}</th>
-                  <th className="py-2 px-4 border-b">{t('destination_station')}</th>
-                  <th className="py-2 px-4 border-b">{t('train_name')}</th>
-                  <th className="py-2 px-4 border-b">{t('departure_time')}</th>
-                  <th className="py-2 px-4 border-b">{t('arrival_time')}</th>
-                  <th className="py-2 px-4 border-b">{t('frequency_min')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {schedules.map((schedule) => (
-                  <tr key={schedule._id}>
-                    <td className="py-2 px-4 border-b">{schedule.sourceStation}</td>
-                    <td className="py-2 px-4 border-b">{schedule.destinationStation}</td>
-                    <td className="py-2 px-4 border-b">{schedule.trainName}</td>
-                    <td className="py-2 px-4 border-b">{schedule.departureTime}</td>
-                    <td className="py-2 px-4 border-b">{schedule.arrivalTime}</td>
-                    <td className="py-2 px-4 border-b">{schedule.frequency}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {schedules.length > 0 && (
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">{t('available_schedules')}</h2>
+            <ul>
+              {schedules.map((schedule) => (
+                <li key={schedule._id} className="bg-gray-100 p-4 rounded-lg shadow-md mb-4">
+                  <p>
+                    <strong>{t('from_colon')}</strong> {schedule.sourceStation}
+                  </p>
+                  <p>
+                    <strong>{t('to_colon')}</strong> {schedule.destinationStation}
+                  </p>
+                  <p>
+                    <strong>{t('departure_time_colon')}</strong> {schedule.departureTime}
+                  </p>
+                  <p>
+                    <strong>{t('arrival_time_colon')}</strong> {schedule.arrivalTime}
+                  </p>
+                  <p>
+                    <strong>{t('fare_colon')}</strong> {schedule.fare}৳
+                  </p>
+                  <p>
+                    <strong>{t('frequency_colon')}</strong> {schedule.frequency}
+                  </p>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
+    </motion.div>
+    </div>
     </div>
   );
 };

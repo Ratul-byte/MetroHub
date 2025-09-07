@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios'; // for Nominatim API
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 
 const Map = () => {
   const { t } = useTranslation();
@@ -122,160 +123,180 @@ const Map = () => {
   };
 
   return (
-    <div className="relative h-full">
-      {user && user.role !== 'admin' && (
-        <div className="absolute top-4 right-4 z-10 bg-white p-4 rounded-md shadow-md flex items-center space-x-2">
-          {(showSourceInput || mapSrc.includes('saddr=')) && (
-            <input
-              type="text"
-              placeholder={t('enter_your_location')}
-              value={source}
-              onChange={handleSourceChange}
-              className="w-64 p-2 border border-gray-300 rounded-md"
-              readOnly={mapSrc.includes('saddr=')} // Added readOnly
-            />
-          )}
-          {(!showNearbyStationsInput || mapSrc.includes('saddr=')) && (
-            <div className="relative">
-              <input
-                type="text"
-                placeholder={t('enter_destination')}
-                value={destination}
-                onChange={handleDestinationChange}
-                className="w-64 p-2 border border-gray-300 rounded-md"
-                readOnly={mapSrc.includes('saddr=')} // Added readOnly
-              />
-              {suggestions.length > 0 && (
-                <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1">
-                  {suggestions.map(suggestion => (
-                    <li
-                      key={suggestion.name}
-                      onClick={() => handleSuggestionClick(suggestion)}
-                      className="p-2 cursor-pointer hover:bg-gray-200"
-                    >
-                      {suggestion.name}
-                    </li>
-                  ))}
-                </ul>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative"
+        >
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold mb-2">Metro Map</h1>
+            <p className="text-muted-foreground">Explore the metro network and plan your routes.</p>
+          </div>
+
+          {user && user.role !== 'admin' && (
+            <div className="absolute top-1 right-4 z-10 bg-white p-3 rounded-md shadow-md flex items-center space-x-2">
+              {(showSourceInput || mapSrc.includes('saddr=')) && (
+                <input
+                  type="text"
+                  placeholder={t('enter_your_location')}
+                  value={source}
+                  onChange={handleSourceChange}
+                  className="w-64 p-2 border border-gray-300 rounded-md"
+                  readOnly={mapSrc.includes('saddr=')} // Added readOnly
+                />
               )}
-            </div>
-          )}
-          {mapSrc.includes('saddr=') ? ( 
-            <button
-              onClick={handleCancelJourney}
-              className="w-auto p-2 bg-transparent text-red-500 rounded-md border-2 border-red-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-red-500 hover:text-white"
-            >
-              {t('cancel_journey')}
-            </button>
-          ) : ( // Existing logic for other buttons
-            <>
-              {!showSourceInput && !showNearbyStationsInput ? (
-                <>
-                  <button
-                    onClick={handleSearchLocation}
-                    className="w-auto p-2 bg-transparent text-blue-500 rounded-md border-2 border-blue-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-blue-500 hover:text-white"
-                  >
-                    {t('search')}
-                  </button>
-                  <button
-                    onClick={() => setShowSourceInput(true)}
-                    className="w-auto p-2 bg-transparent text-green-700 rounded-md border-2 border-green-700 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-green-700 hover:text-white"
-                  >
-                    {t('go_to_location')}
-                  </button>
-                  <button
-                    onClick={() => setShowNearbyStationsInput(true)}
-                    className="w-auto p-2 bg-transparent text-purple-500 rounded-md border-2 border-purple-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-purple-500 hover:text-white"
-                  >
-                    {t('find_nearby_station')}
-                  </button>
-                </>
-              ) : showSourceInput ? (
-                <>
-                  <button
-                    onClick={() => handleGetDirections()} // Call without arguments
-                    className="w-auto p-2 bg-transparent text-blue-500 rounded-md border-2 border-blue-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-blue-500 hover:text-white"
-                  >
-                    {t('get_directions')}
-                  </button>
-                  <button
-                    onClick={handleGoBack}
-                    className="w-auto p-2 bg-transparent text-gray-500 rounded-md border-2 border-gray-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-gray-500 hover:text-white"
-                  >
-                    {t('go_back')}
-                  </button>
-                </>
-              ) : (
-                <div className="flex items-center space-x-2">
+              {(!showNearbyStationsInput || mapSrc.includes('saddr=')) && (
+                <div className="relative">
                   <input
                     type="text"
-                    placeholder={t('enter_your_location')}
-                    value={source}
-                    onChange={handleSourceChange}
+                    placeholder={t('enter_destination')}
+                    value={destination}
+                    onChange={handleDestinationChange}
                     className="w-64 p-2 border border-gray-300 rounded-md"
+                    readOnly={mapSrc.includes('saddr=')} // Added readOnly
                   />
-                  <button
-                    onClick={handleFindNearbyStations}
-                    className="w-auto p-2 bg-transparent text-purple-500 rounded-md border-2 border-purple-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-purple-500 hover:text-white"
-                  >
-                    {t('search_nearby')}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowNearbyStationsInput(false);
-                      setNearbyStations([]); // Clear nearby stations
-                    }}
-                    className="w-auto p-2 bg-transparent text-gray-500 rounded-md border-2 border-gray-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-gray-500 hover:text-white"
-                  >
-                    {t('cancel')}
-                  </button>
+                  {suggestions.length > 0 && (
+                    <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1">
+                      {suggestions.map(suggestion => (
+                        <li
+                          key={suggestion.name}
+                          onClick={() => handleSuggestionClick(suggestion)}
+                          className="p-2 cursor-pointer hover:bg-gray-200"
+                        >
+                          {suggestion.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               )}
-            </>
-          )}
-        </div>
-      )}
-      {loading && <div className="flex items-center justify-center h-full">{t('loading_map')}</div>}
-      {error && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white p-4 rounded-md shadow-md z-20">
-          {error}
-        </div>
-      )}
-      {!loading && (
-        <div className="relative w-full h-full flex">
-          {(hoverMapSrc || mapSrc) && ( 
-            <iframe
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              src={hoverMapSrc || mapSrc}
-              allowFullScreen
-            ></iframe>
-          )}
-          {showNearbyStationsInput && nearbyStations.length > 0 && (
-            <div className="absolute right-4 top-20 w-64 bg-white p-4 rounded-md shadow-md z-10 overflow-y-auto max-h-[calc(100%-100px)]">
-              <h3 className="text-lg font-semibold mb-2">{t('nearby_stations')}</h3>
-              <ul>
-                {nearbyStations.map(station => (
-                  <li
-                      key={station.name}
-                      onClick={() => {
-                        setDestination(station.name);
-                        handleGetDirections(station.name); // Pass the station name directly
-                        setShowNearbyStationsInput(false); // Hide the nearby stations input after selecting
-                      }}
-                      onMouseEnter={() => handleStationHover(station.name)} // Hover handler
-                      onMouseLeave={handleStationLeave} // Leave handler
-                      className="p-2 cursor-pointer hover:bg-gray-100 border-b border-gray-200 last:border-b-0"
-                    >
-                      {station.name} ({t('distance')}: {station.distance} km)
-                    </li>
-                ))}
-              </ul>
+              {mapSrc.includes('saddr=') ? (
+                <button
+                  onClick={handleCancelJourney}
+                  className="w-auto p-2 bg-transparent text-red-500 rounded-md border-2 border-red-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-red-500 hover:text-white"
+                >
+                  {t('cancel_journey')}
+                </button>
+              ) : ( // Existing logic for other buttons
+                <>
+                  {!showSourceInput && !showNearbyStationsInput ? (
+                    <>
+                      <button
+                        onClick={handleSearchLocation}
+                        className="w-auto p-2 bg-transparent text-blue-500 rounded-md border-2 border-blue-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-blue-500 hover:text-white"
+                      >
+                        {t('search')}
+                      </button>
+                      <button
+                        onClick={() => setShowSourceInput(true)}
+                        className="w-auto p-2 bg-transparent text-green-700 rounded-md border-2 border-green-700 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-green-700 hover:text-white"
+                      >
+                        {t('go_to_location')}
+                      </button>
+                      <button
+                        onClick={() => setShowNearbyStationsInput(true)}
+                        className="w-auto p-2 bg-transparent text-purple-500 rounded-md border-2 border-purple-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-purple-500 hover:text-white"
+                      >
+                        {t('find_nearby_station')}
+                      </button>
+                    </>
+                  ) : showSourceInput ? (
+                    <>
+                      <button
+                        onClick={() => handleGetDirections()} // Call without arguments
+                        className="w-auto p-2 bg-transparent text-blue-500 rounded-md border-2 border-blue-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-blue-500 hover:text-white"
+                      >
+                        {t('get_directions')}
+                      </button>
+                      <button
+                        onClick={handleGoBack}
+                        className="w-auto p-2 bg-transparent text-gray-500 rounded-md border-2 border-gray-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-gray-500 hover:text-white"
+                      >
+                        {t('go_back')}
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="text"
+                        placeholder={t('enter_your_location')}
+                        value={source}
+                        onChange={handleSourceChange}
+                        className="w-64 p-2 border border-gray-300 rounded-md"
+                      />
+                      <button
+                        onClick={handleFindNearbyStations}
+                        className="w-auto p-2 bg-transparent text-purple-500 rounded-md border-2 border-purple-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-purple-500 hover:text-white"
+                      >
+                        {t('search_nearby')}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowNearbyStationsInput(false);
+                          setNearbyStations([]); // Clear nearby stations
+                        }}
+                        className="w-auto p-2 bg-transparent text-gray-500 rounded-md border-2 border-gray-500 font-bold transition-all duration-300 ease-in-out px-4 py-2 hover:bg-gray-500 hover:text-white"
+                      >
+                        {t('cancel')}
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           )}
-        </div>
-      )}
+
+          {loading && (
+            <div className="flex items-center justify-center h-[60vh]">{t('loading_map')}</div>
+          )}
+
+          {error && (
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white p-4 rounded-md shadow-md z-20">
+              {error}
+            </div>
+          )}
+
+          {!loading && (
+            <div className="relative w-full h-[70vh] flex rounded-md overflow-hidden mt-10 border border-gray-300 border-2">
+              {(hoverMapSrc || mapSrc) && (
+                <iframe
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  src={hoverMapSrc || mapSrc}
+                  allowFullScreen
+                ></iframe>
+              )}
+
+              {showNearbyStationsInput && nearbyStations.length > 0 && (
+                <div className="absolute right-4 top-5 w-64 bg-white p-4 rounded-md shadow-md z-10 overflow-y-auto max-h-[calc(100%-100px)]">
+                  <h3 className="text-lg font-semibold mb-2">{t('nearby_stations')}</h3>
+                  <ul>
+                    {nearbyStations.map(station => (
+                      <li
+                        key={station.name}
+                        onClick={() => {
+                          setDestination(station.name);
+                          handleGetDirections(station.name); // Pass the station name directly
+                          setShowNearbyStationsInput(false); // Hide the nearby stations input after selecting
+                        }}
+                        onMouseEnter={() => handleStationHover(station.name)} // Hover handler
+                        onMouseLeave={handleStationLeave} // Leave handler
+                        className="p-2 cursor-pointer hover:bg-gray-100 border-b border-gray-200 last:border-b-0"
+                      >
+                        {station.name} ({t('distance')}: {station.distance} km)
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+        </motion.div>
+      </div>
     </div>
   );
 };

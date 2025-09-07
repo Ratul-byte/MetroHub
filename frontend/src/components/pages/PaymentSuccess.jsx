@@ -30,6 +30,7 @@ const PaymentSuccess = () => {
           },
         });
         setTicket(res.data);
+        console.log('API response ticket data:', res.data);
       } catch (err) {
         setError('Failed to fetch ticket details.');
       } finally {
@@ -59,7 +60,13 @@ const PaymentSuccess = () => {
             <p className="text-lg"><strong>{t('from')}</strong> {ticket.schedule.sourceStation}</p>
             <p className="text-lg"><strong>{t('to')}</strong> {ticket.schedule.destinationStation}</p>
             <p className="text-lg"><strong>{t('fare')}</strong> {ticket.amount} {t('bdt')}</p>
-            <p className="text-lg"><strong>{t('time_of_booking')}</strong> {new Date(ticket.createdAt).toLocaleString()}</p>
+            <p className="text-lg"><strong>{t('time_of_booking')}</strong> {new Date(ticket.createdAt).toLocaleString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}</p>
           </div>
           {ticket.qrCode && (
             <div className="w-1/2 flex flex-col items-center justify-center">
@@ -77,6 +84,15 @@ const PaymentSuccess = () => {
                 className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               >
                 {t('download_qr_code')}
+              </button>
+              <button
+                onClick={() => {
+                  const scanUrl = `${API}/api/qr/scan?ticketId=${ticket._id}`;
+                  window.open(scanUrl, '_blank');
+                }}
+                className="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+              >
+                {t('simulate_scan')}
               </button>
             </div>
           )}
