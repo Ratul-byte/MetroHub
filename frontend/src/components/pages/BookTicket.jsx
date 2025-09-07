@@ -127,7 +127,7 @@ export default function BookTicket() {
       const payload = {
         scheduleId: selectedSchedule.segmentIds ? selectedSchedule.segmentIds[0] : selectedSchedule.scheduleId || null,
         segmentIds: selectedSchedule.segmentIds || null,
-        amount: selectedSchedule.fare || 0,
+        amount: selectedSchedule.price || 0,
       };
 
       const res = await axios.post(`${API}/api/payment/init`, payload, {
@@ -161,7 +161,7 @@ export default function BookTicket() {
       const token = localStorage.getItem('token');
       const payload = {
         scheduleId: selectedSchedule.segmentIds ? selectedSchedule.segmentIds[0] : selectedSchedule.scheduleId || null,
-        amount: selectedSchedule.fare || 0,
+        amount: selectedSchedule.price || 0,
       };
 
       const res = await axios.post(`${API}/api/payment/pay-from-balance`, payload, {
@@ -320,7 +320,7 @@ export default function BookTicket() {
                                       
                                       <div className="text-right">
                                         <div className="text-lg font-bold text-primary">
-                                          ৳{formatFareForLocale(schedule.fare, i18n)}
+                                          ৳{formatFareForLocale(schedule.price, i18n)}
                                         </div>
                                         {selectedSchedule?._id === schedule._id && (
                                           <CheckCircle className="h-5 w-5 text-green-600 ml-auto mt-1" />
@@ -385,7 +385,7 @@ export default function BookTicket() {
                     <Separator className="my-4" />
                     <div className="flex justify-between items-center">
                       <span className="text-2xl font-bold">{t('total_fare')}</span>
-                      <span className="text-2xl font-bold text-primary">৳{formatFareForLocale(selectedSchedule.fare, i18n)}</span>
+                      <span className="text-2xl font-bold text-primary">৳{formatFareForLocale(selectedSchedule.price, i18n)}</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -498,7 +498,7 @@ export default function BookTicket() {
                     <div className="pt-4 flex justify-center items-center">
                       <Button 
                         onClick={paymentMethod === 'gateway' ? handleBookTicket : handlePayFromBalance}
-                        disabled={loading || !selectedSchedule || (paymentMethod === "balance" && user.balance < selectedSchedule.fare)}
+                        disabled={loading || !selectedSchedule || (paymentMethod === "balance" && user.balance < selectedSchedule.price)}
                                                   className="text-lg hover:bg-black hover:text-white rounded-md transition-all duration-300 ease-in-out px-4 py-2 border-black border-2"
                         size="lg"
                       >
@@ -507,19 +507,19 @@ export default function BookTicket() {
                             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                             <span>{t('processing_payment')}</span>
                           </div>
-                        ) : paymentMethod === "balance" && user.balance < selectedSchedule.fare ? (
+                        ) : paymentMethod === "balance" && user.balance < selectedSchedule.price ? (
                           t('insufficient_balance')
                         ) : (
                           <div className="flex items-center gap-3 center px-4">
                             {paymentMethod === "balance" ? <Wallet className="h-5 w-5" /> : <CreditCard className="h-5 w-5" />}
                             <span>
-                              {paymentMethod === "balance" ? t('pay_from_balance') : t('proceed_to_payment')} - ৳{formatFareForLocale(selectedSchedule.fare, i18n)}
+                              {paymentMethod === "balance" ? t('pay_from_balance') : t('proceed_to_payment')} - ৳{formatFareForLocale(selectedSchedule.price, i18n)}
                             </span>
                           </div>
                         )}
                       </Button>
                       
-                      {paymentMethod === "balance" && user.balance < selectedSchedule.fare && (
+                      {paymentMethod === "balance" && user.balance < selectedSchedule.price && (
                         <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
                           <p className="text-sm text-orange-700">
                             {t('insufficient_balance_top_up_message')}
