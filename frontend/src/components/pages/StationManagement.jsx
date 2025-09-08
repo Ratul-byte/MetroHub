@@ -9,6 +9,7 @@ const StationManagement = () => {
   const { token } = useAuth();
   const [stations, setStations] = useState([]);
   const [name, setName] = useState('');
+  const [serial, setSerial] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [editingStation, setEditingStation] = useState(null);
@@ -30,6 +31,17 @@ const StationManagement = () => {
     fetchStations();
   }, []);
 
+  useEffect(() => {
+    if (!editingStation) {
+      if (stations.length > 0) {
+        const maxSerial = Math.max(...stations.map(s => s.serial));
+        setSerial(String(maxSerial + 1));
+      } else {
+        setSerial('1');
+      }
+    }
+  }, [stations, editingStation]);
+
   const handleAddStation = async () => {
     try {
       setLoading(true);
@@ -42,7 +54,7 @@ const StationManagement = () => {
       };
       const { data } = await axios.post(
                 `${import.meta.env.VITE_API_URL}/api/stations`,
-        { name, latitude, longitude },
+        { name, serial: Number(serial), latitude, longitude },
         config
       );
       setStations([...stations, data]);
@@ -68,7 +80,7 @@ const StationManagement = () => {
       };
       const { data } = await axios.put(
                 `${import.meta.env.VITE_API_URL}/api/stations/${editingStation._id}`,
-        { name, latitude, longitude },
+        { name, serial: Number(serial), latitude, longitude },
         config
       );
       setStations(
@@ -106,6 +118,7 @@ const StationManagement = () => {
   const startEditing = (station) => {
     setEditingStation(station);
     setName(station.name);
+    setSerial(station.serial);
     setLatitude(station.latitude);
     setLongitude(station.longitude);
     setTimeout(() => {
@@ -139,6 +152,12 @@ const StationManagement = () => {
             placeholder="Station Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            type="number"
+            placeholder="Serial"
+            value={serial}
+            onChange={(e) => setSerial(e.target.value)}
           />
           <Input
             type="number"
@@ -185,6 +204,7 @@ const StationManagement = () => {
               <thead className="bg-gray-200">
                 <tr>
                   <th className="py-2 px-4 border-b text-center">Name</th>
+                  <th className="py-2 px-4 border-b text-center">Serial</th>
                   <th className="py-2 px-4 border-b text-center">Latitude</th>
                   <th className="py-2 px-4 border-b text-center">Longitude</th>
                   <th className="py-2 px-4 border-b text-center">Actions</th>
@@ -194,6 +214,7 @@ const StationManagement = () => {
                 {stations.map((station) => (
                   <tr key={station._id}>
                     <td className="py-2 px-4 border-b text-center">{station.name}</td>
+                    <td className="py-2 px-4 border-b text-center">{station.serial}</td>
                     <td className="py-2 px-4 border-b text-center">{station.latitude}</td>
                     <td className="py-2 px-4 border-b text-center">{station.longitude}</td>
                     <td className="py-2 px-4 border-b text-center">

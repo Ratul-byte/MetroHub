@@ -51,10 +51,11 @@ const geocodeAddress = async (address) => {
 // @route   POST /api/stations
 // @access  Private/Admin
 const createStation = async (req, res) => {
-  const { name, latitude, longitude } = req.body;
+  const { name, serial, latitude, longitude } = req.body;
 
   const station = new MetroStation({
     name,
+    serial,
     latitude,
     longitude,
   });
@@ -89,12 +90,13 @@ const getStationById = async (req, res) => {
 // @route   PUT /api/stations/:id
 // @access  Private/Admin
 const updateStation = async (req, res) => {
-  const { name, latitude, longitude } = req.body;
+  const { name, serial, latitude, longitude } = req.body;
 
   const station = await MetroStation.findById(req.params.id);
 
   if (station) {
     station.name = name;
+    station.serial = serial;
     station.latitude = latitude;
     station.longitude = longitude;
 
