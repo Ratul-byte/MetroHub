@@ -86,19 +86,11 @@ const getAllTickets = async (req, res) => {
 
 export { getUsers, deleteUser, updateUserRole, getRecentUsers, getAllTickets, getActiveTrainsCount, getMetroStationsCount, getActiveFinesCount, getTotalOutstandingFines, getFinesPaidThisMonthCount, getOverdueFinesCount, getRecentFines };
 
-// @desc    Get active trains count
-// @route   GET /api/admin/statistics/active-trains
-// @access  Private/Admin
+
 const getActiveTrainsCount = async (req, res) => {
   try {
-    // This is a placeholder. You need to define what an "active" train is.
-    // For example, you could count schedules that are currently running.
-    const now = new Date();
-    const activeSchedules = await MetroSchedule.countDocuments({
-      departureTime: { $lte: now },
-      arrivalTime: { $gte: now },
-    });
-    res.json({ count: activeSchedules });
+    const distinctTrains = await MetroSchedule.distinct('trainName');
+    res.json({ count: distinctTrains.length });
   } catch (error) {
     console.error('Error fetching active trains count:', error);
     res.status(500).json({ message: 'Server Error' });
