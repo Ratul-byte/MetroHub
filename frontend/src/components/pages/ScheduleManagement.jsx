@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
+import stationData from '../../metro_stations.json';
 
 const ScheduleManagement = () => {
   const { token } = useAuth();
@@ -13,9 +14,13 @@ const ScheduleManagement = () => {
   const [departureTime, setDepartureTime] = useState('');
   const [arrivalTime, setArrivalTime] = useState('');
   const [frequency, setFrequency] = useState('');
+  const [fare, setFare] = useState('');
   const [editingSchedule, setEditingSchedule] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [stations, setStations] = useState([]);
+  const [sourceSuggestions, setSourceSuggestions] = useState([]);
+  const [destinationSuggestions, setDestinationSuggestions] = useState([]);
 
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -30,7 +35,44 @@ const ScheduleManagement = () => {
       }
     };
     fetchSchedules();
+    setStations(stationData.map(station => station.name));
   }, []);
+
+  const handleSourceChange = (e) => {
+    const value = e.target.value;
+    setSourceStation(value);
+    if (value) {
+      const filteredSuggestions = stations.filter(station =>
+        station.toLowerCase().includes(value.toLowerCase())
+      );
+      setSourceSuggestions(filteredSuggestions);
+    } else {
+      setSourceSuggestions([]);
+    }
+  };
+
+  const handleDestinationChange = (e) => {
+    const value = e.target.value;
+    setDestinationStation(value);
+    if (value) {
+      const filteredSuggestions = stations.filter(station =>
+        station.toLowerCase().includes(value.toLowerCase())
+      );
+      setDestinationSuggestions(filteredSuggestions);
+    } else {
+      setDestinationSuggestions([]);
+    }
+  };
+
+  const handleSourceSuggestionClick = (suggestion) => {
+    setSourceStation(suggestion);
+    setSourceSuggestions([]);
+  };
+
+  const handleDestinationSuggestionClick = (suggestion) => {
+    setDestinationStation(suggestion);
+    setDestinationSuggestions([]);
+  };
 
   const handleCreateSchedule = async () => {
     try {
@@ -44,7 +86,7 @@ const ScheduleManagement = () => {
       };
       const { data } = await axios.post(
                 `${import.meta.env.VITE_API_URL}/api/schedules`,
-        { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency },
+        { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency, fare },
         config
       );
       setSchedules([...schedules, data]);
@@ -73,7 +115,7 @@ const ScheduleManagement = () => {
       };
       const { data } = await axios.put(
                 `${import.meta.env.VITE_API_URL}/api/schedules/${editingSchedule._id}`,
-        { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency },
+        { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency, fare },
         config
       );
       setSchedules(
@@ -119,6 +161,7 @@ const ScheduleManagement = () => {
     setDepartureTime(schedule.departureTime);
     setArrivalTime(schedule.arrivalTime);
     setFrequency(schedule.frequency);
+    setFare(schedule.fare);
     setTimeout(() => {
       window.scrollTo({
         top: 0,
@@ -137,6 +180,7 @@ const ScheduleManagement = () => {
     setDepartureTime('');
     setArrivalTime('');
     setFrequency('');
+    setFare('');
   };
 
   return (
@@ -148,18 +192,48 @@ const ScheduleManagement = () => {
           {editingSchedule ? 'Edit Schedule' : 'Create New Schedule'}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            type="text"
-            placeholder="Source Station"
-            value={sourceStation}
-            onChange={(e) => setSourceStation(e.target.value)}
-          />
-          <Input
-            type="text"
-            placeholder="Destination Station"
-            value={destinationStation}
-            onChange={(e) => setDestinationStation(e.target.value)}
-          />
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder="Source Station"
+              value={sourceStation}
+              onChange={handleSourceChange}
+            />
+            {sourceSuggestions.length > 0 && (
+              <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1">
+                {sourceSuggestions.map(suggestion => (
+                  <li
+                    key={suggestion}
+                    onClick={() => handleSourceSuggestionClick(suggestion)}
+                    className="p-2 cursor-pointer hover:bg-gray-200"
+                  >
+                    {suggestion}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder="Destination Station"
+              value={destinationStation}
+              onChange={handleDestinationChange}
+            />
+            {destinationSuggestions.length > 0 && (
+              <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1">
+                {destinationSuggestions.map(suggestion => (
+                  <li
+                    key={suggestion}
+                    onClick={() => handleDestinationSuggestionClick(suggestion)}
+                    className="p-2 cursor-pointer hover:bg-gray-200"
+                  >
+                    {suggestion}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
           <Input
             type="text"
             placeholder="Train Name"
@@ -183,6 +257,12 @@ const ScheduleManagement = () => {
             placeholder="Frequency (minutes)"
             value={frequency}
             onChange={(e) => setFrequency(e.target.value)}
+          />
+          <Input
+            type="number"
+            placeholder="Fare"
+            value={fare}
+            onChange={(e) => setFare(e.target.value)}
           />
         </div>
         <div className="flex justify-end mt-4">
@@ -222,6 +302,7 @@ const ScheduleManagement = () => {
                   <th className="py-2 px-4 border-b text-center">Departure Time</th>
                   <th className="py-2 px-4 border-b text-center">Arrival Time</th>
                   <th className="py-2 px-4 border-b text-center">Frequency (min)</th>
+                  <th className="py-2 px-4 border-b text-center">Fare</th>
                   <th className="py-2 px-4 border-b text-center">Actions</th>
                 </tr>
               </thead>
@@ -234,6 +315,7 @@ const ScheduleManagement = () => {
                     <td className="py-2 px-4 border-b text-center">{schedule.departureTime}</td>
                     <td className="py-2 px-4 border-b text-center">{schedule.arrivalTime}</td>
                     <td className="py-2 px-4 border-b text-center">{schedule.frequency}</td>
+                    <td className="py-2 px-4 border-b text-center">{schedule.fare}</td>
                     <td className="py-2 px-4 border-b text-center">
                       <Button
                         onClick={() => startEditing(schedule)}

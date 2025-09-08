@@ -50,6 +50,7 @@ export default function AdminDashboard() {
           activeTrainsCount,
           metroStationsCount,
           activeFinesCount,
+          totalOutstandingFines,
           recentFines,
         ] = await Promise.all([
           axios.get(`${import.meta.env.VITE_API_URL}/api/admin/users`, config),
@@ -58,6 +59,7 @@ export default function AdminDashboard() {
           axios.get(`${import.meta.env.VITE_API_URL}/api/admin/statistics/active-trains`, config),
           axios.get(`${import.meta.env.VITE_API_URL}/api/admin/statistics/metro-stations`, config),
           axios.get(`${import.meta.env.VITE_API_URL}/api/admin/statistics/active-fines`, config),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/admin/statistics/total-outstanding-fines`, config),
           axios.get(`${import.meta.env.VITE_API_URL}/api/admin/recent-fines`, config),
         ]);
         setNormalUsersCount(userCounts.data.normalUsersCount);
@@ -67,6 +69,7 @@ export default function AdminDashboard() {
         setActiveTrainsCount(activeTrainsCount.data.count);
         setMetroStationsCount(metroStationsCount.data.count);
         setActiveFinesCount(activeFinesCount.data.count);
+        setTotalOutstandingFines(totalOutstandingFines.data.total);
         setRecentFines(recentFines.data);
         console.log("Recent Fines Data:", recentFines.data);
         setLoading(false);
@@ -198,10 +201,7 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-bold text-gray-800">Fine Management</h1>
-              <Button className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-                <Plus className="h-4 w-4 mr-2" />
-                Manual Fine Entry
-              </Button>
+              
             </div>
 
             {/* Fine Statistics */}
@@ -224,56 +224,16 @@ export default function AdminDashboard() {
                     <DollarSign className="h-6 w-6 text-yellow-600" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-800">৳2,350</div>
+                    <div className="text-2xl font-bold text-gray-800">৳{totalOutstandingFines}</div>
                     <div className="text-sm text-gray-500">Total Outstanding</div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow">
-                <div className="flex items-center gap-4">
-                  <div className="bg-green-100 rounded-full p-3">
-                    <CheckCircle className="h-6 w-6 text-green-600" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold">123</div>
-                    <div className="text-sm text-gray-500">Paid This Month</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white p-6 rounded-lg shadow">
-                <div className="flex items-center gap-4">
-                  <div className="bg-orange-100 rounded-full p-3">
-                    <Clock className="h-6 w-6 text-orange-600" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold">15</div>
-                    <div className="text-sm text-gray-500">Overdue Fines</div>
-                  </div>
-                </div>
-              </div>
+              
             </div>
 
-            {/* Fine Rules Configuration */}
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-xl font-semibold mb-4 text-gray-800">Fine Rules Configuration</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Station Overstay Limit (minutes)</label>
-                  <Input type="number" defaultValue="120" className="w-full p-2 border border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Overstay Fine Amount (৳)</label>
-                  <Input type="number" defaultValue="50" className="w-full p-2 border border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Grace Period (minutes)</label>
-                  <Input type="number" defaultValue="15" className="w-full p-2 border border-gray-300 rounded-md" />
-                </div>
-              </div>
-              <Button className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Update Fine Rules</Button>
-            </div>
+            
 
             {/* Fine Management Table */}
             <div className="bg-white p-6 rounded-lg shadow">

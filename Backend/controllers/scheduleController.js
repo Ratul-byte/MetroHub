@@ -166,7 +166,7 @@ const getSchedules = async (req, res) => {
 // @route   POST /api/schedules
 // @access  Private/Admin
 const createSchedule = async (req, res) => {
-  const { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency } = req.body;
+  const { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency, fare } = req.body;
 
   try {
     const schedule = new MetroSchedule({
@@ -176,6 +176,7 @@ const createSchedule = async (req, res) => {
       departureTime,
       arrivalTime,
       frequency,
+      fare,
     });
 
     const createdSchedule = await schedule.save();
@@ -190,7 +191,7 @@ const createSchedule = async (req, res) => {
 // @route   PUT /api/schedules/:id
 // @access  Private/Admin
 const updateSchedule = async (req, res) => {
-  const { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency } = req.body;
+  const { sourceStation, destinationStation, trainName, departureTime, arrivalTime, frequency, fare } = req.body;
 
   try {
     const schedule = await MetroSchedule.findById(req.params.id);
@@ -202,6 +203,7 @@ const updateSchedule = async (req, res) => {
       schedule.departureTime = departureTime || schedule.departureTime;
       schedule.arrivalTime = arrivalTime || schedule.arrivalTime;
       schedule.frequency = frequency || schedule.frequency;
+      schedule.fare = fare || schedule.fare;
 
       const updatedSchedule = await schedule.save();
       res.json(updatedSchedule);
