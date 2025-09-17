@@ -49,7 +49,7 @@ const AnimatedCredit = ({
 
 export function Extras() {
   useEffect(() => {
-    window.scrollTo(0, 0);
+    location.reload();
   }, []);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -115,33 +115,106 @@ export function Extras() {
     }
   };
 
-  const credits = [
-    {
-      text: "A Ratul Mashfiq Project",
-      size: "text-4xl md:text-6xl lg:text-7xl",
-      delay: 0
-    },
-    {
-      text: "Directed by Ratul Mashfiq",
-      size: "text-2xl md:text-4xl lg:text-5xl",
-      delay: 0.3
-    },
-    {
-      text: "Produced by Ratul Mashfiq", 
-      size: "text-2xl md:text-4xl lg:text-5xl",
-      delay: 0.6
-    },
-    {
-      text: "Designed by Ratul Mashfiq",
-      size: "text-2xl md:text-4xl lg:text-5xl", 
-      delay: 0.9
-    },
-    {
-      text: "Written by Ratul Mashfiq",
-      size: "text-2xl md:text-4xl lg:text-5xl",
-      delay: 1.2
-    }
-  ];
+const credits = [
+  {
+    text: "A Ratul Mushfique Project",
+    size: "text-4xl md:text-6xl lg:text-7xl",
+    delay: 1.1
+  },
+  // Leadership
+  {
+    text: "Project Lead",
+    size: "text-2xl md:text-4xl lg:text-5xl",
+    delay: 1.1
+  },
+  {
+    text: "Ratul Mushfique",
+    size: "text-xl md:text-3xl lg:text-4xl",
+    delay: 0.05
+  },
+  {
+    text: "System Architect",
+    size: "text-2xl md:text-4xl lg:text-5xl",
+    delay: 1.1
+  },
+  {
+    text: "Ratul Mushfique",
+    size: "text-xl md:text-3xl lg:text-4xl",
+    delay: 0.05
+  },
+  {
+    text: "Project Demonstrator",
+    size: "text-2xl md:text-4xl lg:text-5xl",
+    delay: 1.1
+  },
+  {
+    text: "Sadman Safiur Rahman",
+    size: "text-xl md:text-3xl lg:text-4xl",
+    delay: 0.05
+  },
+  {
+    text: "System Documenter",
+    size: "text-2xl md:text-4xl lg:text-5xl",
+    delay: 1.1
+  },
+  {
+    text: "Kazi Amzad Abid",
+    size: "text-xl md:text-3xl lg:text-4xl",
+    delay: 0.05
+  },
+  // Development
+  {
+    text: "Frontend Engineer",
+    size: "text-2xl md:text-4xl lg:text-5xl",
+    delay: 1.1
+  },
+  {
+    text: "Ratul Mushfique",
+    size: "text-xl md:text-3xl lg:text-4xl",
+    delay: 0.05
+  },
+  {
+    text: "Backend Engineer",
+    size: "text-2xl md:text-4xl lg:text-5xl",
+    delay: 1.1
+  },
+  {
+    text: "Ratul Mushfique",
+    size: "text-xl md:text-3xl lg:text-4xl",
+    delay: 0.05
+  },
+  {
+    text: "Database Engineer",
+    size: "text-2xl md:text-4xl lg:text-5xl",
+    delay: 1.1
+  },
+  {
+    text: "Ratul Mushfique",
+    size: "text-xl md:text-3xl lg:text-4xl",
+    delay: 0.05
+  },
+  {
+    text: "API & Integration Engineer",
+    size: "text-2xl md:text-4xl lg:text-5xl",
+    delay: 1.1
+  },
+  {
+    text: "Ratul Mushfique",
+    size: "text-xl md:text-3xl lg:text-4xl",
+    delay: 0.05
+  },
+  // Design
+  {
+    text: "UI/UX Designer",
+    size: "text-2xl md:text-4xl lg:text-5xl",
+    delay: 1.1
+  },
+  {
+    text: "Ratul Mushfique",
+    size: "text-xl md:text-3xl lg:text-4xl",
+    delay: 0.05
+  }
+];
 
   return (
     <div className="bg-black text-white overflow-hidden relative">
@@ -166,7 +239,6 @@ export function Extras() {
         transition={{ delay: 1 }}
       >
         <div className="text-xs text-white/60 hidden md:block">
-          <div>Intended Music</div>
           <div className="text-white/80">Elegia (2015 Remaster)</div>
           <div className="text-white/40">New Order</div>
           
