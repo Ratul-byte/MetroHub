@@ -327,21 +327,56 @@ const credits = [
       {/* Credits Sections */}
       {credits.map((credit, index) => (
         <AnimatedCredit key={index} delay={credit.delay}>
-          <motion.h2 
-            className={`${credit.size} font-thin tracking-wide cursor-default`}
-            whileHover={{ 
-              scale: 1.02,
-              textShadow: "0 0 30px rgba(255,255,255,0.6)",
-              letterSpacing: "0.05em"
-            }}
-            transition={{ 
-              type: "tween", 
-              duration: 0.3,
-              ease: "easeOut"
-            }}
-          >
-            {credit.text}
-          </motion.h2>
+          {credit.text ? (
+            <motion.h2 
+              className={`${credit.size} font-thin tracking-wide cursor-default`}
+              whileHover={{ 
+                scale: 1.02,
+                textShadow: "0 0 30px rgba(255,255,255,0.6)",
+                letterSpacing: "0.05em"
+              }}
+              transition={{ 
+                type: "tween", 
+                duration: 0.3,
+                ease: "easeOut"
+              }}
+            >
+              {credit.text}
+            </motion.h2>
+          ) : (
+            <div className="text-center">
+              <motion.h2
+                className={`${credit.sizeTitle} font-thin tracking-wide cursor-default`}
+                whileHover={{ 
+                  scale: 1.02,
+                  textShadow: "0 0 30px rgba(255,255,255,0.6)",
+                  letterSpacing: "0.05em"
+                }}
+                transition={{ 
+                  type: "tween", 
+                  duration: 0.3,
+                  ease: "easeOut"
+                }}
+              >
+                {credit.title}
+              </motion.h2>
+              <motion.p
+                className={`${credit.sizeName} text-white/80 font-thin tracking-wide cursor-default mt-4`}
+                whileHover={{ 
+                  scale: 1.02,
+                  textShadow: "0 0 30px rgba(255,255,255,0.6)",
+                  letterSpacing: "0.05em"
+                }}
+                transition={{ 
+                  type: "tween", 
+                  duration: 0.3,
+                  ease: "easeOut"
+                }}
+              >
+                {credit.name}
+              </motion.p>
+            </div>
+          )}
           
           {/* Decorative line under each credit */}
           <motion.div
