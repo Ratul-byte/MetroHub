@@ -48,8 +48,8 @@ const AnimatedCredit = ({
 };
 
 export function Extras() {
+  location.reload();
   useEffect(() => {
-    location.reload();
   }, []);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
