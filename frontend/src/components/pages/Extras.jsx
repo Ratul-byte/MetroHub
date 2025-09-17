@@ -48,7 +48,6 @@ const AnimatedCredit = ({
 };
 
 export function Extras() {
-  location.reload();
   useEffect(() => {
   }, []);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -119,100 +118,72 @@ const credits = [
   {
     text: "A Ratul Mushfique Project",
     size: "text-4xl md:text-6xl lg:text-7xl",
-    delay: 1.1
-  },
-  // Leadership
-  {
-    text: "Project Lead",
-    size: "text-2xl md:text-4xl lg:text-5xl",
-    delay: 1.1
+    delay: 1.5
   },
   {
-    text: "Ratul Mushfique",
-    size: "text-xl md:text-3xl lg:text-4xl",
-    delay: 0.05
+    title: "Project Lead",
+    name: "Ratul Mushfique",
+    sizeTitle: "text-2xl md:text-4xl lg:text-5xl",
+    sizeName: "text-xl md:text-3xl lg:text-4xl",
+    delay: 1.5
   },
   {
-    text: "System Architect",
-    size: "text-2xl md:text-4xl lg:text-5xl",
-    delay: 1.1
+    title: "System Architect",
+    name: "Ratul Mushfique",
+    sizeTitle: "text-2xl md:text-4xl lg:text-5xl",
+    sizeName: "text-xl md:text-3xl lg:text-4xl",
+    delay: 1.5
   },
   {
-    text: "Ratul Mushfique",
-    size: "text-xl md:text-3xl lg:text-4xl",
-    delay: 0.05
+    title: "Project Demonstrator",
+    name: "Sadman Safiur Rahman",
+    sizeTitle: "text-2xl md:text-4xl lg:text-5xl",
+    sizeName: "text-xl md:text-3xl lg:text-4xl",
+    delay: 1.5
   },
   {
-    text: "Project Demonstrator",
-    size: "text-2xl md:text-4xl lg:text-5xl",
-    delay: 1.1
-  },
-  {
-    text: "Sadman Safiur Rahman",
-    size: "text-xl md:text-3xl lg:text-4xl",
-    delay: 0.05
-  },
-  {
-    text: "System Documenter",
-    size: "text-2xl md:text-4xl lg:text-5xl",
-    delay: 1.1
-  },
-  {
-    text: "Kazi Amzad Abid",
-    size: "text-xl md:text-3xl lg:text-4xl",
-    delay: 0.05
+    title: "System Documenter",
+    name: "Kazi Amzad Abid",
+    sizeTitle: "text-2xl md:text-4xl lg:text-5xl",
+    sizeName: "text-xl md:text-3xl lg:text-4xl",
+    delay: 1.5
   },
   // Development
   {
-    text: "Frontend Engineer",
-    size: "text-2xl md:text-4xl lg:text-5xl",
-    delay: 1.1
+    title: "Frontend Engineer",
+    name: "Ratul Mushfique",
+    sizeTitle: "text-2xl md:text-4xl lg:text-5xl",
+    sizeName: "text-xl md:text-3xl lg:text-4xl",
+    delay: 1.5
   },
   {
-    text: "Ratul Mushfique",
-    size: "text-xl md:text-3xl lg:text-4xl",
-    delay: 0.05
+    title: "Backend Engineer",
+    name: "Ratul Mushfique",
+    sizeTitle: "text-2xl md:text-4xl lg:text-5xl",
+    sizeName: "text-xl md:text-3xl lg:text-4xl",
+    delay: 1.5
   },
   {
-    text: "Backend Engineer",
-    size: "text-2xl md:text-4xl lg:text-5xl",
-    delay: 1.1
+    title: "Database Architect",
+    name: "Ratul Mushfique",
+    sizeTitle: "text-2xl md:text-4xl lg:text-5xl",
+    sizeName: "text-xl md:text-3xl lg:text-4xl",
+    delay: 1.5
   },
   {
-    text: "Ratul Mushfique",
-    size: "text-xl md:text-3xl lg:text-4xl",
-    delay: 0.05
-  },
-  {
-    text: "Database Engineer",
-    size: "text-2xl md:text-4xl lg:text-5xl",
-    delay: 1.1
-  },
-  {
-    text: "Ratul Mushfique",
-    size: "text-xl md:text-3xl lg:text-4xl",
-    delay: 0.05
-  },
-  {
-    text: "API & Integration Engineer",
-    size: "text-2xl md:text-4xl lg:text-5xl",
-    delay: 1.1
-  },
-  {
-    text: "Ratul Mushfique",
-    size: "text-xl md:text-3xl lg:text-4xl",
-    delay: 0.05
+    title: "API & Integration Engineer",
+    name: "Ratul Mushfique",
+    sizeTitle: "text-2xl md:text-4xl lg:text-5xl",
+    sizeName: "text-xl md:text-3xl lg:text-4xl",
+    delay: 1.5
   },
   // Design
   {
-    text: "UI/UX Designer",
-    size: "text-2xl md:text-4xl lg:text-5xl",
-    delay: 1.1
-  },
-  {
-    text: "Ratul Mushfique",
-    size: "text-xl md:text-3xl lg:text-4xl",
-    delay: 0.05
+    title: "UI/UX Designer",
+    name: "Ratul Mushfique",
+    sizeTitle: "text-2xl md:text-4xl lg:text-5xl",
+    sizeName: "text-xl md:text-3xl lg:text-4xl",
+    delay: 1.5
   }
 ];
 
