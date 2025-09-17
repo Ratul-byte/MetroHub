@@ -2,7 +2,8 @@
 
 Hello everyone! This is a project from my university course, System Analysis and Design. MetroHub is a comprehensive web application designed to streamline the urban transportation experience for metro rail users in Dhaka. It provides a seamless interface for users to manage their travel, from booking tickets to navigating the metro network. The application is built with a modern MERN stack (MongoDB, Express.js, React, Node.js) and includes a feature-rich admin dashboard for managing the system.
 
-**Here is the deployed <a href="https://metro-hub.vercel.app/">version</a> of our project.**
+**Here is the deployed <a href="https://metro-hub.vercel.app/">version</a> of our project and a demo <a href="https://drive.google.com/file/d/1SpC8SIVl-Yui86epEeEDOsM78chIXIu6/view?usp=sharing">user manual</a> document that you can follow.** 
+**Register with an actual mail to test notification feature. Password should be 8 characters long including one digit and one special characters.**
 
 ## Features
 
