@@ -133,7 +133,8 @@ export function AboutUs({ onNavigate }) {
               transition={{ duration: 1, delay: 0.6 }}
             >
               <Button size="lg" className="bg-primary hover:bg-primary/90">
-                Discover Our Story
+                Watch Credits
+                onClick={() => onNavigate('extras')}
               </Button>
             </motion.div>
           </div>
