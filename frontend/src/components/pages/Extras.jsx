@@ -164,7 +164,7 @@ const credits = [
     delay: 1.5
   },
   {
-    title: "Database Architect",
+    title: "Database Architect and Data Engineer",
     name: "Ratul Mushfique",
     sizeTitle: "text-2xl md:text-4xl lg:text-5xl",
     sizeName: "text-xl md:text-3xl lg:text-4xl",
