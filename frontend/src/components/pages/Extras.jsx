@@ -48,7 +48,6 @@ const AnimatedCredit = ({
 };
 
 export function Extras() {
-  location.reload();
   useEffect(() => {
   }, []);
   const [isPlaying, setIsPlaying] = useState(false);
