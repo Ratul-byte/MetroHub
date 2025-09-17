@@ -9,8 +9,9 @@ import ratul_img from "../../assets/ratul.jpg";
 import sadman_img from "../../assets/sadman.jpg";
 import abid_img from "../../assets/abid.png";
 import AnimatedSection from "../ui/AnimatedSection";
+import {Extras} from './components/pages/Extras';
 
-
+<Route path="/extras" element={<Extras />} />
 
 export function AboutUs({ onNavigate }) {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -133,8 +134,7 @@ export function AboutUs({ onNavigate }) {
               transition={{ duration: 1, delay: 0.6 }}
             >
               <Button size="lg" className="bg-primary hover:bg-primary/90">
-                Watch Credits
-                onClick={() => onNavigate('extras')}
+                <li><Link to="/extras" className="hover:text-foreground transition-colors">View Credits</Link></li>
               </Button>
             </motion.div>
           </div>
