@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, useAnimation, useInView } from "framer-motion";
 import Button from "../ui/Button";
 import { Card } from "../ui/Card";
@@ -9,9 +10,6 @@ import ratul_img from "../../assets/ratul.jpg";
 import sadman_img from "../../assets/sadman.jpg";
 import abid_img from "../../assets/abid.png";
 import AnimatedSection from "../ui/AnimatedSection";
-import {Extras} from './components/pages/Extras';
-
-<Route path="/extras" element={<Extras />} />
 
 export function AboutUs({ onNavigate }) {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -133,9 +131,11 @@ export function AboutUs({ onNavigate }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.6 }}
             >
-              <Button size="lg" className="bg-primary hover:bg-primary/90">
-                <li><Link to="/extras" className="hover:text-foreground transition-colors">View Credits</Link></li>
-              </Button>
+              <Link to="/extras">
+                <Button size="lg" className="bg-primary hover:bg-primary/90">
+                  View Credits
+                </Button>
+              </Link>
             </motion.div>
           </div>
         </section>
